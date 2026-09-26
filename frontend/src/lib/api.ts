@@ -1,7 +1,12 @@
 import axios, { AxiosError } from 'axios';
 
+// In production the backend serves the SPA from the same origin, so
+// `/api` (relative) is always correct. In dev the Vite server runs on
+// :5173 while the API runs on :4000, so we hit the API host directly.
+// An explicit VITE_API_BASE_URL override wins over both defaults.
 const baseURL =
-  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000/api';
+  import.meta.env.VITE_API_BASE_URL ??
+  (import.meta.env.PROD ? '/api' : 'http://localhost:4000/api');
 
 export const api = axios.create({
   baseURL,
