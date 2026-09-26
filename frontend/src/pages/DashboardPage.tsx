@@ -139,7 +139,7 @@ export function DashboardPage() {
       )}
 
       {data === null ? (
-        <p className="text-sm text-slate-500">Loading dashboard…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading dashboard…</p>
       ) : (
         <>
           <KpiGrid data={data} />
@@ -212,7 +212,7 @@ function Kpi({
   href?: string;
 }) {
   const toneClass: Record<string, string> = {
-    slate: 'text-slate-900',
+    slate: 'text-slate-900 dark:text-slate-100',
     green: 'text-emerald-700',
     amber: 'text-amber-700',
     red: 'text-red-700',
@@ -220,7 +220,7 @@ function Kpi({
 
   const content = (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         {label}
       </p>
       <p className={`mt-1 text-3xl font-semibold ${toneClass[tone]}`}>{value}</p>
@@ -231,14 +231,14 @@ function Kpi({
     return (
       <Link
         to={href}
-        className="block rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50/30"
+        className="block rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50/30"
       >
         {content}
       </Link>
     );
   }
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
       {content}
     </div>
   );
@@ -308,11 +308,11 @@ function ChartCard({
 }) {
   return (
     <section
-      className={`rounded-lg border border-slate-200 bg-white p-4 ${className}`}
+      className={`rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 ${className}`}
     >
-      <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+      <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
       {subtitle && (
-        <p className="text-xs text-slate-500">{subtitle}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{subtitle}</p>
       )}
       <div className="mt-3">{children}</div>
     </section>
@@ -321,7 +321,7 @@ function ChartCard({
 
 function EmptyChart({ message }: { message: string }) {
   return (
-    <div className="flex h-56 items-center justify-center rounded-md border border-dashed border-slate-200 text-sm text-slate-500">
+    <div className="flex h-56 items-center justify-center rounded-md border border-dashed border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400">
       {message}
     </div>
   );
@@ -498,22 +498,22 @@ function FailureSummary({ data }: { data: Dashboard }) {
   );
   return (
     <dl className="grid grid-cols-2 gap-3 text-sm">
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-        <dt className="text-xs uppercase tracking-wide text-slate-500">
+      <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
+        <dt className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
           Failed inspections
         </dt>
         <dd
-          className={`mt-1 text-2xl font-semibold ${failed ? 'text-amber-700' : 'text-slate-700'}`}
+          className={`mt-1 text-2xl font-semibold ${failed ? 'text-amber-700' : 'text-slate-700 dark:text-slate-300'}`}
         >
           {failed}
         </dd>
       </div>
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-        <dt className="text-xs uppercase tracking-wide text-slate-500">
+      <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
+        <dt className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
           Safety-critical failures
         </dt>
         <dd
-          className={`mt-1 text-2xl font-semibold ${safetyCritical ? 'text-red-700' : 'text-slate-700'}`}
+          className={`mt-1 text-2xl font-semibold ${safetyCritical ? 'text-red-700' : 'text-slate-700 dark:text-slate-300'}`}
         >
           {safetyCritical}
         </dd>

@@ -116,7 +116,7 @@ export function UnitComplianceReportPage() {
       )}
 
       {data === null ? (
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       ) : data.rows.length === 0 ? (
         <EmptyState title="No units match" />
       ) : (
@@ -134,9 +134,9 @@ export function UnitComplianceReportPage() {
           ]}
         >
           {data.rows.map((r) => (
-            <tr key={r.unitId} className="hover:bg-slate-50">
+            <tr key={r.unitId} className="hover:bg-slate-50 dark:hover:bg-slate-800">
               <Td className="font-mono text-xs">{r.unitCode}</Td>
-              <Td className="font-medium text-slate-900">{r.unitName}</Td>
+              <Td className="font-medium text-slate-900 dark:text-slate-100">{r.unitName}</Td>
               <Td>{r.totalEquipment}</Td>
               <Td>{r.completed}</Td>
               <Td>{r.overdue}</Td>
@@ -164,7 +164,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`whitespace-nowrap px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`whitespace-nowrap px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );
@@ -181,7 +181,7 @@ function BarPct({ pct }: { pct: number }) {
           style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
         />
       </div>
-      <span className="text-xs text-slate-700">{pct}%</span>
+      <span className="text-xs text-slate-700 dark:text-slate-300">{pct}%</span>
     </div>
   );
 }

@@ -198,7 +198,7 @@ export function QrBulkPage() {
             </div>
           </form>
 
-          <div className="mb-2 flex items-center justify-between text-xs text-slate-600">
+          <div className="mb-2 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
             <p>
               {rows === null
                 ? 'Loading…'
@@ -212,9 +212,9 @@ export function QrBulkPage() {
           {rows && rows.length === 0 ? (
             <EmptyState title="No equipment matches your filters" />
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-              <table className="min-w-full divide-y divide-slate-200 text-sm">
-                <thead className="bg-slate-50">
+            <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-800">
                   <tr>
                     <Th className="w-8">&nbsp;</Th>
                     <Th>Code</Th>
@@ -225,12 +225,12 @@ export function QrBulkPage() {
                     <Th>Status</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                   {rows?.map((r) => (
                     <tr
                       key={r.id}
                       onClick={() => toggle(r)}
-                      className={`cursor-pointer hover:bg-slate-50 ${
+                      className={`cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 ${
                         selected[r.id] ? 'bg-brand-50/70' : ''
                       }`}
                     >
@@ -243,10 +243,10 @@ export function QrBulkPage() {
                         />
                       </Td>
                       <Td className="font-mono text-xs">{r.equipmentCode}</Td>
-                      <Td className="font-medium text-slate-900">{r.name}</Td>
+                      <Td className="font-medium text-slate-900 dark:text-slate-100">{r.name}</Td>
                       <Td>{r.equipmentType.name}</Td>
                       <Td className="font-mono text-xs">{r.unit.code}</Td>
-                      <Td className="text-slate-600">
+                      <Td className="text-slate-600 dark:text-slate-400">
                         {[r.building, r.floor, r.location].filter(Boolean).join(' · ') || '—'}
                       </Td>
                       <Td>
@@ -266,7 +266,7 @@ export function QrBulkPage() {
       {mode === 'preview' && (
         <>
           <div className="print-hide mb-4 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-slate-700">
+            <p className="text-sm text-slate-700 dark:text-slate-300">
               {selectedList.length} label{selectedList.length === 1 ? '' : 's'} ready
               to print.
             </p>
@@ -284,7 +284,7 @@ export function QrBulkPage() {
             </Select>
           </div>
 
-          <div className="rounded-lg bg-white p-4 print:bg-white print:p-0">
+          <div className="rounded-lg bg-white dark:bg-slate-900 p-4 print:bg-white print:p-0">
             <div className="flex flex-wrap gap-3">
               {selectedList.map((eq) => (
                 <QrLabel key={eq.id} equipment={eq} size={labelSize} />
@@ -306,7 +306,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -321,7 +321,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );

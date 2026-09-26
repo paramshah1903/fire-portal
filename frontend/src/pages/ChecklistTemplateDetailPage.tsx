@@ -80,7 +80,7 @@ export function ChecklistTemplateDetailPage() {
     return (
       <div>
         <PageHeader title="Checklist template" />
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </div>
     );
   }
@@ -138,11 +138,11 @@ export function ChecklistTemplateDetailPage() {
       )}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <section className="rounded-lg border border-slate-200 bg-white p-4 lg:col-span-2">
-          <h2 className="mb-3 text-sm font-semibold text-slate-900">Versions</h2>
-          <div className="overflow-hidden rounded-md border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200 text-sm">
-              <thead className="bg-slate-50">
+        <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 lg:col-span-2">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Versions</h2>
+          <div className="overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+              <thead className="bg-slate-50 dark:bg-slate-800">
                 <tr>
                   <Th>Version</Th>
                   <Th>Status</Th>
@@ -151,9 +151,9 @@ export function ChecklistTemplateDetailPage() {
                   <Th className="text-right">Actions</Th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {template.versions.map((v) => (
-                  <tr key={v.id} className="hover:bg-slate-50">
+                  <tr key={v.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                     <Td>
                       <span className="font-mono">v{v.versionNumber}</span>
                       {v.isCurrent && (
@@ -196,8 +196,8 @@ export function ChecklistTemplateDetailPage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-900">Settings</h2>
+        <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Settings</h2>
           <dl className="space-y-3 text-sm">
             <Field label="Description" value={template.description ?? '—'} />
             <Field
@@ -266,7 +266,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -281,7 +281,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );
@@ -296,10 +296,10 @@ function Field({
 }) {
   return (
     <div>
-      <dt className="text-xs uppercase tracking-wide text-slate-500">
+      <dt className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
         {label}
       </dt>
-      <dd className="mt-0.5 text-sm text-slate-900">{value}</dd>
+      <dd className="mt-0.5 text-sm text-slate-900 dark:text-slate-100">{value}</dd>
     </div>
   );
 }
@@ -430,7 +430,7 @@ function SettingsModal({
               });
             }}
           />
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Blank = use the equipment type&apos;s default frequency.
           </p>
         </div>
@@ -475,17 +475,17 @@ function SettingsModal({
           />
         </div>
         <div className="sm:col-span-2">
-          <p className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600">
+          <p className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600 dark:text-slate-400">
             Applicable units
           </p>
-          <p className="mb-2 text-xs text-slate-500">
+          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
             Leave all unchecked to apply this template to every unit.
           </p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {units.map((u) => (
               <label
                 key={u.id}
-                className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm"
+                className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm"
               >
                 <input
                   type="checkbox"
@@ -497,7 +497,7 @@ function SettingsModal({
             ))}
           </div>
         </div>
-        <label className="sm:col-span-2 flex items-center gap-2 text-sm text-slate-700">
+        <label className="sm:col-span-2 flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
           <input
             type="checkbox"
             checked={form.isActive}

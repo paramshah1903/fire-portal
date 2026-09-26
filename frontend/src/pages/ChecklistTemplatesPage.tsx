@@ -54,7 +54,7 @@ export function ChecklistTemplatesPage() {
         description="Inspection templates per equipment type. Templates are versioned — historical inspections keep the version they were captured against."
         actions={
           <>
-            <label className="flex items-center gap-2 text-xs text-slate-600">
+            <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
               <input
                 type="checkbox"
                 checked={includeInactive}
@@ -76,16 +76,16 @@ export function ChecklistTemplatesPage() {
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading templates…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading templates…</p>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No checklist templates"
           description="Create one to start defining monthly inspections."
         />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Name</Th>
                 <Th>Equipment type</Th>
@@ -97,13 +97,13 @@ export function ChecklistTemplatesPage() {
                 <Th className="text-right">Actions</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((t) => {
                 const current = t.versions.find((v) => v.isCurrent);
                 const draft = t.versions.find((v) => v.status === 'DRAFT');
                 return (
-                  <tr key={t.id} className="hover:bg-slate-50">
-                    <Td className="font-medium text-slate-900">
+                  <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <Td className="font-medium text-slate-900 dark:text-slate-100">
                       <Link
                         to={`/checklist-templates/${t.id}`}
                         className="text-brand-700 hover:underline"
@@ -116,7 +116,7 @@ export function ChecklistTemplatesPage() {
                       {current ? (
                         <Badge tone="green">v{current.versionNumber}</Badge>
                       ) : (
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
                           not published
                         </span>
                       )}
@@ -137,7 +137,7 @@ export function ChecklistTemplatesPage() {
                       {t.frequencyDays != null ? (
                         `${t.frequencyDays} days`
                       ) : (
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
                           Type default
                         </span>
                       )}
@@ -183,7 +183,7 @@ export function ChecklistTemplatesPage() {
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -191,7 +191,7 @@ function Th({ children, className = '' }: { children: React.ReactNode; className
   );
 }
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>{children}</td>;
+  return <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>{children}</td>;
 }
 
 function TemplateFormModal({
@@ -344,7 +344,7 @@ function TemplateFormModal({
               });
             }}
           />
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Leave blank to use the equipment type&apos;s default frequency.
           </p>
         </div>
@@ -366,7 +366,7 @@ function TemplateFormModal({
             value={form.headerText}
             onChange={(e) => setForm({ ...form, headerText: e.target.value })}
           />
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Shown at the top of the perform page and on the PDF export.
           </p>
         </div>
@@ -392,17 +392,17 @@ function TemplateFormModal({
           />
         </div>
         <div className="sm:col-span-2">
-          <p className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600">
+          <p className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600 dark:text-slate-400">
             Applicable units
           </p>
-          <p className="mb-2 text-xs text-slate-500">
+          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
             Leave all unchecked to apply this template to every unit.
           </p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {units.map((u) => (
               <label
                 key={u.id}
-                className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm"
+                className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm"
               >
                 <input
                   type="checkbox"

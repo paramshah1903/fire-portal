@@ -70,7 +70,7 @@ export function InspectionDetailPage() {
     return (
       <div>
         <PageHeader title="Inspection" />
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </div>
     );
   }
@@ -89,15 +89,15 @@ export function InspectionDetailPage() {
           PDF opens with clean, form-like branding rather than nav chrome. */}
       <div className="mb-4 hidden border-b-2 border-slate-800 pb-3 print:block">
         {template.headerText && (
-          <p className="whitespace-pre-wrap text-center text-sm font-semibold text-slate-900">
+          <p className="whitespace-pre-wrap text-center text-sm font-semibold text-slate-900 dark:text-slate-100">
             {template.headerText}
           </p>
         )}
-        <p className="mt-2 text-center text-lg font-semibold text-slate-900">
+        <p className="mt-2 text-center text-lg font-semibold text-slate-900 dark:text-slate-100">
           {template.name}
         </p>
         {insp.inspectionNumber && (
-          <p className="mt-1 text-center text-xs text-slate-700">
+          <p className="mt-1 text-center text-xs text-slate-700 dark:text-slate-300">
             Inspection No.{' '}
             <span className="font-mono font-semibold">
               {insp.inspectionNumber}
@@ -131,7 +131,7 @@ export function InspectionDetailPage() {
               </Button>
               <Link
                 to={`/equipment/${insp.equipment.id}`}
-                className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+                className="inline-flex items-center rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Open equipment
               </Link>
@@ -184,11 +184,11 @@ export function InspectionDetailPage() {
       />
 
       {insp.remarks && (
-        <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-1 text-sm font-semibold text-slate-900">
+        <section className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+          <h2 className="mb-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
             Inspector remarks
           </h2>
-          <p className="whitespace-pre-wrap text-sm text-slate-700">
+          <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">
             {insp.remarks}
           </p>
         </section>
@@ -198,17 +198,17 @@ export function InspectionDetailPage() {
         {insp.templateVersion.sections.map((section, si) => (
           <section
             key={section.id}
-            className="print-avoid-break rounded-lg border border-slate-200 bg-white"
+            className="print-avoid-break rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
           >
-            <header className="border-b border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            <header className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Section {si + 1}
               </p>
-              <h2 className="text-sm font-semibold text-slate-900">
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {section.title}
               </h2>
             </header>
-            <ul className="divide-y divide-slate-200">
+            <ul className="divide-y divide-slate-200 dark:divide-slate-700">
               {section.questions.map((q, qi) => (
                 <li
                   key={q.id}
@@ -222,7 +222,7 @@ export function InspectionDetailPage() {
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <p className="text-slate-800">
+                      <p className="text-slate-800 dark:text-slate-200">
                         <span className="mr-2 text-xs text-slate-400">
                           {si + 1}.{qi + 1}
                         </span>
@@ -243,7 +243,7 @@ export function InspectionDetailPage() {
                     </div>
                   </div>
                   {responseByQ.get(q.id)?.notes && (
-                    <p className="mt-2 rounded bg-slate-50 px-2 py-1 text-xs text-slate-700">
+                    <p className="mt-2 rounded bg-slate-50 dark:bg-slate-800 px-2 py-1 text-xs text-slate-700 dark:text-slate-300">
                       Notes: {responseByQ.get(q.id)?.notes}
                     </p>
                   )}
@@ -255,7 +255,7 @@ export function InspectionDetailPage() {
                           href={inspectionAttachmentUrl(a.id)}
                           target="_blank"
                           rel="noopener"
-                          className="block h-24 w-24 overflow-hidden rounded border border-slate-300"
+                          className="block h-24 w-24 overflow-hidden rounded border border-slate-300 dark:border-slate-600"
                           title={a.originalName}
                         >
                           <img
@@ -287,7 +287,7 @@ export function InspectionDetailPage() {
                           <PriorityBadge priority={ca.priority} />
                           <StatusBadge status={ca.status} />
                           {ca.assignee && (
-                            <span className="text-slate-600">
+                            <span className="text-slate-600 dark:text-slate-400">
                               → {ca.assignee.fullName}
                             </span>
                           )}
@@ -305,29 +305,29 @@ export function InspectionDetailPage() {
       {/* Signature block — visible on screen and print, useful as a
           formal sign-off area on the PDF. */}
       {insp.status === 'COMPLETED' && (
-        <section className="print-avoid-break mt-6 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-2">
+        <section className="print-avoid-break mt-6 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 sm:grid-cols-2">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               {signatureLine}
             </p>
-            <p className="mt-2 text-sm text-slate-900">
+            <p className="mt-2 text-sm text-slate-900 dark:text-slate-100">
               {insp.confirmationName ?? insp.inspector.fullName}
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               {insp.inspector.fullName} · {insp.inspector.username}
             </p>
             <div className="mt-6 border-t border-slate-400" />
-            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Signature
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               Reviewed by
             </p>
             <p className="mt-2 text-sm text-slate-400">—</p>
             <div className="mt-6 border-t border-slate-400" />
-            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Name &amp; signature
             </p>
           </div>
@@ -336,7 +336,7 @@ export function InspectionDetailPage() {
 
       {/* Optional template footer text, printed at the bottom of the PDF. */}
       {template.footerText && (
-        <p className="mt-4 whitespace-pre-wrap border-t border-slate-200 pt-3 text-center text-xs text-slate-500">
+        <p className="mt-4 whitespace-pre-wrap border-t border-slate-200 dark:border-slate-700 pt-3 text-center text-xs text-slate-500 dark:text-slate-400">
           {template.footerText}
         </p>
       )}
@@ -386,17 +386,17 @@ function EquipmentDetailStrip({
   ];
 
   return (
-    <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+    <section className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         Equipment details
       </p>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
         {fields.map(([label, value]) => (
           <div key={label}>
-            <dt className="text-[10px] uppercase tracking-wide text-slate-500">
+            <dt className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
               {label}
             </dt>
-            <dd className="text-slate-800">{value}</dd>
+            <dd className="text-slate-800 dark:text-slate-200">{value}</dd>
           </div>
         ))}
       </dl>
@@ -414,12 +414,12 @@ function SummaryCard({
   extra?: string;
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         {label}
       </p>
-      <div className="mt-1 text-sm font-medium text-slate-900">{value}</div>
-      {extra && <p className="mt-1 text-xs text-slate-500">{extra}</p>}
+      <div className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">{value}</div>
+      {extra && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{extra}</p>}
     </div>
   );
 }
@@ -464,7 +464,7 @@ function AnswerDisplay({ row }: { row: InspectionResponseRow | undefined }) {
       {row.isFail || row.questionType === 'PASS_FAIL' || row.questionType === 'YES_NO' ? (
         <Badge tone={failTone}>{typeof content === 'string' ? content : '—'}</Badge>
       ) : (
-        <span className="text-sm text-slate-800">{content}</span>
+        <span className="text-sm text-slate-800 dark:text-slate-200">{content}</span>
       )}
     </span>
   );

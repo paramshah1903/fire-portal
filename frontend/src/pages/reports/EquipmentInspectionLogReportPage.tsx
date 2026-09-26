@@ -238,20 +238,20 @@ function EquipmentInfoCard({
   ];
 
   return (
-    <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+    <section className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         Equipment
       </p>
-      <p className="text-lg font-semibold text-slate-900">
+      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
         {equipment.name}
       </p>
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3 lg:grid-cols-4">
         {fields.map(([label, value]) => (
           <div key={label}>
-            <dt className="text-[10px] uppercase tracking-wide text-slate-500">
+            <dt className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
               {label}
             </dt>
-            <dd className="text-slate-800">{value}</dd>
+            <dd className="text-slate-800 dark:text-slate-200">{value}</dd>
           </div>
         ))}
       </dl>
@@ -270,14 +270,14 @@ function LogTable({ data }: { data: InspectionLogReport }) {
     { key: 'completedAt', header: 'Completed', className: '' },
     { key: 'inspector', header: 'Inspector', className: '' },
     { key: 'result', header: 'Result', className: '' },
-    { key: 'template', header: 'Template', className: 'text-xs text-slate-600' },
-    { key: 'remarks', header: 'Overall remarks', className: 'text-xs text-slate-700' },
+    { key: 'template', header: 'Template', className: 'text-xs text-slate-600 dark:text-slate-400' },
+    { key: 'remarks', header: 'Overall remarks', className: 'text-xs text-slate-700 dark:text-slate-300' },
   ];
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
-        <thead className="bg-slate-50">
+    <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+      <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+        <thead className="bg-slate-50 dark:bg-slate-800">
           <tr>
             {fixedCols.map((c) => (
               <Th key={c.key}>{c.header}</Th>
@@ -290,7 +290,7 @@ function LogTable({ data }: { data: InspectionLogReport }) {
                       {q.sectionTitle}
                     </p>
                   )}
-                  <p className="whitespace-normal text-[11px] font-semibold normal-case text-slate-700">
+                  <p className="whitespace-normal text-[11px] font-semibold normal-case text-slate-700 dark:text-slate-300">
                     {q.text}
                   </p>
                   {q.isSafetyCritical && (
@@ -303,9 +303,9 @@ function LogTable({ data }: { data: InspectionLogReport }) {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200">
+        <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
           {data.rows.map((r) => (
-            <tr key={r.inspectionId} className="hover:bg-slate-50">
+            <tr key={r.inspectionId} className="hover:bg-slate-50 dark:hover:bg-slate-800">
               <Td className="whitespace-nowrap font-mono text-xs">
                 {r.periodKey}
               </Td>
@@ -315,9 +315,9 @@ function LogTable({ data }: { data: InspectionLogReport }) {
                   : '—'}
               </Td>
               <Td className="whitespace-nowrap">
-                <span className="text-slate-800">{r.inspectorName}</span>
+                <span className="text-slate-800 dark:text-slate-200">{r.inspectorName}</span>
                 {r.confirmationName && (
-                  <span className="ml-1 text-xs text-slate-500">
+                  <span className="ml-1 text-xs text-slate-500 dark:text-slate-400">
                     (signed as {r.confirmationName})
                   </span>
                 )}
@@ -340,12 +340,12 @@ function LogTable({ data }: { data: InspectionLogReport }) {
                   '—'
                 )}
               </Td>
-              <Td className="whitespace-nowrap text-xs text-slate-600">
+              <Td className="whitespace-nowrap text-xs text-slate-600 dark:text-slate-400">
                 {r.templateName} v{r.templateVersion}
               </Td>
               <Td className="max-w-xs">
                 {r.remarks ? (
-                  <span className="text-xs text-slate-700">{r.remarks}</span>
+                  <span className="text-xs text-slate-700 dark:text-slate-300">{r.remarks}</span>
                 ) : (
                   '—'
                 )}
@@ -378,17 +378,17 @@ function LogTable({ data }: { data: InspectionLogReport }) {
                       {isBadge && a.valueString ? (
                         <Badge tone={tone}>{a.valueString}</Badge>
                       ) : (
-                        <span className="text-slate-800">
+                        <span className="text-slate-800 dark:text-slate-200">
                           {a.display || '—'}
                         </span>
                       )}
                       {a.notes && (
-                        <p className="mt-1 text-[11px] italic text-slate-500">
+                        <p className="mt-1 text-[11px] italic text-slate-500 dark:text-slate-400">
                           {a.notes}
                         </p>
                       )}
                       {a.attachmentCount > 0 && q.type === 'PHOTO' && (
-                        <p className="mt-1 text-[11px] text-slate-500">
+                        <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                           {a.attachmentCount} photo
                           {a.attachmentCount === 1 ? '' : 's'}
                         </p>
@@ -408,7 +408,7 @@ function LogTable({ data }: { data: InspectionLogReport }) {
 function Th({ children }: { children: React.ReactNode }) {
   return (
     <th
-      className="whitespace-nowrap px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 align-top"
+      className="whitespace-nowrap px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 align-top"
       scope="col"
     >
       {children}
@@ -423,7 +423,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );

@@ -132,13 +132,13 @@ export function CorrectiveActionsPage() {
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       ) : rows.length === 0 ? (
         <EmptyState title="No corrective actions match" />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Code</Th>
                 <Th>Title</Th>
@@ -151,9 +151,9 @@ export function CorrectiveActionsPage() {
                 <Th className="text-right">Actions</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50">
+                <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Td className="font-mono text-xs">
                     <Link
                       to={`/corrective-actions/${r.id}`}
@@ -162,9 +162,9 @@ export function CorrectiveActionsPage() {
                       {r.code}
                     </Link>
                   </Td>
-                  <Td className="font-medium text-slate-900">{r.title}</Td>
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">{r.title}</Td>
                   <Td>
-                    <span className="font-mono text-xs text-slate-500">
+                    <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
                       {r.equipment.equipmentCode}
                     </span>{' '}
                     {r.equipment.name}
@@ -198,7 +198,7 @@ export function CorrectiveActionsPage() {
       )}
 
       {rows !== null && total > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
           <p>
             Page {page} of {totalPages} — {total} corrective action
             {total === 1 ? '' : 's'}
@@ -258,7 +258,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -273,7 +273,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );

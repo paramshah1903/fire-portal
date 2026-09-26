@@ -138,7 +138,7 @@ export function FailedEquipmentReportPage() {
       )}
 
       {data === null ? (
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       ) : data.rows.length === 0 ? (
         <EmptyState
           title="No failed equipment"
@@ -158,10 +158,10 @@ export function FailedEquipmentReportPage() {
           ]}
         >
           {data.rows.map((r) => (
-            <tr key={r.equipmentCode} className="hover:bg-slate-50">
+            <tr key={r.equipmentCode} className="hover:bg-slate-50 dark:hover:bg-slate-800">
               <Td className="font-mono text-xs">{r.unitCode}</Td>
               <Td className="font-mono text-xs">{r.equipmentCode}</Td>
-              <Td className="font-medium text-slate-900">{r.equipmentName}</Td>
+              <Td className="font-medium text-slate-900 dark:text-slate-100">{r.equipmentName}</Td>
               <Td>{r.equipmentTypeName}</Td>
               <Td>
                 <Badge
@@ -218,7 +218,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`whitespace-nowrap px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`whitespace-nowrap px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );

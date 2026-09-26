@@ -152,13 +152,13 @@ export function AuditLogsPage() {
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       ) : rows.length === 0 ? (
         <EmptyState title="No audit records match" />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>When</Th>
                 <Th>Actor</Th>
@@ -168,7 +168,7 @@ export function AuditLogsPage() {
                 <Th className="text-right">&nbsp;</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((r) => (
                 <RowGroup
                   key={r.id}
@@ -185,7 +185,7 @@ export function AuditLogsPage() {
       )}
 
       {rows !== null && total > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
           <p>
             Page {page} of {totalPages} — {total} record{total === 1 ? '' : 's'}
           </p>
@@ -223,20 +223,20 @@ function RowGroup({
   const meta = safeParseJson(row.metadata);
   return (
     <>
-      <tr className="hover:bg-slate-50">
-        <Td className="whitespace-nowrap text-xs text-slate-600">
+      <tr className="hover:bg-slate-50 dark:hover:bg-slate-800">
+        <Td className="whitespace-nowrap text-xs text-slate-600 dark:text-slate-400">
           {new Date(row.createdAt).toLocaleString()}
         </Td>
         <Td>
           {row.actor ? (
-            <span className="text-slate-800">
+            <span className="text-slate-800 dark:text-slate-200">
               {row.actor.fullName}{' '}
-              <span className="font-mono text-xs text-slate-500">
+              <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
                 ({row.actor.username})
               </span>
             </span>
           ) : (
-            <span className="text-xs text-slate-500">— system —</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">— system —</span>
           )}
         </Td>
         <Td>
@@ -253,7 +253,7 @@ function RowGroup({
         </Td>
       </tr>
       {open && row.metadata && (
-        <tr className="bg-slate-50">
+        <tr className="bg-slate-50 dark:bg-slate-800">
           <td colSpan={6} className="px-3 py-2">
             <pre className="max-h-64 overflow-auto rounded bg-slate-900 px-3 py-2 font-mono text-xs text-slate-100">
               {meta ? JSON.stringify(meta, null, 2) : row.metadata}
@@ -304,7 +304,7 @@ function Th({
 }) {
   return (
     <th
-      className={`whitespace-nowrap px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`whitespace-nowrap px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -319,7 +319,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );

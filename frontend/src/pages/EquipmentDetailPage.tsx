@@ -124,7 +124,7 @@ export function EquipmentDetailPage() {
     return (
       <div>
         <PageHeader title="Equipment" />
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </div>
     );
   }
@@ -172,7 +172,7 @@ export function EquipmentDetailPage() {
       />
 
       {/* Tabs */}
-      <div className="mb-4 flex flex-wrap gap-1 border-b border-slate-200">
+      <div className="mb-4 flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-700">
         <TabButton active={tab === 'overview'} onClick={() => setTab('overview')}>
           Overview
         </TabButton>
@@ -240,7 +240,7 @@ function TabButton({
       className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium ${
         active
           ? 'border-brand-600 text-brand-800'
-          : 'border-transparent text-slate-600 hover:text-slate-900'
+          : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900'
       }`}
     >
       {children}
@@ -296,7 +296,7 @@ function OverviewPanel({ equipment }: { equipment: Equipment }) {
         <Section title="Status">
           <div className="flex flex-col gap-2">
             <div>
-              <span className="text-xs uppercase tracking-wide text-slate-500">
+              <span className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Operational
               </span>
               <div className="mt-1">
@@ -306,7 +306,7 @@ function OverviewPanel({ equipment }: { equipment: Equipment }) {
               </div>
             </div>
             <div>
-              <span className="text-xs uppercase tracking-wide text-slate-500">
+              <span className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Active
               </span>
               <div className="mt-1">
@@ -318,10 +318,10 @@ function OverviewPanel({ equipment }: { equipment: Equipment }) {
               </div>
             </div>
             <div>
-              <span className="text-xs uppercase tracking-wide text-slate-500">
+              <span className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Inspection frequency
               </span>
-              <p className="mt-1 text-sm text-slate-800">
+              <p className="mt-1 text-sm text-slate-800 dark:text-slate-200">
                 Every {equipment.equipmentType.inspectionFrequencyDays} days
               </p>
             </div>
@@ -374,14 +374,14 @@ function CorrectiveActionsPanel({ equipmentId }: { equipmentId: string }) {
   if (rows === null) {
     return (
       <Section title="Corrective actions">
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </Section>
     );
   }
   if (rows.length === 0) {
     return (
       <Section title="Corrective actions">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           No corrective actions have been raised for this equipment.
         </p>
       </Section>
@@ -389,38 +389,38 @@ function CorrectiveActionsPanel({ equipmentId }: { equipmentId: string }) {
   }
   return (
     <Section title="Corrective actions">
-      <div className="overflow-x-auto rounded-md border border-slate-200">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+      <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+          <thead className="bg-slate-50 dark:bg-slate-800">
             <tr>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Code
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Title
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Priority
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Status
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Assignee
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Target
               </th>
-              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 &nbsp;
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
             {rows.map((r) => (
-              <tr key={r.id} className="hover:bg-slate-50">
+              <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                 <td className="px-3 py-2 font-mono text-xs">{r.code}</td>
-                <td className="px-3 py-2 font-medium text-slate-900">
+                <td className="px-3 py-2 font-medium text-slate-900 dark:text-slate-100">
                   {r.title}
                 </td>
                 <td className="px-3 py-2">
@@ -450,7 +450,7 @@ function CorrectiveActionsPanel({ equipmentId }: { equipmentId: string }) {
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-xs text-slate-500">
+      <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
         {rows.filter((r) => r.status !== 'CLOSED').length} open,{' '}
         {rows.filter((r) => r.status === 'CLOSED').length} closed. Status
         labels: {Object.values(CA_STATUS_LABELS).join(', ')}.
@@ -487,14 +487,14 @@ function InspectionHistoryPanel({ equipmentId }: { equipmentId: string }) {
   if (rows === null) {
     return (
       <Section title="Inspection history">
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </Section>
     );
   }
   if (rows.length === 0) {
     return (
       <Section title="Inspection history">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           No inspections have been performed on this equipment yet.
         </p>
       </Section>
@@ -502,38 +502,38 @@ function InspectionHistoryPanel({ equipmentId }: { equipmentId: string }) {
   }
   return (
     <Section title="Inspection history">
-      <div className="overflow-x-auto rounded-md border border-slate-200">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+      <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+          <thead className="bg-slate-50 dark:bg-slate-800">
             <tr>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Period
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Template
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Status
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Result
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Inspector
               </th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Completed
               </th>
-              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
             {rows.map((r) => (
-              <tr key={r.id} className="hover:bg-slate-50">
+              <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                 <td className="px-3 py-2 font-mono text-xs">{r.periodKey}</td>
-                <td className="px-3 py-2 text-slate-700">
+                <td className="px-3 py-2 text-slate-700 dark:text-slate-300">
                   {r.templateVersion.template.name} v{r.templateVersion.versionNumber}
                 </td>
                 <td className="px-3 py-2">
@@ -614,7 +614,7 @@ function ApplicableChecklistPanel({ equipmentId }: { equipmentId: string }) {
   if (state.kind === 'loading') {
     return (
       <Section title="Assigned checklist">
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </Section>
     );
   }
@@ -628,10 +628,10 @@ function ApplicableChecklistPanel({ equipmentId }: { equipmentId: string }) {
   if (state.kind === 'none') {
     return (
       <Section title="Assigned checklist">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           No published checklist template applies to this equipment yet.
         </p>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
           A Central or Super Admin can create one under{' '}
           <Link
             to="/checklist-templates"
@@ -656,25 +656,25 @@ function ApplicableChecklistPanel({ equipmentId }: { equipmentId: string }) {
           {checklist.template.name}
         </Link>
         <Badge tone="green">v{checklist.version.versionNumber}</Badge>
-        <span className="text-slate-500">
+        <span className="text-slate-500 dark:text-slate-400">
           {checklist.template.frequencyDays != null
             ? ` · every ${checklist.template.frequencyDays} days`
             : ' · uses type default frequency'}
         </span>
       </div>
       {checklist.template.description && (
-        <p className="mb-4 text-sm text-slate-600">
+        <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
           {checklist.template.description}
         </p>
       )}
       <div className="space-y-4">
         {checklist.version.sections.map((section, si) => (
-          <div key={si} className="rounded-md border border-slate-200 p-3">
-            <p className="text-sm font-semibold text-slate-900">
+          <div key={si} className="rounded-md border border-slate-200 dark:border-slate-700 p-3">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
               {si + 1}. {section.title}
             </p>
             {section.description && (
-              <p className="mt-1 text-xs text-slate-600">
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
                 {section.description}
               </p>
             )}
@@ -685,7 +685,7 @@ function ApplicableChecklistPanel({ equipmentId }: { equipmentId: string }) {
                     {si + 1}.{qi + 1}
                   </span>
                   <div className="flex-1">
-                    <p className="text-slate-800">{q.text}</p>
+                    <p className="text-slate-800 dark:text-slate-200">{q.text}</p>
                     <div className="mt-1 flex flex-wrap gap-1">
                       <Badge tone="blue">
                         {QUESTION_TYPE_LABELS[q.questionType]}
@@ -717,8 +717,8 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="mb-3 text-sm font-semibold text-slate-900">{title}</h2>
+    <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
       {children}
     </section>
   );
@@ -733,11 +733,11 @@ function FieldGrid({
     <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {fields.map(([label, value, mono]) => (
         <div key={label}>
-          <dt className="text-xs uppercase tracking-wide text-slate-500">
+          <dt className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {label}
           </dt>
           <dd
-            className={`mt-0.5 text-sm text-slate-900 ${
+            className={`mt-0.5 text-sm text-slate-900 dark:text-slate-100 ${
               mono ? 'font-mono' : ''
             }`}
           >

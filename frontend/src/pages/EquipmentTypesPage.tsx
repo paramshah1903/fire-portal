@@ -51,7 +51,7 @@ export function EquipmentTypesPage() {
         description="Configurable equipment classifications used by the equipment master and checklist templates."
         actions={
           <>
-            <label className="flex items-center gap-2 text-xs text-slate-600">
+            <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
               <input
                 type="checkbox"
                 checked={includeInactive}
@@ -73,13 +73,13 @@ export function EquipmentTypesPage() {
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading equipment types…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading equipment types…</p>
       ) : rows.length === 0 ? (
         <EmptyState title="No equipment types" />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Key</Th>
                 <Th>Name</Th>
@@ -90,12 +90,12 @@ export function EquipmentTypesPage() {
                 {canManage && <Th className="text-right">Actions</Th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((t) => (
-                <tr key={t.id} className="hover:bg-slate-50">
+                <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Td className="font-mono text-xs">{t.key}</Td>
-                  <Td className="font-medium text-slate-900">{t.name}</Td>
-                  <Td className="text-slate-600">{t.description ?? '—'}</Td>
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">{t.name}</Td>
+                  <Td className="text-slate-600 dark:text-slate-400">{t.description ?? '—'}</Td>
                   <Td>{t.inspectionFrequencyDays} days</Td>
                   <Td>{t._count?.equipment ?? 0}</Td>
                   <Td>
@@ -143,7 +143,7 @@ export function EquipmentTypesPage() {
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -151,7 +151,7 @@ function Th({ children, className = '' }: { children: React.ReactNode; className
   );
 }
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>{children}</td>;
+  return <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>{children}</td>;
 }
 
 interface FormState {
@@ -284,7 +284,7 @@ function TypeFormModal({
           }
           hint="30 = monthly. Used from Phase 5 to compute due dates."
         />
-        <label className="flex items-center gap-2 text-sm text-slate-700">
+        <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
           <input
             type="checkbox"
             checked={form.isActive}

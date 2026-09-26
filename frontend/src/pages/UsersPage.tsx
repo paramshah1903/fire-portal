@@ -107,7 +107,7 @@ export function UsersPage() {
             </Select>
           </div>
         )}
-        <label className="mb-2 flex items-center gap-2 text-xs text-slate-600">
+        <label className="mb-2 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
           <input
             type="checkbox"
             checked={includeInactive}
@@ -127,13 +127,13 @@ export function UsersPage() {
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading users…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading users…</p>
       ) : rows.length === 0 ? (
         <EmptyState title="No users match" />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Name</Th>
                 <Th>Username</Th>
@@ -146,10 +146,10 @@ export function UsersPage() {
                 {canManage && <Th className="text-right">Actions</Th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((u) => (
-                <tr key={u.id} className="hover:bg-slate-50">
-                  <Td className="font-medium text-slate-900">{u.fullName}</Td>
+                <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">{u.fullName}</Td>
                   <Td className="font-mono text-xs">{u.username}</Td>
                   <Td>{u.email ?? '—'}</Td>
                   <Td>
@@ -229,7 +229,7 @@ export function UsersPage() {
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -237,7 +237,7 @@ function Th({ children, className = '' }: { children: React.ReactNode; className
   );
 }
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>{children}</td>;
+  return <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>{children}</td>;
 }
 
 interface FormState {
@@ -484,7 +484,7 @@ function UserFormModal({
             hint="At least 8 characters with a letter and a digit."
           />
         )}
-        <label className="col-span-2 mt-1 flex items-center gap-2 text-sm text-slate-700">
+        <label className="col-span-2 mt-1 flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
           <input
             type="checkbox"
             checked={form.isActive}
@@ -560,7 +560,7 @@ function ResetPasswordModal({
       }
     >
       {done ? (
-        <p className="text-sm text-slate-700">
+        <p className="text-sm text-slate-700 dark:text-slate-300">
           Password reset. The user has been signed out of all active sessions
           and must sign in again with the new password.
         </p>

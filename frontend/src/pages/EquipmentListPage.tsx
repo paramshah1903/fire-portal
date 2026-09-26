@@ -174,7 +174,7 @@ export function EquipmentListPage() {
           ))}
         </Select>
         <div className="flex flex-col justify-end gap-2">
-          <label className="flex items-center gap-2 text-xs text-slate-600">
+          <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
             <input
               type="checkbox"
               checked={includeInactive}
@@ -198,16 +198,16 @@ export function EquipmentListPage() {
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading equipment…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading equipment…</p>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No equipment matches"
           description="Try clearing filters or search terms."
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Code</Th>
                 <Th>Name</Th>
@@ -219,9 +219,9 @@ export function EquipmentListPage() {
                 <Th className="text-right">Actions</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50">
+                <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Td className="font-mono text-xs">
                     <Link
                       to={`/equipment/${r.id}`}
@@ -230,10 +230,10 @@ export function EquipmentListPage() {
                       {r.equipmentCode}
                     </Link>
                   </Td>
-                  <Td className="font-medium text-slate-900">{r.name}</Td>
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">{r.name}</Td>
                   <Td>{r.equipmentType.name}</Td>
                   <Td className="font-mono text-xs">{r.unit.code}</Td>
-                  <Td className="text-slate-600">
+                  <Td className="text-slate-600 dark:text-slate-400">
                     {[r.building, r.floor, r.location]
                       .filter(Boolean)
                       .join(' · ') || '—'}
@@ -266,7 +266,7 @@ export function EquipmentListPage() {
       )}
 
       {rows !== null && total > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
           <p>
             Page {page} of {totalPages} — {total} equipment record
             {total === 1 ? '' : 's'}
@@ -306,7 +306,7 @@ export function EquipmentListPage() {
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -314,5 +314,5 @@ function Th({ children, className = '' }: { children: React.ReactNode; className
   );
 }
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>{children}</td>;
+  return <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>{children}</td>;
 }

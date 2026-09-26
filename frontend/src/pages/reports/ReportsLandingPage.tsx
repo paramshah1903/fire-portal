@@ -64,15 +64,15 @@ export function ReportsLandingPage() {
           <Link
             key={c.to}
             to={c.to}
-            className="block rounded-lg border border-slate-200 bg-white p-4 shadow-sm hover:border-brand-300 hover:bg-brand-50/40"
+            className="block rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm hover:border-brand-300 hover:bg-brand-50/40"
           >
             <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-600">
               Report
             </p>
-            <h2 className="mt-1 text-base font-semibold text-slate-900">
+            <h2 className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-100">
               {c.title}
             </h2>
-            <p className="mt-1 text-sm text-slate-600">{c.description}</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{c.description}</p>
           </Link>
         ))}
       </div>

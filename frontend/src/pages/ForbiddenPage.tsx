@@ -6,8 +6,8 @@ export function ForbiddenPage() {
       <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">
         403
       </p>
-      <h1 className="mt-1 text-2xl font-semibold text-slate-900">Not allowed</h1>
-      <p className="mt-2 text-sm text-slate-600">
+      <h1 className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">Not allowed</h1>
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
         You do not have permission to view this page. If you believe this is a
         mistake, contact your administrator.
       </p>

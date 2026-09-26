@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { PERMS, type PermKey } from '../lib/permissions';
+import { ThemeToggle } from '../theme/ThemeContext';
 
 interface NavItem {
   to: string;
@@ -89,13 +90,13 @@ export function AppLayout() {
   })).filter((g) => g.items.length > 0);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* top bar — hidden on print so PDF exports don't include app chrome */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm print:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 print:hidden">
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="rounded p-1 text-slate-600 hover:bg-slate-100 lg:hidden"
+            className="rounded p-1 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle navigation"
           >
@@ -113,11 +114,16 @@ export function AppLayout() {
               />
             </svg>
           </button>
+          <img
+            src="/logo.jpeg"
+            alt="UPL"
+            className="h-8 w-auto rounded"
+          />
           <div>
-            <p className="text-sm font-bold tracking-tight text-brand-600">
+            <p className="text-sm font-bold tracking-tight text-brand-500">
               SafetyVerse
             </p>
-            <p className="-mt-0.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">
+            <p className="-mt-0.5 text-[10px] font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">
               by UPL
             </p>
           </div>
@@ -125,13 +131,18 @@ export function AppLayout() {
 
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
-            <p className="text-sm font-medium text-slate-900">{user?.fullName}</p>
-            <p className="text-xs text-slate-500">{user?.roleName}</p>
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              {user?.fullName}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {user?.roleName}
+            </p>
           </div>
+          <ThemeToggle />
           <button
             type="button"
             onClick={handleLogout}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           >
             Sign out
           </button>
@@ -155,7 +166,7 @@ export function AppLayout() {
         <aside
           className={[
             // desktop
-            'hidden shrink-0 border-r border-slate-200 bg-white lg:block lg:w-64',
+            'hidden shrink-0 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 lg:block lg:w-64',
             // mobile overlay when open
             mobileOpen
               ? 'fixed inset-y-0 left-0 top-14 z-40 !block w-72 max-w-[80vw] overflow-y-auto shadow-xl lg:static lg:top-0 lg:z-auto lg:w-64 lg:shadow-none'
@@ -167,7 +178,7 @@ export function AppLayout() {
           <nav className="p-4">
             {visibleGroups.map((group) => (
               <div key={group.label} className="mb-4">
-                <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {group.label}
                 </p>
                 <ul>
@@ -181,8 +192,8 @@ export function AppLayout() {
                           [
                             'block rounded-md px-3 py-1.5 text-sm',
                             isActive
-                              ? 'bg-brand-50 font-medium text-brand-800'
-                              : 'text-slate-700 hover:bg-slate-100',
+                              ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-300'
+                              : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
                           ].join(' ')
                         }
                       >

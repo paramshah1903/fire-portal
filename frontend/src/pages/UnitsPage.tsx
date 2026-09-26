@@ -51,7 +51,7 @@ export function UnitsPage() {
         description="Manufacturing units. Each unit contains departments, users and equipment."
         actions={
           <>
-            <label className="flex items-center gap-2 text-xs text-slate-600">
+            <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
               <input
                 type="checkbox"
                 checked={includeInactive}
@@ -73,7 +73,7 @@ export function UnitsPage() {
       )}
 
       {units === null ? (
-        <p className="text-sm text-slate-500">Loading units…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading units…</p>
       ) : units.length === 0 ? (
         <EmptyState
           title="No units found"
@@ -89,9 +89,9 @@ export function UnitsPage() {
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Code</Th>
                 <Th>Name</Th>
@@ -102,11 +102,11 @@ export function UnitsPage() {
                 {canManage && <Th className="text-right">Actions</Th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {units.map((u) => (
-                <tr key={u.id} className="hover:bg-slate-50">
+                <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Td className="font-mono text-xs">{u.code}</Td>
-                  <Td className="font-medium text-slate-900">{u.name}</Td>
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">{u.name}</Td>
                   <Td>{u.location ?? '—'}</Td>
                   <Td>{u._count?.departments ?? 0}</Td>
                   <Td>{u._count?.users ?? 0}</Td>
@@ -155,7 +155,7 @@ export function UnitsPage() {
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -163,7 +163,7 @@ function Th({ children, className = '' }: { children: React.ReactNode; className
   );
 }
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>{children}</td>;
+  return <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>{children}</td>;
 }
 
 interface FormState {
@@ -290,7 +290,7 @@ function UnitFormModal({
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
-        <label className="flex items-center gap-2 text-sm text-slate-700">
+        <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
           <input
             type="checkbox"
             checked={form.isActive}

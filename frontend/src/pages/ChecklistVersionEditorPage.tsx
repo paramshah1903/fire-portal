@@ -170,7 +170,7 @@ export function ChecklistVersionEditorPage() {
     return (
       <div>
         <PageHeader title="Version editor" />
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </div>
     );
   }
@@ -203,7 +203,7 @@ export function ChecklistVersionEditorPage() {
               </span>
             )}
             {readOnly && (
-              <span className="ml-2 text-xs text-slate-500">
+              <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">
                 (read-only — create a new draft to change a published template)
               </span>
             )}
@@ -310,9 +310,9 @@ export function ChecklistVersionEditorPage() {
 
           {/* Sticky action bar so Save/Publish are reachable while
               scrolled deep into a long template. */}
-          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_10px_-4px_rgba(15,23,42,0.15)] backdrop-blur">
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/95 px-4 py-3 shadow-[0_-4px_10px_-4px_rgba(15,23,42,0.15)] backdrop-blur">
             <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 {totalQuestions} question{totalQuestions === 1 ? '' : 's'} across{' '}
                 {draft.sections.length} section
                 {draft.sections.length === 1 ? '' : 's'}
@@ -363,10 +363,10 @@ function SectionEditor({
   onRemove: () => void;
 }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white">
-      <header className="flex flex-wrap items-start gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
+    <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+      <header className="flex flex-wrap items-start gap-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3">
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Section {index + 1}
           </p>
           <Input
@@ -491,9 +491,9 @@ function QuestionEditor({
   onRemove: () => void;
 }) {
   return (
-    <div className="rounded-md border border-slate-200 bg-slate-50/50 p-3">
+    <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
           Question {index + 1}
         </p>
         {!readOnly && (
@@ -664,7 +664,7 @@ function Toggle({
 }) {
   return (
     <label
-      className={`flex items-start gap-2 text-sm text-slate-700 ${
+      className={`flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300 ${
         disabled ? 'opacity-60' : ''
       }`}
     >
@@ -677,7 +677,7 @@ function Toggle({
       />
       <div>
         <p>{label}</p>
-        {hint && <p className="text-xs text-slate-500">{hint}</p>}
+        {hint && <p className="text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
       </div>
     </label>
   );
@@ -750,7 +750,7 @@ function DropdownOptionsInput({
         value={text}
         onChange={(e) => handleChange(e.target.value)}
       />
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
         One option per line. Blank lines are ignored. Options may contain commas.
       </p>
     </div>

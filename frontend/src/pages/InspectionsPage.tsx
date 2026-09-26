@@ -50,7 +50,7 @@ export function InspectionsPage() {
         description="Monthly inspection schedule and history."
       />
 
-      <div className="mb-4 flex flex-wrap gap-1 border-b border-slate-200">
+      <div className="mb-4 flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-700">
         <TabButton active={tab === 'schedule'} onClick={() => setTab('schedule')}>
           Monthly schedule
         </TabButton>
@@ -223,13 +223,13 @@ function SchedulePanel({
       )}
 
       {data === null ? (
-        <p className="text-sm text-slate-500">Loading schedule…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading schedule…</p>
       ) : data.rows.length === 0 ? (
         <EmptyState title="Nothing to show for this filter" />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Code</Th>
                 <Th>Name</Th>
@@ -241,9 +241,9 @@ function SchedulePanel({
                 <Th className="text-right">Actions</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {data.rows.map((r) => (
-                <tr key={r.equipment.id} className="hover:bg-slate-50">
+                <tr key={r.equipment.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Td className="font-mono text-xs">
                     <Link
                       to={`/equipment/${r.equipment.id}`}
@@ -252,7 +252,7 @@ function SchedulePanel({
                       {r.equipment.equipmentCode}
                     </Link>
                   </Td>
-                  <Td className="font-medium text-slate-900">{r.equipment.name}</Td>
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">{r.equipment.name}</Td>
                   <Td>{r.equipment.equipmentType.name}</Td>
                   <Td className="font-mono text-xs">{r.equipment.unit.code}</Td>
                   <Td>
@@ -408,13 +408,13 @@ function HistoryPanel({
       )}
 
       {rows === null ? (
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       ) : rows.length === 0 ? (
         <EmptyState title="No inspections match" />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>Inspection #</Th>
                 <Th>Period</Th>
@@ -427,17 +427,17 @@ function HistoryPanel({
                 <Th className="text-right">Actions</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {rows.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50">
+                <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Td className="font-mono text-xs">
                     {r.inspectionNumber ?? (
                       <span className="text-slate-400">—</span>
                     )}
                   </Td>
                   <Td className="font-mono text-xs">{r.periodKey}</Td>
-                  <Td className="font-medium text-slate-900">
-                    <span className="font-mono text-xs text-slate-500">
+                  <Td className="font-medium text-slate-900 dark:text-slate-100">
+                    <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
                       {r.equipment.equipmentCode}
                     </span>{' '}
                     {r.equipment.name}
@@ -494,7 +494,7 @@ function HistoryPanel({
       )}
 
       {rows !== null && total > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
           <p>
             Page {page} of {totalPages} — {total} inspection
             {total === 1 ? '' : 's'}
@@ -541,7 +541,7 @@ function TabButton({
       className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium ${
         active
           ? 'border-brand-600 text-brand-800'
-          : 'border-transparent text-slate-600 hover:text-slate-900'
+          : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900'
       }`}
     >
       {children}
@@ -559,9 +559,9 @@ function SummaryPill({
   tone: 'slate' | 'amber' | 'green' | 'red';
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5">
+    <div className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5">
       <Badge tone={tone}>{value}</Badge>
-      <span className="text-slate-700">{label}</span>
+      <span className="text-slate-700 dark:text-slate-300">{label}</span>
     </div>
   );
 }
@@ -595,7 +595,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 ${className}`}
+      className={`px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 ${className}`}
       scope="col"
     >
       {children}
@@ -610,7 +610,7 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>
+    <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>
       {children}
     </td>
   );

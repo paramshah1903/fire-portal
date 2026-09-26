@@ -133,7 +133,7 @@ export function InspectionPerformPage() {
     return (
       <div>
         <PageHeader title="Perform inspection" />
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </div>
     );
   }
@@ -331,11 +331,11 @@ export function InspectionPerformPage() {
           checklist, without having to open the equipment page. */}
       <EquipmentContextCard equipment={insp.equipment} unit={insp.unit} />
 
-      <div className="mb-4 rounded-lg border border-slate-200 bg-white p-3">
+      <div className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
           <p>
             Progress: <strong>{answeredMandatory}</strong> / {totalMandatory} mandatory ·{' '}
-            <span className="text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
               {totalAnswered} / {allQuestions.length} total
             </span>
           </p>
@@ -386,7 +386,7 @@ export function InspectionPerformPage() {
                 className={`rounded-md border px-3 py-1.5 text-xs font-medium ${
                   i === currentSectionIdx
                     ? 'border-brand-600 bg-brand-50 text-brand-800'
-                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {i + 1}. {s.title} {done ? '✓' : ''}
@@ -397,22 +397,22 @@ export function InspectionPerformPage() {
       )}
 
       {currentSection && (
-        <section className="rounded-lg border border-slate-200 bg-white">
-          <header className="border-b border-slate-200 bg-slate-50 px-4 py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+        <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <header className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               Section {currentSectionIdx + 1} of {sections.length}
             </p>
-            <h2 className="text-lg font-semibold text-slate-900">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               {currentSection.title}
             </h2>
             {currentSection.description && (
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                 {currentSection.description}
               </p>
             )}
           </header>
 
-          <div className="divide-y divide-slate-200">
+          <div className="divide-y divide-slate-200 dark:divide-slate-700">
             {currentSection.questions.map((q) => (
               <QuestionInput
                 key={q.id}
@@ -436,7 +436,7 @@ export function InspectionPerformPage() {
         >
           ← Previous section
         </Button>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           Section {currentSectionIdx + 1} of {sections.length}
         </p>
         <Button
@@ -452,7 +452,7 @@ export function InspectionPerformPage() {
         </Button>
       </div>
 
-      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-4">
+      <section className="mt-6 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
         <TextArea
           label="Overall remarks (optional)"
           rows={3}
@@ -469,9 +469,9 @@ export function InspectionPerformPage() {
 
       {/* Sticky action bar so Save/Submit are always reachable on
           long inspections, especially on mobile. */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_10px_-4px_rgba(15,23,42,0.15)] backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/95 px-4 py-3 shadow-[0_-4px_10px_-4px_rgba(15,23,42,0.15)] backdrop-blur">
         <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2">
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             <strong>{answeredMandatory}</strong> / {totalMandatory} mandatory
           </p>
           <div className="flex flex-wrap gap-2">
@@ -552,13 +552,13 @@ function EquipmentContextCard({
   ];
 
   return (
-    <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
+    <section className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Equipment
           </p>
-          <p className="text-base font-semibold text-slate-900">
+          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
             {equipment.name}
           </p>
         </div>
@@ -574,10 +574,10 @@ function EquipmentContextCard({
       <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
         {fields.map(([label, value]) => (
           <div key={label}>
-            <dt className="text-[10px] uppercase tracking-wide text-slate-500">
+            <dt className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
               {label}
             </dt>
-            <dd className="text-slate-800">{value}</dd>
+            <dd className="text-slate-800 dark:text-slate-200">{value}</dd>
           </div>
         ))}
       </dl>
@@ -615,9 +615,9 @@ function QuestionInput({
     >
       <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-900">{q.text}</p>
+          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{q.text}</p>
           {q.helpText && (
-            <p className="mt-1 text-xs text-slate-500">{q.helpText}</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{q.helpText}</p>
           )}
           <div className="mt-1 flex flex-wrap gap-1">
             {q.isMandatory && <Badge tone="slate">Mandatory</Badge>}
@@ -682,10 +682,10 @@ function AnswerControl({
           className="max-w-[10rem]"
         />
         {q.numericUnit && (
-          <span className="text-sm text-slate-600">{q.numericUnit}</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">{q.numericUnit}</span>
         )}
         {(q.numericMin != null || q.numericMax != null) && (
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             (range {q.numericMin ?? '—'} to {q.numericMax ?? '—'})
           </span>
         )}
@@ -703,7 +703,7 @@ function AnswerControl({
       <select
         value={answer?.valueString ?? ''}
         onChange={(e) => onChange({ valueString: e.target.value })}
-        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:max-w-md"
+        className="w-full rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:max-w-md"
       >
         <option value="">Select an option…</option>
         {opts.map((o) => (
@@ -720,7 +720,7 @@ function AnswerControl({
         type="date"
         value={answer?.valueDate ?? ''}
         onChange={(e) => onChange({ valueDate: e.target.value || null })}
-        className="rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        className="rounded-md border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
       />
     );
   }
@@ -766,14 +766,14 @@ function PillGroup({
           opt === 'FAIL' || opt === 'NO'
             ? selected
               ? 'bg-red-600 text-white border-red-600'
-              : 'bg-white text-red-700 border-red-300 hover:bg-red-50'
+              : 'bg-white dark:bg-slate-900 text-red-700 border-red-300 hover:bg-red-50'
             : opt === 'PASS' || opt === 'YES'
               ? selected
                 ? 'bg-emerald-600 text-white border-emerald-600'
-                : 'bg-white text-emerald-700 border-emerald-300 hover:bg-emerald-50'
+                : 'bg-white dark:bg-slate-900 text-emerald-700 border-emerald-300 hover:bg-emerald-50'
               : selected
                 ? 'bg-slate-800 text-white border-slate-800'
-                : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100';
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800';
         return (
           <button
             key={opt}
@@ -808,7 +808,7 @@ function PhotoInput({
             href={inspectionAttachmentUrl(a.id)}
             target="_blank"
             rel="noopener"
-            className="block h-24 w-24 overflow-hidden rounded border border-slate-300 bg-white"
+            className="block h-24 w-24 overflow-hidden rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
             title={a.originalName}
           >
             <img
@@ -822,7 +822,7 @@ function PhotoInput({
           type="button"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
-          className="flex h-24 w-24 items-center justify-center rounded border border-dashed border-slate-300 bg-slate-50 text-xs text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+          className="flex h-24 w-24 items-center justify-center rounded border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
         >
           {busy ? 'Uploading…' : '+ Add photo'}
         </button>
@@ -891,7 +891,7 @@ function ConfirmModal({
         </>
       }
     >
-      <p className="text-sm text-slate-700">
+      <p className="text-sm text-slate-700 dark:text-slate-300">
         Once submitted, the inspection record <strong>cannot be edited</strong>.
       </p>
       {anySafetyFail && (

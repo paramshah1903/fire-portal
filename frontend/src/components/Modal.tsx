@@ -45,20 +45,22 @@ export function Modal({ open, title, onClose, children, footer, size = 'md' }: P
       onClick={onClose}
     >
       <div
-        className={`flex w-full ${width} max-h-[calc(100vh-2rem)] flex-col rounded-lg bg-white shadow-lg`}
+        className={`flex w-full ${width} max-h-[calc(100vh-2rem)] flex-col rounded-lg bg-white shadow-lg dark:bg-slate-900`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header — never scrolls */}
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3">
-          <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-700">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded p-1 text-slate-500 hover:bg-slate-100"
+            className="rounded p-1 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
               <path
@@ -79,7 +81,7 @@ export function Modal({ open, title, onClose, children, footer, size = 'md' }: P
 
         {/* Footer — never scrolls, always visible */}
         {footer && (
-          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
             {footer}
           </div>
         )}

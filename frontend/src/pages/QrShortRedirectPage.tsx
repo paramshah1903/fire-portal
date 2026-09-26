@@ -18,7 +18,7 @@ export function QrShortRedirectPage() {
   }, [value, navigate]);
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12 text-center text-sm text-slate-500">
+    <div className="mx-auto max-w-md px-4 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
       Redirecting to scan…
     </div>
   );

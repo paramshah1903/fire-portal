@@ -107,7 +107,7 @@ export function CorrectiveActionDetailPage() {
     return (
       <div>
         <PageHeader title="Corrective action" />
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
       </div>
     );
   }
@@ -183,11 +183,11 @@ export function CorrectiveActionDetailPage() {
         />
       </div>
 
-      <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-1 text-sm font-semibold text-slate-900">
+      <section className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+        <h2 className="mb-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
           Description
         </h2>
-        <p className="whitespace-pre-wrap text-sm text-slate-700">
+        <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">
           {ca.description}
         </p>
       </section>
@@ -202,25 +202,25 @@ export function CorrectiveActionDetailPage() {
           <h2 className="mb-1 text-sm font-semibold text-emerald-900">
             Resolution remarks
           </h2>
-          <p className="whitespace-pre-wrap text-sm text-slate-800">
+          <p className="whitespace-pre-wrap text-sm text-slate-800 dark:text-slate-200">
             {ca.resolutionRemarks}
           </p>
         </section>
       )}
       {ca.closureRemarks && (
-        <section className="mb-4 rounded-lg border border-slate-300 bg-slate-100 p-4">
-          <h2 className="mb-1 text-sm font-semibold text-slate-900">
+        <section className="mb-4 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-100 p-4">
+          <h2 className="mb-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
             Closure remarks
           </h2>
-          <p className="whitespace-pre-wrap text-sm text-slate-800">
+          <p className="whitespace-pre-wrap text-sm text-slate-800 dark:text-slate-200">
             {ca.closureRemarks}
           </p>
         </section>
       )}
 
-      <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
+      <section className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-900">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
             Attachments / evidence
           </h2>
           {canManage && !isClosed && (
@@ -255,7 +255,7 @@ export function CorrectiveActionDetailPage() {
           )}
         </div>
         {ca.attachments.length === 0 ? (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             No evidence attached yet.
           </p>
         ) : (
@@ -266,7 +266,7 @@ export function CorrectiveActionDetailPage() {
                 href={caAttachmentUrl(a.id)}
                 target="_blank"
                 rel="noopener"
-                className="block w-32 overflow-hidden rounded border border-slate-200 bg-white"
+                className="block w-32 overflow-hidden rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
                 title={`${a.stage} · ${a.originalName}`}
               >
                 <img
@@ -274,7 +274,7 @@ export function CorrectiveActionDetailPage() {
                   alt={a.caption ?? a.originalName}
                   className="h-24 w-full object-cover"
                 />
-                <div className="px-2 py-1 text-[10px] text-slate-600">
+                <div className="px-2 py-1 text-[10px] text-slate-600 dark:text-slate-400">
                   <p className="font-semibold uppercase tracking-widest">
                     {a.stage}
                   </p>
@@ -288,8 +288,8 @@ export function CorrectiveActionDetailPage() {
 
       {/* Lifecycle actions */}
       {!isClosed && (
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-900">
+        <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
             Lifecycle
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -318,7 +318,7 @@ export function CorrectiveActionDetailPage() {
               </Button>
             )}
             {!canClose && ca.status === 'RESOLVED' && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Waiting for closure by an authorised user.
               </p>
             )}
@@ -369,11 +369,11 @@ function Card({
   extra?: string;
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         {label}
       </p>
-      <div className="mt-1 text-sm font-medium text-slate-900">{value}</div>
+      <div className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">{value}</div>
       {extra && (
         <p className="mt-1 text-xs font-semibold text-red-700">{extra}</p>
       )}
@@ -383,8 +383,8 @@ function Card({
 
 function PeoplePanel({ ca }: { ca: CorrectiveActionDetail }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="mb-3 text-sm font-semibold text-slate-900">People</h2>
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">People</h2>
       <dl className="grid grid-cols-1 gap-2 text-sm">
         <Row
           label="Raised by"
@@ -417,8 +417,8 @@ function PeoplePanel({ ca }: { ca: CorrectiveActionDetail }) {
 
 function TimelinePanel({ ca }: { ca: CorrectiveActionDetail }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="mb-3 text-sm font-semibold text-slate-900">Timeline</h2>
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">Timeline</h2>
       <ul className="space-y-2 text-sm">
         <TimelineItem
           when={ca.raisedAt}
@@ -440,7 +440,7 @@ function TimelinePanel({ ca }: { ca: CorrectiveActionDetail }) {
           />
         )}
         {ca.sourceInspection && (
-          <li className="flex items-start gap-2 text-xs text-slate-500">
+          <li className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400">
             <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-400" />
             <div>
               Auto-created from inspection period{' '}
@@ -460,8 +460,8 @@ function TimelinePanel({ ca }: { ca: CorrectiveActionDetail }) {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between gap-2">
-      <dt className="text-xs uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="text-right text-sm text-slate-900">{value}</dd>
+      <dt className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="text-right text-sm text-slate-900 dark:text-slate-100">{value}</dd>
     </div>
   );
 }
@@ -479,13 +479,13 @@ function TimelineItem({
     <li className="flex items-start gap-2">
       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-brand-500" />
       <div>
-        <p className="text-slate-900">
+        <p className="text-slate-900 dark:text-slate-100">
           <span className="font-medium">{label}</span> —{' '}
-          <span className="text-slate-500">
+          <span className="text-slate-500 dark:text-slate-400">
             {new Date(when).toLocaleString()}
           </span>
         </p>
-        {detail && <p className="text-xs text-slate-600">by {detail}</p>}
+        {detail && <p className="text-xs text-slate-600 dark:text-slate-400">by {detail}</p>}
       </div>
     </li>
   );
@@ -699,7 +699,7 @@ function ResolveModal({
       }
     >
       <form id="ca-resolve-form" onSubmit={onSubmit} className="space-y-3">
-        <p className="text-sm text-slate-700">
+        <p className="text-sm text-slate-700 dark:text-slate-300">
           Describe what was done to resolve this corrective action. A
           supervisor with closure rights will verify and close it.
         </p>

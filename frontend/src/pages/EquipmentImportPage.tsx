@@ -79,7 +79,7 @@ export function EquipmentImportPage() {
             </Button>
             <a
               href={templateDownloadUrl()}
-              className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+              className="inline-flex items-center rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               Download template
             </a>
@@ -87,7 +87,7 @@ export function EquipmentImportPage() {
         }
       />
 
-      <ol className="mb-4 flex flex-wrap gap-2 text-xs text-slate-600">
+      <ol className="mb-4 flex flex-wrap gap-2 text-xs text-slate-600 dark:text-slate-400">
         <StepBadge label="1. Upload" active={step === 'upload'} done={step !== 'upload'} />
         <StepBadge label="2. Preview" active={step === 'preview'} done={step === 'done'} />
         <StepBadge label="3. Result" active={step === 'done'} done={false} />
@@ -100,9 +100,9 @@ export function EquipmentImportPage() {
       )}
 
       {step === 'upload' && (
-        <section className="rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="text-sm font-semibold text-slate-900">1. Choose file</h2>
-          <p className="mt-1 text-xs text-slate-600">
+        <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">1. Choose file</h2>
+          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
             Accepted: CSV, XLS, XLSX. Max 5&nbsp;MB. The first row must be a
             header row using the column names from the template.
           </p>
@@ -131,9 +131,9 @@ export function EquipmentImportPage() {
       )}
 
       {step === 'done' && result && (
-        <section className="rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="text-sm font-semibold text-slate-900">Import complete</h2>
-          <p className="mt-1 text-sm text-slate-700">
+        <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Import complete</h2>
+          <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
             Inserted {result.inserted} equipment record
             {result.inserted === 1 ? '' : 's'}
             {result.skipped > 0 ? `, skipped ${result.skipped}` : ''}.
@@ -163,7 +163,7 @@ function StepBadge({
     ? 'bg-brand-50 text-brand-800 border-brand-200'
     : done
       ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-      : 'bg-slate-50 text-slate-500 border-slate-200';
+      : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700';
   return (
     <span
       className={`inline-flex items-center rounded-full border px-3 py-1 font-medium ${cls}`}
@@ -191,8 +191,8 @@ function PreviewPanel({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="text-sm font-semibold text-slate-900">Summary</h2>
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Summary</h2>
         <div className="mt-3 flex flex-wrap gap-4 text-sm">
           <SummaryStat label="Total rows" value={preview.summary.total} tone="slate" />
           <SummaryStat label="Valid" value={preview.summary.valid} tone="green" />
@@ -215,10 +215,10 @@ function PreviewPanel({
         )}
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-4 py-3">
-          <h2 className="text-sm font-semibold text-slate-900">Rows</h2>
-          <label className="flex items-center gap-2 text-xs text-slate-600">
+      <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 px-4 py-3">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Rows</h2>
+          <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
             <input
               type="checkbox"
               checked={showOnlyErrors}
@@ -228,8 +228,8 @@ function PreviewPanel({
           </label>
         </div>
         <div className="max-h-[520px] overflow-auto">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="sticky top-0 bg-slate-50">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800">
               <tr>
                 <Th>#</Th>
                 <Th>Status</Th>
@@ -241,13 +241,13 @@ function PreviewPanel({
                 <Th>Errors</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {visible.map((r) => (
                 <RowRow key={`${r.rowNumber}-${r.equipmentCode}`} row={r} />
               ))}
               {visible.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="p-4 text-center text-sm text-slate-500">
+                  <td colSpan={8} className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
                     Nothing to show.
                   </td>
                 </tr>
@@ -294,7 +294,7 @@ function SummaryStat({
   return (
     <div className="flex items-center gap-2">
       <Badge tone={tone}>{value}</Badge>
-      <span className="text-slate-600">{label}</span>
+      <span className="text-slate-600 dark:text-slate-400">{label}</span>
     </div>
   );
 }
@@ -303,7 +303,7 @@ function RowRow({ row }: { row: ImportRow }) {
   const bad = row.errors.length > 0;
   return (
     <tr className={bad ? 'bg-red-50/50' : ''}>
-      <Td className="text-xs text-slate-500">{row.rowNumber}</Td>
+      <Td className="text-xs text-slate-500 dark:text-slate-400">{row.rowNumber}</Td>
       <Td>
         {bad ? (
           <Badge tone="red">Skip</Badge>
@@ -326,7 +326,7 @@ function RowRow({ row }: { row: ImportRow }) {
 function Th({ children }: { children: React.ReactNode }) {
   return (
     <th
-      className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500"
+      className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
       scope="col"
     >
       {children}
@@ -334,5 +334,5 @@ function Th({ children }: { children: React.ReactNode }) {
   );
 }
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 text-sm text-slate-700 ${className}`}>{children}</td>;
+  return <td className={`px-3 py-2 text-sm text-slate-700 dark:text-slate-300 ${className}`}>{children}</td>;
 }

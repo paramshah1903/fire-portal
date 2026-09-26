@@ -6,10 +6,10 @@ export function NotFoundPage() {
       <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">
         404
       </p>
-      <h1 className="mt-1 text-2xl font-semibold text-slate-900">
+      <h1 className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
         Page not found
       </h1>
-      <p className="mt-2 text-sm text-slate-600">
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
         The page you requested does not exist.
       </p>
       <Link

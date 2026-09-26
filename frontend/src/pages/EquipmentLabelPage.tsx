@@ -32,7 +32,7 @@ export function EquipmentLabelPage() {
   }
   if (!equipment) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-8 text-sm text-slate-500">
+      <div className="mx-auto max-w-lg px-4 py-8 text-sm text-slate-500 dark:text-slate-400">
         Loading…
       </div>
     );
@@ -45,7 +45,7 @@ export function EquipmentLabelPage() {
           <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-600">
             Print label
           </p>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-slate-700 dark:text-slate-300">
             Use your browser's print dialog to print or save as PDF.
           </p>
         </div>
