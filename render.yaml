@@ -1,0 +1,30 @@
+# Render blueprint for the UPL Fire Equipment Maintenance Portal.
+#
+# One web service serves both the /api and the built React SPA from
+# a single origin, so cookies + CORS just work with no fuss.
+#
+# Sensitive env vars (DATABASE_URL, CORS_ORIGIN) are marked
+# `sync: false` — you set them in the Render dashboard, not in this
+# committed file.
+
+services:
+  - type: web
+    name: upl-fire-portal
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: cd backend && npm ci --include=dev && npx prisma generate && cd ../frontend && npm ci --include=dev && npm run build && cd ../backend && npm run build && npx prisma db push --accept-data-loss --skip-generate && npx tsx prisma/seed.ts
+    startCommand: cd backend && node dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_DIST_DIR
+        value: ../frontend/dist
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: UPLOAD_DIR
+        value: ./uploads

@@ -1,0 +1,631 @@
+// UPL Fire Equipment Maintenance Portal — Prisma schema
+//
+// Phases 1–6 delivered: auth / RBAC / units / departments / users,
+// equipment types + master, checklist templates with versioning,
+// monthly inspections + photo attachments, corrective actions
+// (auto-created on failed inspection responses).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // PostgreSQL for hosted deployments (Neon on Render). Local dev
+  // points DATABASE_URL at the same Neon connection string or at a
+  // local Postgres instance — see docs/DATABASE.md.
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Health / infra
+// ---------------------------------------------------------------------------
+
+/// Trivial marker row used by the /api/health endpoint to confirm the
+/// database is reachable and migrations have been applied.
+model HealthCheck {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// RBAC
+// ---------------------------------------------------------------------------
+
+/// A role groups a set of permissions. Roles are seeded and not
+/// user-editable in the UI to keep RBAC predictable.
+model Role {
+  id          String   @id @default(cuid())
+  /// Machine key, e.g. "SUPER_ADMIN". Stable across environments.
+  key         String   @unique
+  name        String
+  description String?
+  isSystem    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions RolePermission[]
+  users       User[]
+}
+
+/// A permission is a fine-grained action string (e.g. "user.manage").
+model Permission {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+// ---------------------------------------------------------------------------
+// Organisation
+// ---------------------------------------------------------------------------
+
+model Unit {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  name        String
+  location    String?
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  departments            Department[]
+  users                  User[]
+  equipment              Equipment[]
+  checklistTemplateUnits ChecklistTemplateUnit[]
+  inspections            Inspection[]
+  correctiveActions      CorrectiveAction[]
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  unitId      String
+  code        String
+  name        String
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  unit      Unit        @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  users     User[]
+  equipment Equipment[]
+
+  @@unique([unitId, code])
+  @@index([unitId])
+}
+
+// ---------------------------------------------------------------------------
+// Users / Sessions
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  employeeId    String?   @unique
+  username      String    @unique
+  email         String?   @unique
+  fullName      String
+  mobile        String?
+  designation   String?
+  passwordHash  String
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  roleId       String
+  role         Role        @relation(fields: [roleId], references: [id])
+
+  unitId       String?
+  unit         Unit?       @relation(fields: [unitId], references: [id])
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  sessions                    Session[]
+  auditLogs                   AuditLog[]
+  publishedChecklists         ChecklistTemplateVersion[] @relation("PublishedChecklistVersions")
+  inspectionsPerformed        Inspection[]               @relation("InspectionsPerformed")
+  inspectionAttachments       InspectionAttachment[]
+  correctiveActionsRaised     CorrectiveAction[]         @relation("CorrectiveActionsRaised")
+  correctiveActionsAssigned   CorrectiveAction[]         @relation("CorrectiveActionsAssigned")
+  correctiveActionsResolved   CorrectiveAction[]         @relation("CorrectiveActionsResolved")
+  correctiveActionsClosed     CorrectiveAction[]         @relation("CorrectiveActionsClosed")
+  correctiveActionAttachments CorrectiveActionAttachment[]
+
+  @@index([roleId])
+  @@index([unitId])
+  @@index([departmentId])
+}
+
+/// A session row is created on login. The session id is stored in an
+/// HTTP-only signed cookie. Sessions can be revoked by deleting rows.
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  userAgent  String?
+  ip         String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+// Equipment
+// ---------------------------------------------------------------------------
+
+/// Configurable equipment types (Fire Extinguisher, Hydrant, etc).
+/// Templates and checklist assignment (Phase 3) hang off this.
+model EquipmentType {
+  id             String  @id @default(cuid())
+  key            String  @unique
+  name           String
+  description    String?
+  /// Inspection frequency in days. 30 = monthly by default.
+  inspectionFrequencyDays Int    @default(30)
+  isActive       Boolean @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  equipment          Equipment[]
+  checklistTemplates ChecklistTemplate[]
+}
+
+/// Individual pieces of fire safety equipment. Status drives inspection
+/// scheduling — see docs/DATABASE.md.
+model Equipment {
+  id              String   @id @default(cuid())
+  /// Human-readable equipment ID (e.g. "FE-A-0001"). Unique.
+  equipmentCode   String   @unique
+  /// Opaque value encoded into the QR label. Unique; not sensitive.
+  qrCodeValue     String   @unique
+  name            String
+
+  equipmentTypeId String
+  equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
+
+  serialNumber     String?
+  manufacturer     String?
+  model            String?
+  capacity         String?
+  assetNumber      String?
+  installationDate DateTime?
+
+  unitId          String
+  unit            Unit @relation(fields: [unitId], references: [id])
+
+  departmentId    String?
+  department      Department? @relation(fields: [departmentId], references: [id])
+
+  /// Broad zone within the unit (e.g. "Production Block A").
+  area            String?
+  building        String?
+  floor           String?
+  /// Human-readable free-form location for signage (e.g. "Near stairwell 2").
+  location        String?
+  /// Very specific pointer (e.g. "Wall bracket, west side").
+  exactLocation   String?
+
+  /// Operational status. Values: ACTIVE | UNDER_MAINTENANCE | OUT_OF_SERVICE | RETIRED
+  status          String   @default("ACTIVE")
+  /// Administrative flag. Both status=RETIRED and isActive=false exclude
+  /// an item from monthly inspection schedules.
+  isActive        Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  inspections       Inspection[]
+  correctiveActions CorrectiveAction[]
+
+  @@index([equipmentTypeId])
+  @@index([unitId])
+  @@index([departmentId])
+  @@index([status])
+  @@index([isActive])
+}
+
+// ---------------------------------------------------------------------------
+// Checklist templates (versioned)
+// ---------------------------------------------------------------------------
+//
+// A ChecklistTemplate is the *logical* checklist (e.g. "Monthly Fire
+// Extinguisher Check"). It owns a sequence of immutable versions.
+// Only one PUBLISHED version per template is `isCurrent=true` at a
+// time and is the one used by new inspections. Historical inspections
+// keep the exact version id they were captured against, so template
+// edits never mutate history.
+//
+// Editing workflow:
+//   1. Create template → auto-creates version 1 (DRAFT).
+//   2. Edit draft freely (sections/questions bulk-save).
+//   3. Publish draft → becomes the current PUBLISHED; the previously
+//      current one is marked ARCHIVED with isCurrent=false.
+//   4. To change a published template, create a new DRAFT version
+//      (cloned from current). Repeat.
+
+model ChecklistTemplate {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  equipmentTypeId String
+  /// Inspection frequency in days for scheduling. Defaults to the
+  /// equipment type's frequency at create time.
+  frequencyDays   Int      @default(30)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  equipmentType   EquipmentType             @relation(fields: [equipmentTypeId], references: [id])
+  versions        ChecklistTemplateVersion[]
+  applicableUnits ChecklistTemplateUnit[]
+
+  @@index([equipmentTypeId])
+  @@index([isActive])
+}
+
+/// A join table: which units a template applies to. If a template has
+/// zero rows here, it applies to ALL units.
+model ChecklistTemplateUnit {
+  templateId String
+  unitId     String
+
+  template ChecklistTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  unit     Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@id([templateId, unitId])
+  @@index([unitId])
+}
+
+/// Immutable-once-published version of a template. Sections and
+/// questions hang off this row.
+model ChecklistTemplateVersion {
+  id            String   @id @default(cuid())
+  templateId    String
+  versionNumber Int
+  /// DRAFT | PUBLISHED | ARCHIVED
+  status        String   @default("DRAFT")
+  /// At most one true per template — enforced by the service layer.
+  isCurrent     Boolean  @default(false)
+  publishedAt   DateTime?
+  publishedById String?
+  archivedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  template     ChecklistTemplate  @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  publishedBy  User?              @relation("PublishedChecklistVersions", fields: [publishedById], references: [id])
+  sections     ChecklistSection[]
+  inspections  Inspection[]
+
+  @@unique([templateId, versionNumber])
+  @@index([templateId, isCurrent])
+  @@index([status])
+}
+
+model ChecklistSection {
+  id          String @id @default(cuid())
+  versionId   String
+  title       String
+  description String?
+  sequence    Int
+
+  version   ChecklistTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  questions ChecklistQuestion[]
+
+  @@index([versionId])
+}
+
+/// Question types (stored as string for SQLite portability):
+///   PASS_FAIL | YES_NO | NUMERIC | TEXT | DROPDOWN | DATE | PHOTO | REMARKS
+model ChecklistQuestion {
+  id                             String  @id @default(cuid())
+  sectionId                      String
+  text                           String
+  helpText                       String?
+  questionType                   String
+  isMandatory                    Boolean @default(true)
+  isSafetyCritical               Boolean @default(false)
+  /// If true, a failed answer to this question raises a corrective
+  /// action automatically (see Phase 6).
+  requiresCorrectiveActionOnFail Boolean @default(false)
+  /// JSON-encoded array of option labels for DROPDOWN questions.
+  optionsJson                    String?
+  /// Numeric constraints (only used for NUMERIC).
+  numericMin                     Float?
+  numericMax                     Float?
+  numericUnit                    String?
+  sequence                       Int
+  isActive                       Boolean @default(true)
+
+  section  ChecklistSection     @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  responses InspectionResponse[]
+
+  @@index([sectionId])
+}
+
+// ---------------------------------------------------------------------------
+// Inspections
+// ---------------------------------------------------------------------------
+//
+// An Inspection is one performance of a checklist for one equipment
+// in one period (calendar month for the default 30-day frequency).
+//
+//   * status = PENDING once created, COMPLETED once submitted.
+//     "Overdue" is derived at query time (PENDING + dueDate < today).
+//   * Duplicate prevention: unique(equipmentId, periodKey) so we can
+//     never have two Inspection rows for the same equipment + month.
+//     Callers starting a new inspection get the existing PENDING one
+//     back if there is one.
+//   * Immutability: once COMPLETED, responses/attachments/remarks are
+//     not editable through the API. Reinspection requires an explicit
+//     administrative action (Phase 6+).
+//   * Each response snapshots the question text + type + flags at
+//     submission time so historical records survive future template
+//     edits.
+
+model Inspection {
+  id                       String    @id @default(cuid())
+  equipmentId              String
+  templateVersionId        String
+  unitId                   String
+  inspectorId              String
+
+  /// Bucket key for duplicate prevention. Currently "YYYY-MM" for all
+  /// 30-day frequencies. See docs/DATABASE.md.
+  periodKey                String
+  /// First moment of the period. Used for reporting and due-date math.
+  periodStart              DateTime
+  /// End-of-period (last moment of the period, inclusive).
+  periodEnd                DateTime
+  /// The date by which this inspection must be completed to be on time.
+  dueDate                  DateTime
+
+  /// PENDING | COMPLETED
+  status                   String    @default("PENDING")
+  /// PASS | FAIL — set on submission.
+  result                   String?
+
+  startedAt                DateTime  @default(now())
+  completedAt              DateTime?
+
+  remarks                  String?
+  /// True if at least one safety-critical question failed.
+  hasSafetyCriticalFailure Boolean   @default(false)
+  /// The typed name the inspector confirmed the submission with.
+  confirmationName         String?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  equipment       Equipment                @relation(fields: [equipmentId], references: [id])
+  templateVersion ChecklistTemplateVersion @relation(fields: [templateVersionId], references: [id])
+  unit            Unit                     @relation(fields: [unitId], references: [id])
+  inspector       User                     @relation("InspectionsPerformed", fields: [inspectorId], references: [id])
+
+  responses          InspectionResponse[]
+  attachments        InspectionAttachment[]
+  correctiveActions  CorrectiveAction[]
+
+  @@unique([equipmentId, periodKey])
+  @@index([status])
+  @@index([unitId])
+  @@index([inspectorId])
+  @@index([completedAt])
+  @@index([dueDate])
+  @@index([equipmentId])
+}
+
+model InspectionResponse {
+  id           String @id @default(cuid())
+  inspectionId String
+  questionId   String
+
+  /// Snapshot of the question fields at submission — used for
+  /// historical reporting even if the template is later edited.
+  questionText                   String
+  questionType                   String
+  isMandatory                    Boolean @default(false)
+  isSafetyCritical               Boolean @default(false)
+  requiresCorrectiveActionOnFail Boolean @default(false)
+  numericMin                     Float?
+  numericMax                     Float?
+  numericUnit                    String?
+  /// JSON-encoded array of dropdown options (snapshot).
+  optionsJson                    String?
+
+  /// Shape depends on questionType:
+  ///   PASS_FAIL          → valueString ∈ {"PASS","FAIL","NA"}
+  ///   YES_NO             → valueString ∈ {"YES","NO","NA"}
+  ///   NUMERIC            → valueNumeric (valueString for units suffix)
+  ///   TEXT / REMARKS     → valueString
+  ///   DROPDOWN           → valueString (one of the options)
+  ///   DATE               → valueDate
+  ///   PHOTO              → attachments[], valueString optional caption
+  valueString  String?
+  valueNumeric Float?
+  valueDate    DateTime?
+
+  /// Computed at submission — true if this answer counts as a fail.
+  isFail       Boolean @default(false)
+
+  notes        String?
+
+  createdAt DateTime @default(now())
+
+  inspection        Inspection             @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  question          ChecklistQuestion      @relation(fields: [questionId], references: [id])
+  attachments       InspectionAttachment[]
+  correctiveActions CorrectiveAction[]
+
+  @@unique([inspectionId, questionId])
+  @@index([inspectionId])
+  @@index([questionId])
+  @@index([isFail])
+}
+
+/// An uploaded file attached to an inspection (usually a photo). The
+/// filesystem path is never exposed — clients stream via the API.
+model InspectionAttachment {
+  id             String  @id @default(cuid())
+  inspectionId   String
+  responseId     String?
+
+  /// Server-generated safe filename inside uploads/inspections/{id}/.
+  /// See backend/src/lib/fileStorage.ts for the naming scheme.
+  storedFilename String
+  originalName   String
+  mimeType       String
+  sizeBytes      Int
+  /// Optional caption entered by the inspector.
+  caption        String?
+
+  createdAt   DateTime @default(now())
+  createdById String
+
+  inspection Inspection          @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  response   InspectionResponse? @relation(fields: [responseId], references: [id], onDelete: SetNull)
+  createdBy  User                @relation(fields: [createdById], references: [id])
+
+  @@index([inspectionId])
+  @@index([responseId])
+}
+
+// ---------------------------------------------------------------------------
+// Corrective actions
+// ---------------------------------------------------------------------------
+//
+// A CorrectiveAction (CA) is raised whenever an equipment issue must be
+// tracked to closure. CAs are auto-created by the inspection submit
+// flow for every failed response whose question had
+// `requiresCorrectiveActionOnFail = true`; they can also be created
+// manually by inspectors and admins.
+//
+//   Status lifecycle: OPEN → IN_PROGRESS → RESOLVED → CLOSED
+//   Only users with `corrective_action.close` can transition RESOLVED → CLOSED.
+//   Once CLOSED, the record is immutable.
+
+model CorrectiveAction {
+  id       String @id @default(cuid())
+  /// Human-readable ID like "CA-A-00001". Unique.
+  code     String @unique
+
+  equipmentId String
+  unitId      String
+
+  /// Source: the failed inspection response (for auto-created CAs).
+  sourceInspectionId String?
+  sourceResponseId   String?
+  /// Snapshot of the failed question text — kept even if the template
+  /// or response is later archived so the CA remains self-explanatory.
+  failedItemText     String?
+
+  title       String
+  description String
+
+  /// CRITICAL | HIGH | MEDIUM | LOW
+  priority String @default("MEDIUM")
+  /// OPEN | IN_PROGRESS | RESOLVED | CLOSED
+  status   String @default("OPEN")
+
+  raisedById String
+  raisedAt   DateTime @default(now())
+
+  assigneeId String?
+  targetDate DateTime?
+
+  resolutionRemarks String?
+  resolvedAt        DateTime?
+  resolvedById      String?
+
+  closureRemarks String?
+  closedAt       DateTime?
+  closedById     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  equipment        Equipment           @relation(fields: [equipmentId], references: [id])
+  unit             Unit                @relation(fields: [unitId], references: [id])
+  sourceInspection Inspection?         @relation(fields: [sourceInspectionId], references: [id])
+  sourceResponse   InspectionResponse? @relation(fields: [sourceResponseId], references: [id])
+  raisedBy         User                @relation("CorrectiveActionsRaised", fields: [raisedById], references: [id])
+  assignee         User?               @relation("CorrectiveActionsAssigned", fields: [assigneeId], references: [id])
+  resolvedBy       User?               @relation("CorrectiveActionsResolved", fields: [resolvedById], references: [id])
+  closedBy         User?               @relation("CorrectiveActionsClosed", fields: [closedById], references: [id])
+
+  attachments CorrectiveActionAttachment[]
+
+  @@index([equipmentId])
+  @@index([unitId])
+  @@index([status])
+  @@index([priority])
+  @@index([targetDate])
+  @@index([assigneeId])
+  @@index([raisedById])
+  @@index([sourceInspectionId])
+}
+
+/// Evidence attached to a CA. `stage` records whether the file was
+/// uploaded at raise (EVIDENCE), resolution (RESOLUTION), or closure
+/// (CLOSURE) time.
+model CorrectiveActionAttachment {
+  id                 String  @id @default(cuid())
+  correctiveActionId String
+
+  storedFilename String
+  originalName   String
+  mimeType       String
+  sizeBytes      Int
+  caption        String?
+  /// EVIDENCE | RESOLUTION | CLOSURE
+  stage          String  @default("EVIDENCE")
+
+  createdAt   DateTime @default(now())
+  createdById String
+
+  correctiveAction CorrectiveAction @relation(fields: [correctiveActionId], references: [id], onDelete: Cascade)
+  createdBy        User             @relation(fields: [createdById], references: [id])
+
+  @@index([correctiveActionId])
+}
+
+// ---------------------------------------------------------------------------
+// Audit log
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  actorId    String?
+  action     String
+  entityType String?
+  entityId   String?
+  metadata   String?
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
