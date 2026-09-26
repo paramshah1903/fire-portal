@@ -657,7 +657,9 @@ function ApplicableChecklistPanel({ equipmentId }: { equipmentId: string }) {
         </Link>
         <Badge tone="green">v{checklist.version.versionNumber}</Badge>
         <span className="text-slate-500">
-          · every {checklist.template.frequencyDays} days
+          {checklist.template.frequencyDays != null
+            ? ` · every ${checklist.template.frequencyDays} days`
+            : ' · uses type default frequency'}
         </span>
       </div>
       {checklist.template.description && (

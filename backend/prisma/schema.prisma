@@ -268,9 +268,9 @@ model ChecklistTemplate {
   name            String
   description     String?
   equipmentTypeId String
-  /// Inspection frequency in days for scheduling. Defaults to the
-  /// equipment type's frequency at create time.
-  frequencyDays   Int      @default(30)
+  /// Optional inspection frequency in days for scheduling. When null,
+  /// callers fall back to the equipment type's inspectionFrequencyDays.
+  frequencyDays   Int?
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -385,6 +385,9 @@ model ChecklistQuestion {
 
 model Inspection {
   id                       String    @id @default(cuid())
+  /// Human-readable unique number assigned at submission time, e.g.
+  /// "INS-2026-000042". Null while the inspection is still PENDING.
+  inspectionNumber         String?   @unique
   equipmentId              String
   templateVersionId        String
   unitId                   String

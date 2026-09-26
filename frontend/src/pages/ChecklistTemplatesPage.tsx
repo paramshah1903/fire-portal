@@ -133,7 +133,15 @@ export function ChecklistTemplatesPage() {
                         ? 'All units'
                         : t.applicableUnits.map((au) => au.unit.code).join(', ')}
                     </Td>
-                    <Td>{t.frequencyDays} days</Td>
+                    <Td>
+                      {t.frequencyDays != null ? (
+                        `${t.frequencyDays} days`
+                      ) : (
+                        <span className="text-xs text-slate-500">
+                          Type default
+                        </span>
+                      )}
+                    </Td>
                     <Td>
                       {t.isActive ? (
                         <Badge tone="green">Active</Badge>
@@ -201,7 +209,8 @@ function TemplateFormModal({
     name: '',
     description: '',
     equipmentTypeId: '',
-    frequencyDays: 30,
+    // Empty string = "not specified"; falls back to equipment type default at inspection time.
+    frequencyDays: '' as '' | number,
     applicableUnitIds: [] as string[],
   });
   const [error, setError] = useState<string | null>(null);
@@ -214,20 +223,14 @@ function TemplateFormModal({
       name: '',
       description: '',
       equipmentTypeId: '',
-      frequencyDays: 30,
+      frequencyDays: '',
       applicableUnitIds: [],
     });
     listEquipmentTypes().then(setTypes).catch(() => setTypes([]));
     listUnits().then(setUnits).catch(() => setUnits([]));
   }, [open]);
 
-  // Auto-fill frequencyDays when the type changes.
-  useEffect(() => {
-    if (!form.equipmentTypeId) return;
-    const t = types.find((x) => x.id === form.equipmentTypeId);
-    if (t) setForm((f) => ({ ...f, frequencyDays: t.inspectionFrequencyDays }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.equipmentTypeId]);
+  const selectedType = types.find((x) => x.id === form.equipmentTypeId);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -238,7 +241,8 @@ function TemplateFormModal({
         name: form.name,
         description: form.description || null,
         equipmentTypeId: form.equipmentTypeId,
-        frequencyDays: form.frequencyDays,
+        frequencyDays:
+          typeof form.frequencyDays === 'number' ? form.frequencyDays : undefined,
         applicableUnitIds:
           form.applicableUnitIds.length > 0
             ? form.applicableUnitIds
@@ -310,20 +314,31 @@ function TemplateFormModal({
             </option>
           ))}
         </Select>
-        <Input
-          label="Frequency (days)"
-          name="frequencyDays"
-          type="number"
-          min={1}
-          max={3650}
-          value={form.frequencyDays}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              frequencyDays: Number.parseInt(e.target.value, 10) || 30,
-            })
-          }
-        />
+        <div>
+          <Input
+            label="Frequency (days, optional)"
+            name="frequencyDays"
+            type="number"
+            min={1}
+            max={3650}
+            placeholder={
+              selectedType
+                ? `Type default: ${selectedType.inspectionFrequencyDays}`
+                : 'Leave blank to use equipment type default'
+            }
+            value={form.frequencyDays === '' ? '' : form.frequencyDays}
+            onChange={(e) => {
+              const raw = e.target.value;
+              setForm({
+                ...form,
+                frequencyDays: raw === '' ? '' : Number.parseInt(raw, 10) || '',
+              });
+            }}
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Leave blank to use the equipment type&apos;s default frequency.
+          </p>
+        </div>
         <div className="sm:col-span-2">
           <TextArea
             label="Description"

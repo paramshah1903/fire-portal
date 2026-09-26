@@ -92,7 +92,11 @@ export function ChecklistTemplateDetailPage() {
     <div>
       <PageHeader
         title={template.name}
-        description={`${template.equipmentType.name} · every ${template.frequencyDays} days`}
+        description={
+          template.frequencyDays != null
+            ? `${template.equipmentType.name} · every ${template.frequencyDays} days`
+            : `${template.equipmentType.name} · uses type default frequency`
+        }
         actions={
           <>
             <Button
@@ -206,7 +210,11 @@ export function ChecklistTemplateDetailPage() {
             />
             <Field
               label="Frequency"
-              value={`${template.frequencyDays} days`}
+              value={
+                template.frequencyDays != null
+                  ? `${template.frequencyDays} days`
+                  : 'Equipment type default'
+              }
             />
             <Field
               label="Applicable units"
@@ -311,7 +319,8 @@ function SettingsModal({
   const [form, setForm] = useState({
     name: template.name,
     description: template.description ?? '',
-    frequencyDays: template.frequencyDays,
+    // Empty string = "not specified" (falls back to equipment type default).
+    frequencyDays: (template.frequencyDays ?? '') as '' | number,
     applicableUnitIds: template.applicableUnits.map((au) => au.unitId),
     isActive: template.isActive,
   });
@@ -323,7 +332,7 @@ function SettingsModal({
     setForm({
       name: template.name,
       description: template.description ?? '',
-      frequencyDays: template.frequencyDays,
+      frequencyDays: (template.frequencyDays ?? '') as '' | number,
       applicableUnitIds: template.applicableUnits.map((au) => au.unitId),
       isActive: template.isActive,
     });
@@ -339,7 +348,9 @@ function SettingsModal({
       const payload: TemplateUpdateInput = {
         name: form.name,
         description: form.description || null,
-        frequencyDays: form.frequencyDays,
+        // null clears back to type default; number sets an override.
+        frequencyDays:
+          typeof form.frequencyDays === 'number' ? form.frequencyDays : null,
         applicableUnitIds: form.applicableUnitIds,
         isActive: form.isActive,
       };
@@ -393,20 +404,27 @@ function SettingsModal({
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
         </div>
-        <Input
-          label="Frequency (days)"
-          name="frequencyDays"
-          type="number"
-          min={1}
-          max={3650}
-          value={form.frequencyDays}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              frequencyDays: Number.parseInt(e.target.value, 10) || 30,
-            })
-          }
-        />
+        <div>
+          <Input
+            label="Frequency (days, optional)"
+            name="frequencyDays"
+            type="number"
+            min={1}
+            max={3650}
+            placeholder="Leave blank for equipment type default"
+            value={form.frequencyDays === '' ? '' : form.frequencyDays}
+            onChange={(e) => {
+              const raw = e.target.value;
+              setForm({
+                ...form,
+                frequencyDays: raw === '' ? '' : Number.parseInt(raw, 10) || '',
+              });
+            }}
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Blank = use the equipment type&apos;s default frequency.
+          </p>
+        </div>
         <div className="sm:col-span-2">
           <TextArea
             label="Description"

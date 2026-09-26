@@ -114,11 +114,11 @@ export function AppLayout() {
             </svg>
           </button>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-brand-600">
-              UPL
+            <p className="text-sm font-bold tracking-tight text-brand-600">
+              SafetyVerse
             </p>
-            <p className="-mt-0.5 text-sm font-semibold text-slate-900">
-              Fire Safety Portal
+            <p className="-mt-0.5 text-[10px] font-medium uppercase tracking-widest text-slate-500">
+              by UPL
             </p>
           </div>
         </div>

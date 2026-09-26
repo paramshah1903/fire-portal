@@ -490,6 +490,34 @@ export async function startInspection(actor: Actor, equipmentId: string) {
 }
 
 // ---------------------------------------------------------------------------
+// Inspection number generation
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate the next inspection number for a given completion year.
+ * Format: INS-YYYY-NNNNNN. Sequence is per-year, zero-padded to 6 digits.
+ * Called inside the submit transaction so concurrent submits within the
+ * same year get distinct numbers.
+ */
+async function nextInspectionNumber(
+  tx: Pick<PrismaClient, 'inspection'>,
+  completedAt: Date,
+): Promise<string> {
+  const year = completedAt.getFullYear();
+  const prefix = `INS-${year}-`;
+  const last = await tx.inspection.findFirst({
+    where: { inspectionNumber: { startsWith: prefix } },
+    orderBy: { inspectionNumber: 'desc' },
+    select: { inspectionNumber: true },
+  });
+  const nextSeq =
+    last?.inspectionNumber && /\d+$/.test(last.inspectionNumber)
+      ? Number.parseInt(last.inspectionNumber.match(/\d+$/)![0], 10) + 1
+      : 1;
+  return `${prefix}${String(nextSeq).padStart(6, '0')}`;
+}
+
+// ---------------------------------------------------------------------------
 // Save / submit
 // ---------------------------------------------------------------------------
 
@@ -772,13 +800,16 @@ export async function submitInspection(
   if (!unit) throw notFound('Inspection unit not found.');
 
   const submitted = await prisma.$transaction(async (tx) => {
+    const completedAt = new Date();
+    const inspectionNumber = await nextInspectionNumber(tx, completedAt);
     const updated = await tx.inspection.update({
       where: { id },
       data: {
         status: 'COMPLETED',
         result: anyFail ? 'FAIL' : 'PASS',
         hasSafetyCriticalFailure: anySafetyFail,
-        completedAt: new Date(),
+        completedAt,
+        inspectionNumber,
         confirmationName: input.confirmationName.trim(),
       },
       include: inspectionDetailInclude,

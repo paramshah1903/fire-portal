@@ -5,6 +5,7 @@ import {
   getInspection,
   inspectionAttachmentUrl,
   type InspectionDetail,
+  type InspectionEquipmentContext,
   type InspectionResponseRow,
 } from '../lib/apiInspections';
 import { QUESTION_TYPE_LABELS } from '../lib/apiChecklists';
@@ -85,6 +86,14 @@ export function InspectionDetailPage() {
         title={`Inspection — ${insp.equipment.name}`}
         description={
           <>
+            {insp.inspectionNumber && (
+              <>
+                <span className="font-mono font-semibold text-brand-700">
+                  {insp.inspectionNumber}
+                </span>{' '}
+                ·{' '}
+              </>
+            )}
             <span className="font-mono">{insp.equipment.equipmentCode}</span>{' '}
             · {insp.templateVersion.template.name} (v{insp.templateVersion.versionNumber}){' '}
             · Period <span className="font-mono">{insp.periodKey}</span>
@@ -135,6 +144,13 @@ export function InspectionDetailPage() {
           extra={insp.confirmationName ? `Confirmed by ${insp.confirmationName}` : undefined}
         />
       </section>
+
+      {/* Equipment context — serial, asset, location kept on the
+          completed record for auditors and the future PDF export. */}
+      <EquipmentDetailStrip
+        equipment={insp.equipment}
+        unit={insp.unit}
+      />
 
       {insp.remarks && (
         <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
@@ -255,6 +271,66 @@ export function InspectionDetailPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+function EquipmentDetailStrip({
+  equipment,
+  unit,
+}: {
+  equipment: InspectionEquipmentContext;
+  unit: { id: string; code: string; name: string };
+}) {
+  const locationParts = [
+    equipment.building,
+    equipment.floor,
+    equipment.area,
+    equipment.location,
+  ]
+    .filter((p) => !!p && String(p).trim().length > 0)
+    .join(' · ');
+
+  const fields: Array<[string, React.ReactNode]> = [
+    ['Equipment code', <span className="font-mono">{equipment.equipmentCode}</span>],
+    ['Type', equipment.equipmentType.name],
+    ['Unit', `${unit.code} — ${unit.name}`],
+    [
+      'Department',
+      equipment.department
+        ? `${equipment.department.code} — ${equipment.department.name}`
+        : '—',
+    ],
+    ['Serial number', equipment.serialNumber ?? '—'],
+    ['Asset number', equipment.assetNumber ?? '—'],
+    ['Location', locationParts || '—'],
+    ['Exact location', equipment.exactLocation ?? '—'],
+    ['Manufacturer', equipment.manufacturer ?? '—'],
+    ['Model', equipment.model ?? '—'],
+    ['Capacity', equipment.capacity ?? '—'],
+    [
+      'Installation date',
+      equipment.installationDate
+        ? new Date(equipment.installationDate).toLocaleDateString()
+        : '—',
+    ],
+  ];
+
+  return (
+    <section className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+        Equipment details
+      </p>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
+        {fields.map(([label, value]) => (
+          <div key={label}>
+            <dt className="text-[10px] uppercase tracking-wide text-slate-500">
+              {label}
+            </dt>
+            <dd className="text-slate-800">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 

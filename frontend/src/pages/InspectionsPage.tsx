@@ -416,6 +416,7 @@ function HistoryPanel({
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
+                <Th>Inspection #</Th>
                 <Th>Period</Th>
                 <Th>Equipment</Th>
                 <Th>Unit</Th>
@@ -429,6 +430,11 @@ function HistoryPanel({
             <tbody className="divide-y divide-slate-200">
               {rows.map((r) => (
                 <tr key={r.id} className="hover:bg-slate-50">
+                  <Td className="font-mono text-xs">
+                    {r.inspectionNumber ?? (
+                      <span className="text-slate-400">—</span>
+                    )}
+                  </Td>
                   <Td className="font-mono text-xs">{r.periodKey}</Td>
                   <Td className="font-medium text-slate-900">
                     <span className="font-mono text-xs text-slate-500">

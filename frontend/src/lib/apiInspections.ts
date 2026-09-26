@@ -7,6 +7,8 @@ export type ScheduleStatus = 'DUE' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
 
 export interface InspectionListItem {
   id: string;
+  /// Assigned at submission time; null while PENDING.
+  inspectionNumber: string | null;
   equipmentId: string;
   templateVersionId: string;
   unitId: string;

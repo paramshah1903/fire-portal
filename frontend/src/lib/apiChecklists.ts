@@ -37,7 +37,8 @@ export interface ChecklistTemplateSummary {
   name: string;
   description: string | null;
   equipmentTypeId: string;
-  frequencyDays: number;
+  /// Null means "use equipment type's default frequency".
+  frequencyDays: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -104,7 +105,7 @@ export interface ChecklistVersion {
     id: string;
     name: string;
     description: string | null;
-    frequencyDays: number;
+    frequencyDays: number | null;
     equipmentType: { id: string; key: string; name: string };
     applicableUnits: {
       templateId: string;
@@ -120,14 +121,14 @@ export interface TemplateCreateInput {
   name: string;
   description?: string | null;
   equipmentTypeId: string;
-  frequencyDays?: number;
+  frequencyDays?: number | null;
   applicableUnitIds?: string[];
 }
 
 export interface TemplateUpdateInput {
   name?: string;
   description?: string | null;
-  frequencyDays?: number;
+  frequencyDays?: number | null;
   applicableUnitIds?: string[];
   isActive?: boolean;
 }
@@ -215,7 +216,7 @@ export interface ApplicableChecklist {
     id: string;
     name: string;
     description: string | null;
-    frequencyDays: number;
+    frequencyDays: number | null;
     equipmentType: { id: string; key: string; name: string };
   };
   version: ChecklistVersion;

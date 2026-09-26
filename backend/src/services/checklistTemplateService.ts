@@ -48,14 +48,16 @@ export interface TemplateCreateInput {
   name: string;
   description?: string | null;
   equipmentTypeId: string;
-  frequencyDays?: number;
+  /// Omit or pass null to fall back to the equipment type default.
+  frequencyDays?: number | null;
   applicableUnitIds?: string[];
 }
 
 export interface TemplateUpdateInput {
   name?: string;
   description?: string | null;
-  frequencyDays?: number;
+  /// Omit to leave unchanged; pass null to clear back to the type default.
+  frequencyDays?: number | null;
   applicableUnitIds?: string[];
   isActive?: boolean;
 }
@@ -207,7 +209,7 @@ export async function createTemplate(input: TemplateCreateInput) {
         name: input.name.trim(),
         description: input.description?.trim() || null,
         equipmentTypeId: input.equipmentTypeId,
-        frequencyDays: input.frequencyDays ?? type.inspectionFrequencyDays,
+        frequencyDays: input.frequencyDays ?? null,
         applicableUnits: input.applicableUnitIds
           ? {
               create: input.applicableUnitIds.map((unitId) => ({ unitId })),

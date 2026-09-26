@@ -41,13 +41,13 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">
-            UPL
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold text-slate-900">
-            Fire Safety Portal
+          <h1 className="text-3xl font-bold tracking-tight text-brand-600">
+            SafetyVerse
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-xs font-medium uppercase tracking-widest text-slate-500">
+            by UPL
+          </p>
+          <p className="mt-4 text-sm text-slate-600">
             Sign in with your assigned credentials.
           </p>
         </div>
@@ -112,36 +112,6 @@ export function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 rounded-md border border-slate-200 bg-white p-4 text-xs text-slate-600">
-          <p className="font-semibold text-slate-700">Demo credentials</p>
-          <table className="mt-2 w-full text-left">
-            <tbody>
-              <tr>
-                <td className="py-0.5">Super Admin</td>
-                <td className="py-0.5 font-mono">admin / Admin@123</td>
-              </tr>
-              <tr>
-                <td className="py-0.5">Central Admin</td>
-                <td className="py-0.5 font-mono">centraladmin / Central@123</td>
-              </tr>
-              <tr>
-                <td className="py-0.5">Unit Admin</td>
-                <td className="py-0.5 font-mono">unitadmin / UnitAdmin@123</td>
-              </tr>
-              <tr>
-                <td className="py-0.5">Inspector</td>
-                <td className="py-0.5 font-mono">inspector / Inspector@123</td>
-              </tr>
-              <tr>
-                <td className="py-0.5">Viewer</td>
-                <td className="py-0.5 font-mono">viewer / Viewer@123</td>
-              </tr>
-            </tbody>
-          </table>
-          <p className="mt-2 text-slate-500">
-            Dev only. Change these before deploying.
-          </p>
-        </div>
       </div>
     </div>
   );
