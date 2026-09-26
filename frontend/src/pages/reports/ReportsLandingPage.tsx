@@ -33,6 +33,12 @@ const CARDS: ReportCard[] = [
       'For one equipment: every question × every inspection, plus who filled it. Ideal for audits.',
   },
   {
+    to: '/reports/by-equipment-type',
+    title: 'Inspections by equipment type',
+    description:
+      'All completed inspections for a chosen type — one row each, every checklist question as a column, plus serial / asset / location / inspection number.',
+  },
+  {
     to: '/reports/failed-equipment',
     title: 'Failed equipment',
     description:

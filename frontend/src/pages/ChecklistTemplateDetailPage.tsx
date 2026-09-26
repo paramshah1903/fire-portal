@@ -321,6 +321,9 @@ function SettingsModal({
     description: template.description ?? '',
     // Empty string = "not specified" (falls back to equipment type default).
     frequencyDays: (template.frequencyDays ?? '') as '' | number,
+    headerText: template.headerText ?? '',
+    footerText: template.footerText ?? '',
+    signatureLine: template.signatureLine ?? '',
     applicableUnitIds: template.applicableUnits.map((au) => au.unitId),
     isActive: template.isActive,
   });
@@ -333,6 +336,9 @@ function SettingsModal({
       name: template.name,
       description: template.description ?? '',
       frequencyDays: (template.frequencyDays ?? '') as '' | number,
+      headerText: template.headerText ?? '',
+      footerText: template.footerText ?? '',
+      signatureLine: template.signatureLine ?? '',
       applicableUnitIds: template.applicableUnits.map((au) => au.unitId),
       isActive: template.isActive,
     });
@@ -351,6 +357,9 @@ function SettingsModal({
         // null clears back to type default; number sets an override.
         frequencyDays:
           typeof form.frequencyDays === 'number' ? form.frequencyDays : null,
+        headerText: form.headerText.trim() || null,
+        footerText: form.footerText.trim() || null,
+        signatureLine: form.signatureLine.trim() || null,
         applicableUnitIds: form.applicableUnitIds,
         isActive: form.isActive,
       };
@@ -432,6 +441,37 @@ function SettingsModal({
             rows={2}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <TextArea
+            label="Printed header (optional)"
+            name="headerText"
+            rows={2}
+            placeholder="e.g. UPL Fire Safety — Monthly Inspection Record"
+            value={form.headerText}
+            onChange={(e) => setForm({ ...form, headerText: e.target.value })}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <TextArea
+            label="Printed footer (optional)"
+            name="footerText"
+            rows={2}
+            placeholder="e.g. Confidential — internal use only"
+            value={form.footerText}
+            onChange={(e) => setForm({ ...form, footerText: e.target.value })}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <Input
+            label="Signature line (optional)"
+            name="signatureLine"
+            placeholder={`Defaults to "Inspector's signature"`}
+            value={form.signatureLine}
+            onChange={(e) =>
+              setForm({ ...form, signatureLine: e.target.value })
+            }
           />
         </div>
         <div className="sm:col-span-2">

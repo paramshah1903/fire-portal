@@ -128,7 +128,14 @@ export interface InspectionDetail extends Omit<InspectionListItem, 'equipment'> 
   equipment: InspectionEquipmentContext;
   templateVersion: InspectionListItem['templateVersion'] & {
     versionNumber: number;
-    template: { id: string; name: string; description: string | null };
+    template: {
+      id: string;
+      name: string;
+      description: string | null;
+      headerText: string | null;
+      footerText: string | null;
+      signatureLine: string | null;
+    };
     sections: InspectionSection[];
   };
   responses: InspectionResponseRow[];

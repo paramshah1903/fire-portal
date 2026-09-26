@@ -271,6 +271,15 @@ model ChecklistTemplate {
   /// Optional inspection frequency in days for scheduling. When null,
   /// callers fall back to the equipment type's inspectionFrequencyDays.
   frequencyDays   Int?
+  /// Optional free-text header printed at the top of each PDF export
+  /// and shown on the perform page (e.g. "UPL Fire Safety Monthly Log").
+  headerText      String?
+  /// Optional free-text footer printed at the bottom of each PDF
+  /// (e.g. legal disclaimer, "Confidential — internal use only").
+  footerText      String?
+  /// Label rendered next to the signature area on printed checklists.
+  /// Falls back to "Inspector's signature" when null.
+  signatureLine   String?
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

@@ -834,6 +834,236 @@ function formatAnswer(r: {
   return core;
 }
 
+// ============================================================================
+// 7. Equipment-type inspection log — one row per completed inspection,
+//    across every equipment of a given type. Fixed columns identify the
+//    equipment + inspector + inspection number; dynamic columns come
+//    from every question ever answered on inspections in the range.
+// ============================================================================
+
+export interface EquipmentTypeLogRow {
+  inspectionId: string;
+  inspectionNumber: string;
+  periodKey: string;
+  completedAt: string;
+  inspectorName: string;
+  inspectorUsername: string;
+  confirmationName: string;
+  result: string;
+  hasSafetyCriticalFailure: boolean;
+  remarks: string;
+  templateName: string;
+  templateVersion: number;
+  /// Equipment info per row (each inspection is a different equipment).
+  equipmentId: string;
+  equipmentCode: string;
+  equipmentName: string;
+  serialNumber: string;
+  assetNumber: string;
+  location: string;
+  unitCode: string;
+  departmentCode: string;
+  answers: Record<string, InspectionLogAnswer>;
+}
+
+export interface EquipmentTypeLogReport {
+  equipmentType: {
+    id: string;
+    key: string;
+    name: string;
+  };
+  fromDate: string | null;
+  toDate: string | null;
+  summary: {
+    totalInspections: number;
+    equipmentCount: number;
+    passed: number;
+    failed: number;
+    safetyCriticalFailures: number;
+  };
+  questions: InspectionLogQuestion[];
+  rows: EquipmentTypeLogRow[];
+}
+
+export async function equipmentTypeInspectionLogReport(opts: {
+  actor: Actor;
+  equipmentTypeId: string;
+  fromDate?: string;
+  toDate?: string;
+  unitId?: string;
+}): Promise<EquipmentTypeLogReport> {
+  const equipmentType = await prisma.equipmentType.findUnique({
+    where: { id: opts.equipmentTypeId },
+    select: { id: true, key: true, name: true },
+  });
+  if (!equipmentType) throw notFound('Equipment type not found.');
+
+  const rangeSpecified = !!(opts.fromDate || opts.toDate);
+  let range: DateRange | null = null;
+  if (rangeSpecified) {
+    range = resolveDateRange({
+      fromDate: opts.fromDate,
+      toDate: opts.toDate,
+    });
+  }
+
+  const scopeUnit = scopeUnitId(opts.actor, opts.unitId);
+
+  const inspections = await prisma.inspection.findMany({
+    where: {
+      status: 'COMPLETED',
+      ...(range ? { periodKey: { in: range.periodKeys } } : {}),
+      equipment: {
+        equipmentTypeId: opts.equipmentTypeId,
+        ...(scopeUnit ? { unitId: scopeUnit } : {}),
+      },
+    },
+    include: {
+      inspector: { select: { fullName: true, username: true } },
+      equipment: {
+        select: {
+          id: true,
+          equipmentCode: true,
+          name: true,
+          serialNumber: true,
+          assetNumber: true,
+          area: true,
+          building: true,
+          floor: true,
+          location: true,
+          exactLocation: true,
+          unit: { select: { code: true } },
+          department: { select: { code: true } },
+        },
+      },
+      responses: {
+        include: {
+          attachments: { select: { id: true } },
+        },
+      },
+      templateVersion: {
+        select: {
+          versionNumber: true,
+          template: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: [{ completedAt: 'desc' }],
+  });
+
+  // Look up section + sequence for every question referenced.
+  const allQuestionIds = new Set<string>();
+  for (const insp of inspections) {
+    for (const r of insp.responses) allQuestionIds.add(r.questionId);
+  }
+  const questionMeta = new Map<
+    string,
+    { sequence: number; sectionTitle: string; sectionSequence: number }
+  >();
+  if (allQuestionIds.size > 0) {
+    const qRows = await prisma.checklistQuestion.findMany({
+      where: { id: { in: Array.from(allQuestionIds) } },
+      select: {
+        id: true,
+        sequence: true,
+        section: { select: { title: true, sequence: true } },
+      },
+    });
+    for (const q of qRows) {
+      questionMeta.set(q.id, {
+        sequence: q.sequence,
+        sectionTitle: q.section.title,
+        sectionSequence: q.section.sequence,
+      });
+    }
+  }
+
+  const seen = new Map<string, InspectionLogQuestion>();
+  for (const insp of inspections) {
+    for (const r of insp.responses) {
+      if (seen.has(r.questionId)) continue;
+      const meta = questionMeta.get(r.questionId);
+      seen.set(r.questionId, {
+        key: r.questionId,
+        text: r.questionText,
+        type: r.questionType,
+        isSafetyCritical: r.isSafetyCritical,
+        isMandatory: r.isMandatory,
+        sectionTitle: meta?.sectionTitle ?? '',
+        sortKey:
+          (meta?.sectionSequence ?? 999) * 1000 + (meta?.sequence ?? 999),
+      });
+    }
+  }
+  const questions = Array.from(seen.values()).sort(
+    (a, b) => a.sortKey - b.sortKey,
+  );
+
+  const rows: EquipmentTypeLogRow[] = inspections.map((insp) => {
+    const answers: Record<string, InspectionLogAnswer> = {};
+    for (const r of insp.responses) {
+      answers[r.questionId] = {
+        valueString: r.valueString,
+        valueNumeric: r.valueNumeric,
+        valueDate: r.valueDate ? r.valueDate.toISOString() : null,
+        isFail: r.isFail,
+        notes: r.notes,
+        attachmentCount: r.attachments.length,
+        display: formatAnswer(r),
+      };
+    }
+    const eq = insp.equipment;
+    const locationParts = [eq.building, eq.floor, eq.area, eq.location, eq.exactLocation]
+      .filter((p) => !!p && String(p).trim().length > 0)
+      .join(' · ');
+    return {
+      inspectionId: insp.id,
+      inspectionNumber: insp.inspectionNumber ?? '',
+      periodKey: insp.periodKey,
+      completedAt: insp.completedAt ? insp.completedAt.toISOString() : '',
+      inspectorName: insp.inspector.fullName,
+      inspectorUsername: insp.inspector.username,
+      confirmationName: insp.confirmationName ?? '',
+      result: insp.result ?? '',
+      hasSafetyCriticalFailure: insp.hasSafetyCriticalFailure,
+      remarks: insp.remarks ?? '',
+      templateName: insp.templateVersion.template.name,
+      templateVersion: insp.templateVersion.versionNumber,
+      equipmentId: eq.id,
+      equipmentCode: eq.equipmentCode,
+      equipmentName: eq.name,
+      serialNumber: eq.serialNumber ?? '',
+      assetNumber: eq.assetNumber ?? '',
+      location: locationParts,
+      unitCode: eq.unit.code,
+      departmentCode: eq.department?.code ?? '',
+      answers,
+    };
+  });
+
+  const uniqueEquipment = new Set(rows.map((r) => r.equipmentId)).size;
+
+  return {
+    equipmentType: {
+      id: equipmentType.id,
+      key: equipmentType.key,
+      name: equipmentType.name,
+    },
+    fromDate: range?.fromDate.toISOString() ?? null,
+    toDate: range?.toDate.toISOString() ?? null,
+    summary: {
+      totalInspections: rows.length,
+      equipmentCount: uniqueEquipment,
+      passed: rows.filter((r) => r.result === 'PASS').length,
+      failed: rows.filter((r) => r.result === 'FAIL').length,
+      safetyCriticalFailures: rows.filter((r) => r.hasSafetyCriticalFailure)
+        .length,
+    },
+    questions,
+    rows,
+  };
+}
+
 export async function equipmentInspectionLogReport(opts: {
   actor: Actor;
   equipmentId: string;

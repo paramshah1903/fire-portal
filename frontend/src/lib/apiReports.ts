@@ -313,6 +313,68 @@ export async function fetchEquipmentInspectionLogReport(
   return data;
 }
 
+// ---------- Equipment-type inspection log ----------
+
+export interface EquipmentTypeLogRow {
+  inspectionId: string;
+  inspectionNumber: string;
+  periodKey: string;
+  completedAt: string;
+  inspectorName: string;
+  inspectorUsername: string;
+  confirmationName: string;
+  result: string;
+  hasSafetyCriticalFailure: boolean;
+  remarks: string;
+  templateName: string;
+  templateVersion: number;
+  equipmentId: string;
+  equipmentCode: string;
+  equipmentName: string;
+  serialNumber: string;
+  assetNumber: string;
+  location: string;
+  unitCode: string;
+  departmentCode: string;
+  answers: Record<string, InspectionLogAnswer>;
+}
+
+export interface EquipmentTypeLogReport {
+  equipmentType: {
+    id: string;
+    key: string;
+    name: string;
+  };
+  fromDate: string | null;
+  toDate: string | null;
+  summary: {
+    totalInspections: number;
+    equipmentCount: number;
+    passed: number;
+    failed: number;
+    safetyCriticalFailures: number;
+  };
+  questions: InspectionLogQuestion[];
+  rows: EquipmentTypeLogRow[];
+}
+
+export interface EquipmentTypeLogParams {
+  equipmentTypeId: string;
+  fromDate?: string;
+  toDate?: string;
+  unitId?: string;
+}
+
+export async function fetchEquipmentTypeInspectionLogReport(
+  params: EquipmentTypeLogParams,
+): Promise<EquipmentTypeLogReport> {
+  const { data } = await api.get<EquipmentTypeLogReport>(
+    '/reports/equipment-type-inspection-log',
+    { params: normalise(params) },
+  );
+  return data;
+}
+
 /**
  * Build a full URL for a CSV / XLSX export. Used to render an
  * `<a href>` so the browser's download dialog kicks in.
@@ -324,7 +386,8 @@ export function reportExportUrl(
     | 'equipment-history'
     | 'failed-equipment'
     | 'corrective-actions'
-    | 'equipment-inspection-log',
+    | 'equipment-inspection-log'
+    | 'equipment-type-inspection-log',
   format: 'csv' | 'xlsx',
   params: Record<string, string | undefined>,
 ): string {

@@ -29,6 +29,7 @@ import { EquipmentHistoryReportPage } from './pages/reports/EquipmentHistoryRepo
 import { FailedEquipmentReportPage } from './pages/reports/FailedEquipmentReportPage';
 import { CorrectiveActionsReportPage } from './pages/reports/CorrectiveActionsReportPage';
 import { EquipmentInspectionLogReportPage } from './pages/reports/EquipmentInspectionLogReportPage';
+import { EquipmentTypeInspectionLogReportPage } from './pages/reports/EquipmentTypeInspectionLogReportPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { ForbiddenPage } from './pages/ForbiddenPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -145,6 +146,10 @@ export function App() {
               <Route
                 path="reports/equipment-inspection-log"
                 element={<EquipmentInspectionLogReportPage />}
+              />
+              <Route
+                path="reports/by-equipment-type"
+                element={<EquipmentTypeInspectionLogReportPage />}
               />
               <Route
                 path="reports/failed-equipment"

@@ -17,3 +17,7 @@ reportsRouter.get(
   '/equipment-inspection-log',
   ctrl.equipmentInspectionLog,
 );
+reportsRouter.get(
+  '/equipment-type-inspection-log',
+  ctrl.equipmentTypeInspectionLog,
+);

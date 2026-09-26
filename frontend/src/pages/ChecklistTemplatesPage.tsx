@@ -211,6 +211,9 @@ function TemplateFormModal({
     equipmentTypeId: '',
     // Empty string = "not specified"; falls back to equipment type default at inspection time.
     frequencyDays: '' as '' | number,
+    headerText: '',
+    footerText: '',
+    signatureLine: '',
     applicableUnitIds: [] as string[],
   });
   const [error, setError] = useState<string | null>(null);
@@ -224,6 +227,9 @@ function TemplateFormModal({
       description: '',
       equipmentTypeId: '',
       frequencyDays: '',
+      headerText: '',
+      footerText: '',
+      signatureLine: '',
       applicableUnitIds: [],
     });
     listEquipmentTypes().then(setTypes).catch(() => setTypes([]));
@@ -243,6 +249,9 @@ function TemplateFormModal({
         equipmentTypeId: form.equipmentTypeId,
         frequencyDays:
           typeof form.frequencyDays === 'number' ? form.frequencyDays : undefined,
+        headerText: form.headerText.trim() || null,
+        footerText: form.footerText.trim() || null,
+        signatureLine: form.signatureLine.trim() || null,
         applicableUnitIds:
           form.applicableUnitIds.length > 0
             ? form.applicableUnitIds
@@ -346,6 +355,40 @@ function TemplateFormModal({
             rows={2}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <TextArea
+            label="Printed header (optional)"
+            name="headerText"
+            rows={2}
+            placeholder="e.g. UPL Fire Safety — Monthly Inspection Record"
+            value={form.headerText}
+            onChange={(e) => setForm({ ...form, headerText: e.target.value })}
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Shown at the top of the perform page and on the PDF export.
+          </p>
+        </div>
+        <div className="sm:col-span-2">
+          <TextArea
+            label="Printed footer (optional)"
+            name="footerText"
+            rows={2}
+            placeholder="e.g. Confidential — internal use only"
+            value={form.footerText}
+            onChange={(e) => setForm({ ...form, footerText: e.target.value })}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <Input
+            label="Signature line (optional)"
+            name="signatureLine"
+            placeholder={`Defaults to "Inspector's signature"`}
+            value={form.signatureLine}
+            onChange={(e) =>
+              setForm({ ...form, signatureLine: e.target.value })
+            }
           />
         </div>
         <div className="sm:col-span-2">

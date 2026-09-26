@@ -14,6 +14,9 @@ const createTemplateSchema = z.object({
   description: z.string().max(2000).optional().nullable(),
   equipmentTypeId: z.string().min(1),
   frequencyDays: z.number().int().min(1).max(3650).nullable().optional(),
+  headerText: z.string().max(2000).optional().nullable(),
+  footerText: z.string().max(2000).optional().nullable(),
+  signatureLine: z.string().max(200).optional().nullable(),
   applicableUnitIds: z.array(z.string()).optional(),
 });
 
@@ -21,6 +24,9 @@ const updateTemplateSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().max(2000).optional().nullable(),
   frequencyDays: z.number().int().min(1).max(3650).nullable().optional(),
+  headerText: z.string().max(2000).optional().nullable(),
+  footerText: z.string().max(2000).optional().nullable(),
+  signatureLine: z.string().max(200).optional().nullable(),
   applicableUnitIds: z.array(z.string()).optional(),
   isActive: z.boolean().optional(),
 });

@@ -50,6 +50,9 @@ export interface TemplateCreateInput {
   equipmentTypeId: string;
   /// Omit or pass null to fall back to the equipment type default.
   frequencyDays?: number | null;
+  headerText?: string | null;
+  footerText?: string | null;
+  signatureLine?: string | null;
   applicableUnitIds?: string[];
 }
 
@@ -58,6 +61,9 @@ export interface TemplateUpdateInput {
   description?: string | null;
   /// Omit to leave unchanged; pass null to clear back to the type default.
   frequencyDays?: number | null;
+  headerText?: string | null;
+  footerText?: string | null;
+  signatureLine?: string | null;
   applicableUnitIds?: string[];
   isActive?: boolean;
 }
@@ -210,6 +216,9 @@ export async function createTemplate(input: TemplateCreateInput) {
         description: input.description?.trim() || null,
         equipmentTypeId: input.equipmentTypeId,
         frequencyDays: input.frequencyDays ?? null,
+        headerText: input.headerText?.trim() || null,
+        footerText: input.footerText?.trim() || null,
+        signatureLine: input.signatureLine?.trim() || null,
         applicableUnits: input.applicableUnitIds
           ? {
               create: input.applicableUnitIds.map((unitId) => ({ unitId })),
@@ -262,6 +271,18 @@ export async function updateTemplate(id: string, input: TemplateUpdateInput) {
             ? undefined
             : input.description?.trim() || null,
         frequencyDays: input.frequencyDays,
+        headerText:
+          input.headerText === undefined
+            ? undefined
+            : input.headerText?.trim() || null,
+        footerText:
+          input.footerText === undefined
+            ? undefined
+            : input.footerText?.trim() || null,
+        signatureLine:
+          input.signatureLine === undefined
+            ? undefined
+            : input.signatureLine?.trim() || null,
         isActive: input.isActive,
       },
     });

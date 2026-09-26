@@ -90,8 +90,8 @@ export function AppLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* top bar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm">
+      {/* top bar — hidden on print so PDF exports don't include app chrome */}
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm print:hidden">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -160,6 +160,8 @@ export function AppLayout() {
             mobileOpen
               ? 'fixed inset-y-0 left-0 top-14 z-40 !block w-72 max-w-[80vw] overflow-y-auto shadow-xl lg:static lg:top-0 lg:z-auto lg:w-64 lg:shadow-none'
               : '',
+            // hidden on print
+            'print:hidden',
           ].join(' ')}
         >
           <nav className="p-4">

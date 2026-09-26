@@ -80,39 +80,70 @@ export function InspectionDetailPage() {
     cas.filter((c) => c.sourceResponseId).map((c) => [c.sourceResponseId!, c]),
   );
 
+  const template = insp.templateVersion.template;
+  const signatureLine = template.signatureLine?.trim() || "Inspector's signature";
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader
-        title={`Inspection — ${insp.equipment.name}`}
-        description={
-          <>
-            {insp.inspectionNumber && (
-              <>
-                <span className="font-mono font-semibold text-brand-700">
-                  {insp.inspectionNumber}
-                </span>{' '}
-                ·{' '}
-              </>
-            )}
-            <span className="font-mono">{insp.equipment.equipmentCode}</span>{' '}
-            · {insp.templateVersion.template.name} (v{insp.templateVersion.versionNumber}){' '}
-            · Period <span className="font-mono">{insp.periodKey}</span>
-          </>
-        }
-        actions={
-          <>
-            <Button variant="secondary" onClick={() => navigate('/inspections')}>
-              Back
-            </Button>
-            <Link
-              to={`/equipment/${insp.equipment.id}`}
-              className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-            >
-              Open equipment
-            </Link>
-          </>
-        }
-      />
+    <div className="mx-auto max-w-3xl print-color">
+      {/* Print-only header — replaces the app PageHeader on paper so the
+          PDF opens with clean, form-like branding rather than nav chrome. */}
+      <div className="mb-4 hidden border-b-2 border-slate-800 pb-3 print:block">
+        {template.headerText && (
+          <p className="whitespace-pre-wrap text-center text-sm font-semibold text-slate-900">
+            {template.headerText}
+          </p>
+        )}
+        <p className="mt-2 text-center text-lg font-semibold text-slate-900">
+          {template.name}
+        </p>
+        {insp.inspectionNumber && (
+          <p className="mt-1 text-center text-xs text-slate-700">
+            Inspection No.{' '}
+            <span className="font-mono font-semibold">
+              {insp.inspectionNumber}
+            </span>
+          </p>
+        )}
+      </div>
+
+      <div className="print:hidden">
+        <PageHeader
+          title={`Inspection — ${insp.equipment.name}`}
+          description={
+            <>
+              {insp.inspectionNumber && (
+                <>
+                  <span className="font-mono font-semibold text-brand-700">
+                    {insp.inspectionNumber}
+                  </span>{' '}
+                  ·{' '}
+                </>
+              )}
+              <span className="font-mono">{insp.equipment.equipmentCode}</span>{' '}
+              · {insp.templateVersion.template.name} (v{insp.templateVersion.versionNumber}){' '}
+              · Period <span className="font-mono">{insp.periodKey}</span>
+            </>
+          }
+          actions={
+            <>
+              <Button variant="secondary" onClick={() => navigate('/inspections')}>
+                Back
+              </Button>
+              <Link
+                to={`/equipment/${insp.equipment.id}`}
+                className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+              >
+                Open equipment
+              </Link>
+              {insp.status === 'COMPLETED' && (
+                <Button onClick={() => window.print()}>
+                  Print / Save as PDF
+                </Button>
+              )}
+            </>
+          }
+        />
+      </div>
 
       <section className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <SummaryCard
@@ -167,7 +198,7 @@ export function InspectionDetailPage() {
         {insp.templateVersion.sections.map((section, si) => (
           <section
             key={section.id}
-            className="rounded-lg border border-slate-200 bg-white"
+            className="print-avoid-break rounded-lg border border-slate-200 bg-white"
           >
             <header className="border-b border-slate-200 bg-slate-50 px-4 py-3">
               <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
@@ -270,6 +301,45 @@ export function InspectionDetailPage() {
           </section>
         ))}
       </div>
+
+      {/* Signature block — visible on screen and print, useful as a
+          formal sign-off area on the PDF. */}
+      {insp.status === 'COMPLETED' && (
+        <section className="print-avoid-break mt-6 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-2">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+              {signatureLine}
+            </p>
+            <p className="mt-2 text-sm text-slate-900">
+              {insp.confirmationName ?? insp.inspector.fullName}
+            </p>
+            <p className="text-xs text-slate-500">
+              {insp.inspector.fullName} · {insp.inspector.username}
+            </p>
+            <div className="mt-6 border-t border-slate-400" />
+            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+              Signature
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+              Reviewed by
+            </p>
+            <p className="mt-2 text-sm text-slate-400">—</p>
+            <div className="mt-6 border-t border-slate-400" />
+            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+              Name &amp; signature
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Optional template footer text, printed at the bottom of the PDF. */}
+      {template.footerText && (
+        <p className="mt-4 whitespace-pre-wrap border-t border-slate-200 pt-3 text-center text-xs text-slate-500">
+          {template.footerText}
+        </p>
+      )}
     </div>
   );
 }

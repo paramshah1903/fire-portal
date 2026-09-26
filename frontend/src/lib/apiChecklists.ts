@@ -39,6 +39,9 @@ export interface ChecklistTemplateSummary {
   equipmentTypeId: string;
   /// Null means "use equipment type's default frequency".
   frequencyDays: number | null;
+  headerText: string | null;
+  footerText: string | null;
+  signatureLine: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -122,6 +125,9 @@ export interface TemplateCreateInput {
   description?: string | null;
   equipmentTypeId: string;
   frequencyDays?: number | null;
+  headerText?: string | null;
+  footerText?: string | null;
+  signatureLine?: string | null;
   applicableUnitIds?: string[];
 }
 
@@ -129,6 +135,9 @@ export interface TemplateUpdateInput {
   name?: string;
   description?: string | null;
   frequencyDays?: number | null;
+  headerText?: string | null;
+  footerText?: string | null;
+  signatureLine?: string | null;
   applicableUnitIds?: string[];
   isActive?: boolean;
 }

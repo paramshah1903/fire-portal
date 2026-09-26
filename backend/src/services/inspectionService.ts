@@ -70,7 +70,16 @@ const inspectionDetailInclude = {
   // everything it needs to render without a second round-trip.
   templateVersion: {
     include: {
-      template: { select: { id: true, name: true, description: true } },
+      template: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          headerText: true,
+          footerText: true,
+          signatureLine: true,
+        },
+      },
       sections: {
         orderBy: { sequence: 'asc' },
         include: {

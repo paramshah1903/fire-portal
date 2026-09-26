@@ -15,9 +15,10 @@
 }
 
 /*
- * Print styles for QR label pages. Any container that opts into
- * printing wraps itself in `.print-page`; siblings (like the app
- * chrome) can add `print:hidden` to disappear on print.
+ * Print styles for QR label pages AND completed inspection PDFs. Any
+ * container that opts into printing wraps itself in `.print-page`;
+ * siblings (like the app chrome) can add `print:hidden` to disappear
+ * on print.
  */
 @media print {
   html,
@@ -30,7 +31,20 @@
     display: none !important;
   }
 
+  /* Give inspection sections stronger borders on paper and prevent
+     awkward page breaks inside a single question row. */
+  .print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Preserve subtle backgrounds like fail-row tints in the PDF. */
+  .print-color {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   @page {
-    margin: 10mm;
+    margin: 12mm;
   }
 }

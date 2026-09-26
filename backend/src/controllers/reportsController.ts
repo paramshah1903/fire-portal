@@ -227,6 +227,75 @@ export const correctiveActions: RequestHandler = asyncHandler(async (req, res) =
   res.json(data);
 });
 
+export const equipmentTypeInspectionLog: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const equipmentTypeId = queryString(req.query.equipmentTypeId);
+    if (!equipmentTypeId) {
+      res.status(400).json({
+        error: {
+          code: 'MISSING_EQUIPMENT_TYPE_ID',
+          message: 'Provide equipmentTypeId query parameter.',
+        },
+      });
+      return;
+    }
+    const data = await service.equipmentTypeInspectionLogReport({
+      actor: actor(req),
+      equipmentTypeId,
+      fromDate: queryString(req.query.fromDate),
+      toDate: queryString(req.query.toDate),
+      unitId: queryString(req.query.unitId),
+    });
+
+    const format = parseFormat(req.query.format);
+    const filename = `inspection-log-${data.equipmentType.key}`;
+    if (format === 'json') {
+      res.json(data);
+      return;
+    }
+
+    const staticCols: ColumnSpec<service.EquipmentTypeLogRow>[] = [
+      { header: 'Inspection Number', accessor: (r) => r.inspectionNumber },
+      { header: 'Period', accessor: (r) => r.periodKey },
+      { header: 'Completed At', accessor: (r) => r.completedAt },
+      { header: 'Inspector', accessor: (r) => r.inspectorName },
+      { header: 'Signed As', accessor: (r) => r.confirmationName },
+      { header: 'Equipment Code', accessor: (r) => r.equipmentCode },
+      { header: 'Equipment Name', accessor: (r) => r.equipmentName },
+      { header: 'Serial Number', accessor: (r) => r.serialNumber },
+      { header: 'Asset Number', accessor: (r) => r.assetNumber },
+      { header: 'Location', accessor: (r) => r.location },
+      { header: 'Unit', accessor: (r) => r.unitCode },
+      { header: 'Department', accessor: (r) => r.departmentCode },
+      { header: 'Result', accessor: (r) => r.result },
+      {
+        header: 'Safety-Critical Fail',
+        accessor: (r) => (r.hasSafetyCriticalFailure ? 'Yes' : ''),
+      },
+      {
+        header: 'Template',
+        accessor: (r) => `${r.templateName} v${r.templateVersion}`,
+      },
+      { header: 'Overall Remarks', accessor: (r) => r.remarks },
+    ];
+    const questionCols: ColumnSpec<service.EquipmentTypeLogRow>[] =
+      data.questions.map((q) => ({
+        header: q.sectionTitle ? `[${q.sectionTitle}] ${q.text}` : q.text,
+        accessor: (r) => r.answers[q.key]?.display ?? '',
+      }));
+    const columns = [...staticCols, ...questionCols];
+
+    if (format === 'csv') return sendCsv(res, filename, columns, data.rows);
+    return sendXlsx(
+      res,
+      filename,
+      columns,
+      data.rows,
+      `${data.equipmentType.name} Log`,
+    );
+  },
+);
+
 export const equipmentInspectionLog: RequestHandler = asyncHandler(
   async (req, res) => {
     const equipmentId = queryString(req.query.equipmentId);
