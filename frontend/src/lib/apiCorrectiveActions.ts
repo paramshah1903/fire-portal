@@ -244,6 +244,7 @@ export async function uploadCaAttachment(
 
 export function caAttachmentUrl(id: string): string {
   const base =
-    import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000/api';
+    import.meta.env.VITE_API_BASE_URL ??
+    (import.meta.env.PROD ? '/api' : 'http://localhost:4000/api');
   return `${base}/corrective-action-attachments/${id}`;
 }

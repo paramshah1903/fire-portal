@@ -391,8 +391,12 @@ export function reportExportUrl(
   format: 'csv' | 'xlsx',
   params: Record<string, string | undefined>,
 ): string {
+  // Match the api.ts base-URL default: same-origin `/api` in prod
+  // builds (backend serves the SPA from one host) and the localhost
+  // API in dev where Vite runs on :5173 and the API on :4000.
   const base =
-    import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000/api';
+    import.meta.env.VITE_API_BASE_URL ??
+    (import.meta.env.PROD ? '/api' : 'http://localhost:4000/api');
   const q = new URLSearchParams();
   q.set('format', format);
   for (const [k, v] of Object.entries(params)) {

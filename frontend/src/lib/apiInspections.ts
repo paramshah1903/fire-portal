@@ -326,6 +326,7 @@ export async function uploadInspectionAttachment(
 
 export function inspectionAttachmentUrl(id: string): string {
   const base =
-    import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000/api';
+    import.meta.env.VITE_API_BASE_URL ??
+    (import.meta.env.PROD ? '/api' : 'http://localhost:4000/api');
   return `${base}/inspection-attachments/${id}`;
 }
