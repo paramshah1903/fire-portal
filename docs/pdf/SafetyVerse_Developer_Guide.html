@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Developer Guide</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --orange: #F37021;
+    --orange-dark: #DB5B0E;
+    --orange-tint: #FFF5EE;
+    --slate-900: #0F172A;
+    --slate-800: #1E293B;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748B;
+    --slate-400: #94A3B8;
+    --slate-300: #CBD5E1;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50:  #F8FAFC;
+  }
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm 22mm 16mm;
+    @bottom-left  { content: "SafetyVerse · by UPL"; font-size: 9pt; color: #64748B; }
+    @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 9pt; color: #64748B; }
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    color: var(--slate-800);
+    font-size: 10.5pt;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Cover block at the very top */
+  .cover {
+    padding: 40mm 0 16mm 0;
+    border-bottom: 3px solid var(--orange);
+    margin-bottom: 12mm;
+    page-break-after: always;
+  }
+  .cover .eyebrow {
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .cover h1 {
+    font-size: 44pt;
+    margin: 8mm 0 2mm 0;
+    color: var(--slate-900);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .cover .sub {
+    font-size: 16pt;
+    color: var(--slate-500);
+    margin: 0 0 20mm 0;
+  }
+  .cover .meta {
+    font-size: 10pt;
+    color: var(--slate-500);
+    border-top: 1px solid var(--slate-200);
+    padding-top: 6mm;
+    margin-top: 10mm;
+  }
+  .cover .meta strong { color: var(--slate-800); }
+
+  /* Headings */
+  h1, h2, h3, h4 {
+    color: var(--slate-900);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 1.6em;
+    margin-bottom: 0.4em;
+    page-break-after: avoid;
+  }
+  h1 { font-size: 22pt; border-bottom: 2px solid var(--orange); padding-bottom: 2mm; }
+  h2 { font-size: 16pt; color: var(--slate-900); margin-top: 1.4em; }
+  h2:before {
+    content: "";
+    display: inline-block;
+    width: 3px; height: 0.9em;
+    background: var(--orange);
+    margin-right: 6px;
+    vertical-align: -0.05em;
+  }
+  h3 { font-size: 12.5pt; color: var(--slate-800); }
+  h4 { font-size: 11pt; color: var(--slate-700); }
+
+  p { margin: 0.5em 0 0.9em 0; }
+  strong { color: var(--slate-900); }
+
+  /* Links */
+  a {
+    color: var(--orange-dark);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--orange);
+  }
+
+  /* Lists */
+  ul, ol { padding-left: 1.4em; margin: 0.4em 0 1em 0; }
+  li { margin: 0.15em 0; }
+  ul li::marker { color: var(--orange); }
+  ol li::marker { color: var(--orange-dark); font-weight: 600; }
+
+  /* Code */
+  code {
+    background: var(--slate-100);
+    color: var(--orange-dark);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+  }
+  pre {
+    background: var(--slate-900);
+    color: #E5E7EB;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 3px solid var(--orange);
+    overflow-x: auto;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0 1.4em 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  thead { background: var(--orange); color: white; }
+  th {
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+    font-size: 9.5pt;
+    letter-spacing: 0.02em;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--slate-200);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--slate-50); }
+
+  /* Blockquotes = callouts */
+  blockquote {
+    background: var(--orange-tint);
+    border-left: 3px solid var(--orange);
+    margin: 1em 0;
+    padding: 8px 14px;
+    border-radius: 0 4px 4px 0;
+    color: var(--slate-800);
+  }
+  blockquote p { margin: 0.3em 0; }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--slate-200);
+    margin: 2em 0;
+  }
+
+  /* Mermaid: keep the SVG on one page and centered */
+  .mermaid {
+    text-align: center;
+    background: var(--slate-50);
+    padding: 12px 8px;
+    border-radius: 6px;
+    margin: 1em 0 1.4em 0;
+    page-break-inside: avoid;
+  }
+
+  /* Task list checkboxes */
+  ul.task-list { list-style: none; padding-left: 1em; }
+  input[type="checkbox"] {
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="eyebrow">SAFETYVERSE · BY UPL</div>
+  <h1>Developer Guide</h1>
+  <p class="sub">SafetyVerse · by UPL</p>
+  <div class="meta">
+    <strong>Version:</strong> 2026-09  ·  <strong>Audience:</strong> Developers &amp; Ops<br>
+    <strong>Live app:</strong> https://upl-fire-portal.onrender.com<br>
+    <strong>Repository:</strong> https://github.com/paramshah1903/fire-portal
+  </div>
+</div>
+
+<h1 id="safetyverse-developer-guide">SafetyVerse — Developer Guide</h1>
+<p><em>A gentle, illustrated tour of the codebase for anyone joining the project.</em></p>
+<p>Read time: 20 minutes. By the end you'll know how the whole system fits
+together and where to look when you need to change something.</p>
+<hr />
+<h2 id="1-what-this-application-does">1. What this application does</h2>
+<p><strong>SafetyVerse</strong> (internally the UPL Fire Equipment Maintenance Portal) is
+a role-based web app that helps a company track every piece of fire
+safety equipment (extinguishers, hydrants, hoses, alarms, etc.) across
+multiple plant units, and captures periodic inspections as immutable
+digital records.</p>
+<p>The typical workflow:</p>
+<ol>
+<li>An admin loads the equipment master (each item has a unique QR code)</li>
+<li>An admin defines a <strong>checklist template</strong> (questions per equipment type)</li>
+<li>An inspector scans a QR code with their phone → the app opens on the
+   matching equipment → they fill the checklist → submit</li>
+<li>Failed answers automatically raise <strong>corrective actions</strong></li>
+<li>Every submitted inspection is stored with a unique number
+   (<code>INS-2026-000042</code>) and shows up in reports + PDF exports</li>
+</ol>
+<hr />
+<h2 id="2-the-10000-foot-view">2. The 10,000-foot view</h2>
+<div class="mermaid">
+flowchart LR
+    subgraph Browser
+        SPA[React SPA<br/>Vite + TS + Tailwind]
+    end
+    subgraph "Render.com (single Node process)"
+        API[Express REST API<br/>Node + TS + Prisma]
+        Static[Static file server<br/>serves the built SPA]
+    end
+    subgraph "Neon (managed Postgres)"
+        DB[(neondb)]
+    end
+    Phone[Inspector's phone camera] -- "scans QR → URL" --> SPA
+    SPA -- "HTTPS + cookie session<br/>fetch /api/*" --> API
+    SPA -- "HTTPS<br/>fetch /*.js /*.css" --> Static
+    API -- "SQL via Prisma" --> DB
+
+</div>
+
+<p><strong>Deployment topology in words:</strong></p>
+<ul>
+<li>One <strong>web service</strong> on Render's free tier runs a single Node process</li>
+<li>That process serves both <code>/api/*</code> (Express routes) and <code>/*</code> (the built
+  React SPA static files) from the same origin</li>
+<li>The database is a managed Postgres on <strong>Neon</strong> (also free tier)</li>
+<li>Photos uploaded during inspections live on the Render container's
+  local disk (ephemeral on the free tier — see §8 for how to fix that
+  for a real rollout)</li>
+</ul>
+<hr />
+<h2 id="3-repository-layout">3. Repository layout</h2>
+<pre><code>upl_project/
+├── frontend/               # React + Vite SPA
+│   ├── public/             # static assets (logo.jpeg, favicon)
+│   ├── src/
+│   │   ├── auth/           # AuthContext + ProtectedRoute
+│   │   ├── components/     # ui.tsx, Modal, ErrorBoundary, DateRangeFilter
+│   │   ├── layout/         # AppLayout (top bar + sidebar)
+│   │   ├── lib/            # api client + one file per API area
+│   │   ├── pages/          # one folder-less .tsx per route
+│   │   │   └── reports/    # all 7 report pages
+│   │   ├── theme/          # ThemeContext (light/dark toggle)
+│   │   ├── App.tsx         # React Router routes
+│   │   └── main.tsx        # ReactDOM entry
+│   ├── index.html
+│   ├── tailwind.config.js  # UPL orange brand palette
+│   └── vite.config.ts
+│
+├── backend/                # Express + Prisma API
+│   ├── prisma/
+│   │   ├── schema.prisma   # data model (14 tables)
+│   │   └── seed.ts         # idempotent demo data
+│   ├── src/
+│   │   ├── config/env.ts   # typed env-var loader
+│   │   ├── controllers/    # one file per resource — thin HTTP layer
+│   │   ├── services/       # one file per resource — business logic
+│   │   ├── routes/         # one file per resource — URL → controller
+│   │   ├── middleware/     # auth, rate limit, error handler, request id
+│   │   ├── lib/            # cross-cutting: rbac, prisma, errors, exporters
+│   │   ├── app.ts          # Express app setup
+│   │   └── server.ts       # HTTP listener
+│   └── package.json
+│
+├── docs/                   # you are here
+├── logo.jpeg               # UPL brand image (also copied to frontend/public/)
+├── render.yaml             # Render.com deployment blueprint
+├── .gitignore
+└── README.md
+</code></pre>
+<hr />
+<h2 id="4-the-two-big-layers">4. The two big layers</h2>
+<h3 id="41-backend-clean-4-layer-stack">4.1 Backend — clean 4-layer stack</h3>
+<div class="mermaid">
+flowchart TD
+    Client[HTTP request] --> Route[Route<br/>URL → Controller]
+    Route --> Middleware[Middleware<br/>auth · rate limit · request id]
+    Middleware --> Controller[Controller<br/>Zod validation · shape response]
+    Controller --> Service[Service<br/>business logic · transactions]
+    Service --> Prisma[Prisma Client]
+    Prisma --> DB[(Postgres)]
+    Controller -.error.-> ErrorHandler[Error Handler<br/>uniform JSON error]
+    Service -.throws AppError.-> Controller
+
+</div>
+
+<p><strong>Rule of thumb — where does new code go?</strong></p>
+<table>
+<thead>
+<tr>
+<th>Kind of code</th>
+<th>Layer</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Bind /foo to the controller"</td>
+<td><code>routes/foo.ts</code></td>
+<td><code>router.get('/', ctrl.list)</code></td>
+</tr>
+<tr>
+<td>"Validate input and shape output"</td>
+<td><code>controllers/fooController.ts</code></td>
+<td>Zod schema + <code>res.json({...})</code></td>
+</tr>
+<tr>
+<td>"Compute something / talk to DB"</td>
+<td><code>services/fooService.ts</code></td>
+<td><code>prisma.foo.findMany(...)</code></td>
+</tr>
+<tr>
+<td>"Run before every request"</td>
+<td><code>middleware/xxx.ts</code></td>
+<td>attach user, rate limit</td>
+</tr>
+<tr>
+<td>"Shared helper / no I/O"</td>
+<td><code>lib/xxx.ts</code></td>
+<td>date range parsing, RBAC keys</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Never</strong> call Prisma directly from a controller. <strong>Never</strong> call <code>res.json</code>
+from a service. Keeps concerns clean.</p>
+<h3 id="42-frontend-routes-hooks-one-big-axios-client">4.2 Frontend — routes, hooks, one big Axios client</h3>
+<div class="mermaid">
+flowchart TD
+    Main[main.tsx] --> Providers["Providers<br/>ErrorBoundary · ThemeProvider · Router"]
+    Providers --> App[App.tsx<br/>route table]
+    App --> AuthCtx[AuthContext<br/>user + login/logout + hasPermission]
+    App --> Protected[ProtectedRoute<br/>redirects unauth users]
+    Protected --> Layout[AppLayout<br/>top bar + sidebar]
+    Layout --> Pages[pages/*.tsx]
+    Pages --> Api[lib/api.ts<br/>single Axios instance]
+    Api --> Backend[Backend]
+
+</div>
+
+<p>Every API call goes through <strong>one Axios instance</strong> in <code>lib/api.ts</code> so
+cookies, base URL, timeout, and error normalisation are consistent.
+Feature-specific wrappers live in <code>lib/apiInspections.ts</code>,
+<code>lib/apiEquipment.ts</code>, etc.</p>
+<hr />
+<h2 id="5-data-model-at-a-glance">5. Data model at a glance</h2>
+<div class="mermaid">
+erDiagram
+    Unit ||--o{ Department : has
+    Unit ||--o{ Equipment : hosts
+    Unit ||--o{ User : employs
+    Department ||--o{ Equipment : located_in
+    Role ||--o{ User : assigned_to
+    Role ||--o{ RolePermission : has
+    Permission ||--o{ RolePermission : granted_via
+    User ||--o{ Session : owns
+    User ||--o{ Inspection : performs
+    EquipmentType ||--o{ Equipment : classifies
+    EquipmentType ||--o{ ChecklistTemplate : has
+    ChecklistTemplate ||--o{ ChecklistTemplateVersion : has_versions
+    ChecklistTemplateVersion ||--o{ ChecklistSection : contains
+    ChecklistSection ||--o{ ChecklistQuestion : contains
+    Equipment ||--o{ Inspection : has_history
+    Inspection ||--o{ InspectionResponse : contains
+    InspectionResponse ||--o{ InspectionAttachment : evidence
+    Inspection ||--o{ CorrectiveAction : may_raise
+    CorrectiveAction ||--o{ CorrectiveActionAttachment : evidence
+
+</div>
+
+<p><strong>Fourteen tables</strong> total. The full schema is in
+<code>backend/prisma/schema.prisma</code> and each model has a comment explaining
+what it's for.</p>
+<p><strong>Key design decisions:</strong></p>
+<ul>
+<li><strong>Versioned checklists</strong>: editing a template creates a new version.
+  Historical inspections keep the exact version they were captured
+  against, so a template edit never mutates history.</li>
+<li><strong>Snapshotted responses</strong>: each <code>InspectionResponse</code> stores a copy of
+  the question text + type at submission time — reports and PDFs render
+  correctly even years later.</li>
+<li><strong>Unique period key</strong> (<code>YYYY-MM</code>) enforces "one inspection per
+  equipment per month" at the DB level with a unique index.</li>
+<li><strong>Inspection numbers</strong> (<code>INS-2026-000042</code>) generated inside the
+  submit transaction — monotonic per year, unique index.</li>
+</ul>
+<hr />
+<h2 id="6-auth-and-rbac-in-one-page">6. Auth and RBAC in one page</h2>
+<h3 id="61-sessions">6.1 Sessions</h3>
+<ul>
+<li>User logs in with username + password → backend verifies bcrypt hash</li>
+<li>Backend creates a <code>Session</code> row → returns an HTTP-only <strong>signed cookie</strong>
+  containing the session id</li>
+<li>Cookie is <code>secure</code> in production (HTTPS only), <code>sameSite: lax</code></li>
+<li>On every subsequent request, middleware reads the cookie, looks up the
+  session, hydrates <code>req.user</code> (or <code>null</code> if invalid / expired)</li>
+<li>Sessions have <strong>sliding expiry</strong> (default 8h idle, 30d absolute cap)</li>
+</ul>
+<h3 id="62-rbac-5-roles-18-permissions">6.2 RBAC — 5 roles, 18 permissions</h3>
+<div class="mermaid">
+flowchart LR
+    subgraph Roles
+        SA[SUPER_ADMIN]
+        CA[CENTRAL_ADMIN]
+        UA[UNIT_ADMIN]
+        IN[INSPECTOR]
+        VI[VIEWER]
+    end
+    subgraph Permissions
+        UMG[user.manage]
+        EMG[equipment.manage]
+        IPF[inspection.perform]
+        CAC[corrective_action.close]
+        RVW[report.view]
+        DOT[... 13 more]
+    end
+    SA --> UMG & EMG & IPF & CAC & RVW & DOT
+    CA --> EMG & IPF & CAC & RVW & DOT
+    UA --> EMG & IPF & RVW
+    IN --> IPF & RVW
+    VI --> RVW
+
+</div>
+
+<ul>
+<li><strong>Every backend service</strong> re-checks permissions AND scope (unit
+  isolation for UNIT_ADMIN / INSPECTOR)</li>
+<li><strong>Frontend hides</strong> nav items and controls the user can't access, but
+  the backend is the source of truth</li>
+</ul>
+<p>Full role/permission matrix is in <a href="RBAC.md"><code>RBAC.md</code></a>.</p>
+<hr />
+<h2 id="7-end-to-end-request-walk-through">7. End-to-end request walk-through</h2>
+<p><em>An inspector opens a QR code on their phone → we submit an inspection.</em></p>
+<div class="mermaid">
+sequenceDiagram
+    participant Phone as Phone camera
+    participant SPA as React SPA
+    participant API as Express API
+    participant DB as Postgres
+
+    Phone->>SPA: scans QR → GET /s/EQ-A1B2C3D4E5F6
+    SPA->>API: GET /api/equipment/by-qr/EQ-A1B2...
+    API->>DB: SELECT equipment WHERE qrCodeValue = ...
+    DB-->>API: row
+    API-->>SPA: 200 { equipment }
+    SPA->>SPA: navigate /equipment/{id}
+    SPA->>API: POST /api/inspections/start { equipmentId }
+    API->>DB: BEGIN; find/create pending inspection
+    DB-->>API: inspection row
+    API-->>SPA: 200 { inspection }
+    SPA->>SPA: navigate /inspections/{id}/perform
+    Note over SPA: Inspector fills answers,<br/>uploads photos
+    SPA->>API: PUT /api/inspections/{id} (save progress)
+    SPA->>API: POST /api/inspections/{id}/submit
+    API->>DB: BEGIN;<br/>update status=COMPLETED;<br/>assign inspectionNumber;<br/>auto-raise CAs for failures;<br/>COMMIT
+    DB-->>API: ok
+    API-->>SPA: 200 { inspection with number }
+    SPA->>SPA: navigate /inspections/{id} (detail page)
+
+</div>
+
+<hr />
+<h2 id="8-deployment-production">8. Deployment (production)</h2>
+<div class="mermaid">
+flowchart LR
+    Dev[Developer laptop] -- git push --> GH[GitHub<br/>fire-portal repo]
+    GH -- webhook --> Render[Render.com build]
+    Render --> BuildSteps["Build steps<br/>1. npm ci<br/>2. prisma generate<br/>3. vite build (frontend)<br/>4. tsc build (backend)<br/>5. prisma db push<br/>6. prisma db seed"]
+    BuildSteps --> Deploy[Deploy to<br/>upl-fire-portal.onrender.com]
+    Deploy -- reads env vars --> Env["DATABASE_URL<br/>SESSION_SECRET<br/>CORS_ORIGIN<br/>FRONTEND_DIST_DIR"]
+    Deploy -- connects --> Neon[(Neon Postgres)]
+
+</div>
+
+<p><strong><code>render.yaml</code></strong> at the repo root is the source of truth for build +
+start commands and env-var declarations. Every push to <code>main</code> on
+GitHub triggers a rebuild automatically.</p>
+<h3 id="ephemeral-disk-caveat">Ephemeral disk caveat</h3>
+<p>Render's free tier wipes the container's filesystem on every restart
+(~15 min idle spin-down or a fresh deploy). Structured data (users,
+inspections, corrective actions) is safe in Neon. <strong>Uploaded photos are
+not</strong>. For a real rollout, switch photo uploads to object storage
+(Cloudflare R2 or S3) — see §10.</p>
+<hr />
+<h2 id="9-local-development">9. Local development</h2>
+<pre><code class="language-bash"># 1. clone + install
+git clone https://github.com/paramshah1903/fire-portal.git
+cd fire-portal
+(cd backend &amp;&amp; npm ci)
+(cd frontend &amp;&amp; npm ci)
+
+# 2. configure env
+cp backend/.env.example backend/.env
+# edit backend/.env — set DATABASE_URL to your Neon URL
+#   (or a local Postgres) and set SESSION_SECRET to any random string
+
+# 3. push schema + seed
+cd backend
+npx prisma generate
+npx prisma db push --accept-data-loss
+npx tsx prisma/seed.ts
+
+# 4. run both processes (in two terminals)
+cd backend &amp;&amp; npm run dev            # http://localhost:4000
+cd frontend &amp;&amp; npm run dev           # http://localhost:5173
+</code></pre>
+<p>Log in with <code>admin</code> / <code>Admin@123</code> for a super-admin session.</p>
+<hr />
+<h2 id="10-where-to-look-when">10. Where to look when…</h2>
+<table>
+<thead>
+<tr>
+<th>I want to…</th>
+<th>Look here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add a new API endpoint</td>
+<td><code>backend/src/routes/</code>, <code>controllers/</code>, <code>services/</code></td>
+</tr>
+<tr>
+<td>Add a new page</td>
+<td><code>frontend/src/pages/YourPage.tsx</code> + register in <code>App.tsx</code></td>
+</tr>
+<tr>
+<td>Change what a role can do</td>
+<td><code>backend/src/lib/rbac.ts</code> (single source of truth)</td>
+</tr>
+<tr>
+<td>Change the theme colour</td>
+<td><code>frontend/tailwind.config.js</code> (<code>brand.*</code> scale)</td>
+</tr>
+<tr>
+<td>Add a new report</td>
+<td><code>services/reportsService.ts</code> + <code>controllers/reportsController.ts</code> + <code>routes/reports.ts</code> + a new page in <code>pages/reports/</code></td>
+</tr>
+<tr>
+<td>Add a new equipment field</td>
+<td>Prisma schema → migrate → controller Zod → service → frontend types → forms</td>
+</tr>
+<tr>
+<td>Change frequency of scheduled inspections</td>
+<td><code>EquipmentType.inspectionFrequencyDays</code> (per-type) or <code>ChecklistTemplate.frequencyDays</code> (per-template override)</td>
+</tr>
+<tr>
+<td>Add a new question type</td>
+<td><code>backend/src/lib/checklistTypes.ts</code> (the enum) + rendering in <code>InspectionPerformPage</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-things-to-improve-for-a-full-production-rollout">11. Things to improve for a full production rollout</h2>
+<ol>
+<li><strong>Object storage for photos</strong> — replace <code>multer.diskStorage()</code> with S3
+   / R2 client. About half a day of work.</li>
+<li><strong>Email / SMS / WhatsApp notifications</strong> — pluggable in
+   <code>services/notificationService.ts</code> (stub file exists). Recommend a
+   provider like AWS SES + Twilio.</li>
+<li><strong>Multi-instance HA</strong> — the app is stateless; needs shared session
+   storage (Redis) if scaled beyond one process.</li>
+<li><strong>Enterprise SSO</strong> — swap the password auth for SAML / OIDC in
+   <code>services/authService.ts</code>. Roles still map to internal RBAC.</li>
+<li><strong>Audit log retention</strong> — currently indefinite; add a monthly
+   cleanup job or archive to cold storage.</li>
+<li><strong>CI pipeline</strong> — GitHub Actions running <code>tsc</code> + tests + Prisma
+   migrate check on every PR.</li>
+</ol>
+<hr />
+<h2 id="12-further-reading">12. Further reading</h2>
+<ul>
+<li><a href="ARCHITECTURE.md"><code>ARCHITECTURE.md</code></a> — original architecture notes</li>
+<li><a href="API.md"><code>API.md</code></a> — full endpoint catalogue</li>
+<li><a href="DATABASE.md"><code>DATABASE.md</code></a> — schema deep-dive</li>
+<li><a href="RBAC.md"><code>RBAC.md</code></a> — role/permission matrix</li>
+<li><a href="DEPLOYMENT.md"><code>DEPLOYMENT.md</code></a> — Render + Neon step-by-step</li>
+<li><a href="USER_MANUAL.md"><code>USER_MANUAL.md</code></a> — role-based end-user manual</li>
+</ul>
+<p>Questions? The commit log tells the whole story of how each feature was
+built — <code>git log --oneline</code> is a great starting point.</p>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#FFF5EE',
+      primaryTextColor: '#0F172A',
+      primaryBorderColor: '#F37021',
+      lineColor: '#F37021',
+      secondaryColor: '#F1F5F9',
+      tertiaryColor: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif'
+    }
+  });
+  // Tell the print driver "we're ready" once diagrams have rendered.
+  // Chrome's --print-to-pdf waits for onload; mermaid runs after that.
+  // We give it a beat then set a flag Puppeteer/CDP could poll — but
+  // since we're using CLI, we rely on --virtual-time-budget instead.
+</script>
+
+</body>
+</html>

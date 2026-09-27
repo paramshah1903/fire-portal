@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>User Manual</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --orange: #F37021;
+    --orange-dark: #DB5B0E;
+    --orange-tint: #FFF5EE;
+    --slate-900: #0F172A;
+    --slate-800: #1E293B;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748B;
+    --slate-400: #94A3B8;
+    --slate-300: #CBD5E1;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50:  #F8FAFC;
+  }
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm 22mm 16mm;
+    @bottom-left  { content: "SafetyVerse · by UPL"; font-size: 9pt; color: #64748B; }
+    @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 9pt; color: #64748B; }
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    color: var(--slate-800);
+    font-size: 10.5pt;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Cover block at the very top */
+  .cover {
+    padding: 40mm 0 16mm 0;
+    border-bottom: 3px solid var(--orange);
+    margin-bottom: 12mm;
+    page-break-after: always;
+  }
+  .cover .eyebrow {
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .cover h1 {
+    font-size: 44pt;
+    margin: 8mm 0 2mm 0;
+    color: var(--slate-900);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .cover .sub {
+    font-size: 16pt;
+    color: var(--slate-500);
+    margin: 0 0 20mm 0;
+  }
+  .cover .meta {
+    font-size: 10pt;
+    color: var(--slate-500);
+    border-top: 1px solid var(--slate-200);
+    padding-top: 6mm;
+    margin-top: 10mm;
+  }
+  .cover .meta strong { color: var(--slate-800); }
+
+  /* Headings */
+  h1, h2, h3, h4 {
+    color: var(--slate-900);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 1.6em;
+    margin-bottom: 0.4em;
+    page-break-after: avoid;
+  }
+  h1 { font-size: 22pt; border-bottom: 2px solid var(--orange); padding-bottom: 2mm; }
+  h2 { font-size: 16pt; color: var(--slate-900); margin-top: 1.4em; }
+  h2:before {
+    content: "";
+    display: inline-block;
+    width: 3px; height: 0.9em;
+    background: var(--orange);
+    margin-right: 6px;
+    vertical-align: -0.05em;
+  }
+  h3 { font-size: 12.5pt; color: var(--slate-800); }
+  h4 { font-size: 11pt; color: var(--slate-700); }
+
+  p { margin: 0.5em 0 0.9em 0; }
+  strong { color: var(--slate-900); }
+
+  /* Links */
+  a {
+    color: var(--orange-dark);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--orange);
+  }
+
+  /* Lists */
+  ul, ol { padding-left: 1.4em; margin: 0.4em 0 1em 0; }
+  li { margin: 0.15em 0; }
+  ul li::marker { color: var(--orange); }
+  ol li::marker { color: var(--orange-dark); font-weight: 600; }
+
+  /* Code */
+  code {
+    background: var(--slate-100);
+    color: var(--orange-dark);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+  }
+  pre {
+    background: var(--slate-900);
+    color: #E5E7EB;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 3px solid var(--orange);
+    overflow-x: auto;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0 1.4em 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  thead { background: var(--orange); color: white; }
+  th {
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+    font-size: 9.5pt;
+    letter-spacing: 0.02em;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--slate-200);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--slate-50); }
+
+  /* Blockquotes = callouts */
+  blockquote {
+    background: var(--orange-tint);
+    border-left: 3px solid var(--orange);
+    margin: 1em 0;
+    padding: 8px 14px;
+    border-radius: 0 4px 4px 0;
+    color: var(--slate-800);
+  }
+  blockquote p { margin: 0.3em 0; }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--slate-200);
+    margin: 2em 0;
+  }
+
+  /* Mermaid: keep the SVG on one page and centered */
+  .mermaid {
+    text-align: center;
+    background: var(--slate-50);
+    padding: 12px 8px;
+    border-radius: 6px;
+    margin: 1em 0 1.4em 0;
+    page-break-inside: avoid;
+  }
+
+  /* Task list checkboxes */
+  ul.task-list { list-style: none; padding-left: 1em; }
+  input[type="checkbox"] {
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="eyebrow">SAFETYVERSE · BY UPL</div>
+  <h1>User Manual</h1>
+  <p class="sub">SafetyVerse · by UPL</p>
+  <div class="meta">
+    <strong>Version:</strong> 2026-09  ·  <strong>Audience:</strong> All end users<br>
+    <strong>Live app:</strong> https://upl-fire-portal.onrender.com<br>
+    <strong>Repository:</strong> https://github.com/paramshah1903/fire-portal
+  </div>
+</div>
+
+<h1 id="safetyverse-user-manual">SafetyVerse — User Manual</h1>
+<p><em>Everything you need to know to use the SafetyVerse portal, organised by
+your role. If you don't know your role, ask your admin — this manual
+tells you exactly what you can do.</em></p>
+<p><strong>Live URL:</strong> <code>https://upl-fire-portal.onrender.com</code>
+<strong>Best on:</strong> any modern browser (Chrome, Edge, Safari, Firefox) on
+desktop or phone.</p>
+<hr />
+<h2 id="table-of-contents">Table of contents</h2>
+<ol>
+<li><a href="#1-signing-in">Signing in</a></li>
+<li><a href="#2-what-am-i-allowed-to-do--role-guide">What am I allowed to do? — Role guide</a></li>
+<li><a href="#3-super-admin-manual">Super Admin manual</a></li>
+<li><a href="#4-central-admin-manual">Central Admin manual</a></li>
+<li><a href="#5-unit-admin-manual">Unit Admin manual</a></li>
+<li><a href="#6-inspector-manual">Inspector manual</a></li>
+<li><a href="#7-viewer-manual">Viewer manual</a></li>
+<li><a href="#8-common-workflows">Common workflows</a></li>
+<li><a href="#9-frequently-asked-questions">Frequently asked questions</a></li>
+<li><a href="#10-getting-help">Getting help</a></li>
+</ol>
+<hr />
+<h2 id="1-signing-in">1. Signing in</h2>
+<ol>
+<li>Open <a href="https://upl-fire-portal.onrender.com">https://upl-fire-portal.onrender.com</a></li>
+<li>Enter your <strong>Username</strong> and <strong>Password</strong></li>
+<li>Click <strong>Sign in</strong></li>
+</ol>
+<blockquote>
+<p><strong>Tip — First login:</strong> Your admin will give you a temporary password.
+Change it immediately from <strong>Users → your row → Reset password</strong>
+(only your admin can do this in the current release; a self-serve
+password change is on the roadmap).</p>
+</blockquote>
+<p><strong>Trouble signing in?</strong>
+- <em>"Unable to reach the server"</em> → refresh the page, then try again.
+  The app spins down after 15 minutes of inactivity and can take
+  ~30 seconds to wake up.
+- <em>"Invalid username or password"</em> → check caps lock, then ask your
+  admin to reset your password.</p>
+<hr />
+<h2 id="2-what-am-i-allowed-to-do-role-guide">2. What am I allowed to do? — Role guide</h2>
+<p>There are <strong>5 roles</strong> in SafetyVerse. Your role decides what you see and
+what you can do.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>You can…</th>
+<th>You cannot…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Super Admin</strong></td>
+<td>Everything, across every unit</td>
+<td>(nothing — full access)</td>
+</tr>
+<tr>
+<td><strong>Central Admin</strong></td>
+<td>Manage equipment, templates, inspections, reports across all units</td>
+<td>Delete users or change roles</td>
+</tr>
+<tr>
+<td><strong>Unit Admin</strong></td>
+<td>Manage equipment, users, and inspections <strong>for your unit only</strong></td>
+<td>See or change data in other units</td>
+</tr>
+<tr>
+<td><strong>Inspector</strong></td>
+<td>Perform inspections, raise corrective actions in your unit</td>
+<td>Manage equipment, users, or templates</td>
+</tr>
+<tr>
+<td><strong>Viewer</strong></td>
+<td>Read-only access to dashboards, equipment, and reports</td>
+<td>Change anything</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The sidebar shows only what you can access</strong> — if you don't see a
+menu item, it's because your role doesn't allow it. That's by design,
+not a bug.</p>
+<hr />
+<h2 id="3-super-admin-manual">3. Super Admin manual</h2>
+<p>You have full system access. Your primary job is <strong>onboarding new
+units, users, and equipment types</strong>, and <strong>overseeing compliance across
+the whole company</strong>.</p>
+<h3 id="31-first-week-checklist">3.1 First-week checklist</h3>
+<ul>
+<li>[ ] Change the seeded <code>admin</code> password (Users page → edit <code>admin</code> → Reset password)</li>
+<li>[ ] Create real user accounts for each unit's team</li>
+<li>[ ] Create Units (one per physical plant)</li>
+<li>[ ] Create Departments inside each Unit</li>
+<li>[ ] Confirm the seeded Equipment Types match your reality (Fire Extinguisher, Hydrant, Hose Reel, etc.); create new ones if needed</li>
+<li>[ ] Create at least one <strong>Checklist Template</strong> per Equipment Type and publish v1</li>
+<li>[ ] Import equipment via CSV (Equipment → Import) or add individually</li>
+</ul>
+<h3 id="32-common-tasks">3.2 Common tasks</h3>
+<p><strong>Create a new Unit</strong>
+Masters → Units → <strong>New unit</strong> → fill code, name, location → Create.</p>
+<p><strong>Create a new user</strong>
+Administration → Users → <strong>New user</strong> → pick role, unit (if not
+Central/Super), username, password → Create.</p>
+<blockquote>
+<p>Users must be assigned to a Unit if their role is Unit Admin or Inspector.
+Central Admin and Super Admin see all units.</p>
+</blockquote>
+<p><strong>Reset a user's password</strong>
+Users → click the user row → <strong>Reset password</strong> → generate or type new
+one → save. The user must change it themselves on next login.</p>
+<p><strong>Create a Checklist Template</strong>
+Masters → Checklist Templates → <strong>New template</strong>:
+1. Give it a name (e.g. "Monthly Fire Extinguisher Check")
+2. Pick the Equipment Type it applies to
+3. Optionally set Frequency in days (leave blank to use the Equipment
+   Type's default frequency)
+4. Optionally add <strong>Printed header</strong> (shown on PDF export), <strong>Printed
+   footer</strong>, and <strong>Signature line</strong>
+5. Optionally restrict to specific units (leave all unchecked to apply
+   to every unit)
+6. Click Create — a <strong>Draft v1</strong> is created</p>
+<p>Then open the template → <strong>Continue draft v1</strong> → add sections and
+questions → <strong>Publish</strong>.</p>
+<p><strong>Bulk import equipment via CSV</strong>
+Masters → Equipment → <strong>Import</strong>:
+1. Download the CSV template
+2. Fill it in (one row per equipment; keep column headers as-is)
+3. Upload → preview → confirm</p>
+<h3 id="33-what-only-you-can-do">3.3 What only you can do</h3>
+<ul>
+<li>Manage the base equipment types (add new types like "Sprinkler")</li>
+<li>Deactivate users (Users → row → toggle Active)</li>
+<li>Access the <strong>Audit Logs</strong> (System → Audit Logs) to see who did what</li>
+<li>View data across <strong>every unit</strong> without any filter</li>
+</ul>
+<hr />
+<h2 id="4-central-admin-manual">4. Central Admin manual</h2>
+<p>You oversee fire safety across all units but don't touch user
+accounts. Your primary jobs are <strong>template management, compliance
+tracking, and corrective-action follow-through</strong>.</p>
+<h3 id="41-daily-routine">4.1 Daily routine</h3>
+<ol>
+<li><strong>Open Dashboard</strong> — check the compliance summary; note any unit
+   with high overdue count</li>
+<li><strong>Check Overdue inspections</strong> (Inspections tab → filter Status =
+   Overdue) — ping the relevant Unit Admin to chase</li>
+<li><strong>Review new corrective actions</strong> (Corrective Actions tab) — assign,
+   set priorities, follow up</li>
+<li><strong>End of day</strong>: check "Failed equipment" report for anything
+   safety-critical</li>
+</ol>
+<h3 id="42-common-tasks">4.2 Common tasks</h3>
+<p><strong>Publish a new checklist version</strong>
+When a question needs to change (add / edit / remove):
+1. Open the template → <strong>New draft version</strong> — this clones the current
+   published version
+2. Edit sections and questions freely in the draft
+3. <strong>Publish</strong> — the previous version is archived; new inspections
+   from now on use the new version</p>
+<blockquote>
+<p>Old inspections keep the version they were captured against, so
+reports for historical periods remain accurate.</p>
+</blockquote>
+<p><strong>Assign a corrective action</strong>
+Corrective Actions → click the CA code → <strong>Assign</strong> → pick the
+Assignee (usually a Unit Admin or Inspector) → set target date.</p>
+<p><strong>Close a corrective action</strong>
+Only Central Admin (and Super Admin) can close CAs. Open the CA → once
+it's in RESOLVED status, click <strong>Close</strong> → add closure remarks +
+optional evidence photo.</p>
+<h3 id="43-reports-youll-use-most">4.3 Reports you'll use most</h3>
+<ul>
+<li><strong>Compliance report</strong> — for a date range: per-equipment,
+  completed / due / overdue / pass / fail. Export to Excel for the
+  monthly review.</li>
+<li><strong>Unit compliance</strong> — one row per unit with completion + pass rates.
+  Great for management review meetings.</li>
+<li><strong>Corrective actions</strong> — status, priority, days-open, average
+  time-to-close.</li>
+<li><strong>Inspections by equipment type</strong> — for auditors: pick a type, get
+  every completed inspection with every answer as a column.</li>
+</ul>
+<hr />
+<h2 id="5-unit-admin-manual">5. Unit Admin manual</h2>
+<p>You run fire safety for <strong>one unit</strong>. You never see other units' data.
+Your primary jobs are <strong>keeping the equipment master current, making
+sure inspections happen on time, and following up on failures in your
+unit</strong>.</p>
+<h3 id="51-daily-routine">5.1 Daily routine</h3>
+<ol>
+<li><strong>Dashboard</strong> — check your unit's compliance stats for the current
+   month</li>
+<li><strong>Overdue inspections</strong> — nudge inspectors, or perform inspections
+   yourself</li>
+<li><strong>Open corrective actions</strong> — check the ones assigned to your unit;
+   move them to IN_PROGRESS as work starts, RESOLVED when done (Central
+   Admin will close them)</li>
+</ol>
+<h3 id="52-common-tasks">5.2 Common tasks</h3>
+<p><strong>Add or edit equipment</strong>
+Masters → Equipment → <strong>New equipment</strong> (or click a row to edit):
+- <strong>Code</strong> — auto-generated but overridable
+- <strong>Type</strong> — pick from the list
+- <strong>Serial / Asset / Location</strong> — these appear on every inspection and
+  on the printed PDF, so fill them in
+- <strong>Department</strong> — helps narrow down location
+- <strong>QR value</strong> — auto-generated; you can print the QR label from the
+  equipment detail page</p>
+<p><strong>Print QR labels</strong>
+Two ways:
+- <strong>One at a time:</strong> Equipment → click the equipment → <strong>Label</strong> →
+  Print / Save as PDF
+- <strong>Bulk:</strong> QR Management → Bulk QR Labels → pick equipment → <strong>Print</strong>
+  → the browser dialog gives you a printable sheet of QR stickers</p>
+<p>Stick the labels on the physical equipment. Any phone camera that
+scans them opens SafetyVerse at the right equipment.</p>
+<p><strong>Perform an inspection yourself</strong>
+Inspections → Monthly schedule → click <strong>Start</strong> next to an equipment.
+See §6 (Inspector manual) for the checklist flow.</p>
+<h3 id="53-what-you-cant-do-and-who-to-ask">5.3 What you can't do (and who to ask)</h3>
+<table>
+<thead>
+<tr>
+<th>I need to…</th>
+<th>Ask…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create a new user</td>
+<td>Super Admin</td>
+</tr>
+<tr>
+<td>Add a new equipment type</td>
+<td>Super Admin</td>
+</tr>
+<tr>
+<td>Change a checklist template</td>
+<td>Central Admin</td>
+</tr>
+<tr>
+<td>Close a corrective action</td>
+<td>Central Admin</td>
+</tr>
+<tr>
+<td>See another unit's data</td>
+<td>You can't — that's by design</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-inspector-manual">6. Inspector manual</h2>
+<p>You do the physical inspections. Your primary tool is <strong>your phone
+camera</strong>. Most of your time in SafetyVerse is on the mobile screen.</p>
+<h3 id="61-the-core-flow-scanning-a-qr">6.1 The core flow — scanning a QR</h3>
+<ol>
+<li>Open your phone camera → point at the QR sticker on the equipment</li>
+<li>Tap the notification → SafetyVerse opens in your browser</li>
+<li>If you're not signed in, log in with your credentials</li>
+<li>You land on the equipment page → tap <strong>Start inspection</strong></li>
+<li>Fill each question:
+   - <strong>Pass / Fail</strong> — tap the button
+   - <strong>Yes / No</strong> — tap the button
+   - <strong>Numeric</strong> — type the number (with the specified unit if any)
+   - <strong>Text / Remarks</strong> — type in the box
+   - <strong>Dropdown</strong> — pick from the list
+   - <strong>Photo</strong> — tap <strong>+ Add photo</strong> → your camera opens → snap →
+     attached to that question</li>
+<li>Add optional overall remarks at the bottom</li>
+<li>Tap <strong>Submit inspection</strong> → type your name to confirm → <strong>Submit</strong></li>
+<li>Done. You get an <strong>Inspection Number</strong> like <code>INS-2026-000042</code> that
+   goes on the record.</li>
+</ol>
+<h3 id="62-things-to-know">6.2 Things to know</h3>
+<ul>
+<li><strong>Safety-critical questions</strong> are marked with a red <strong>Safety</strong> badge.
+  A "Fail" on one of these marks the whole inspection as safety-critical
+  and immediately raises a corrective action.</li>
+<li><strong>Mandatory questions</strong> must be answered before you can submit — the
+  submit button stays disabled until they're all done.</li>
+<li>If you can't complete an inspection right away, tap <strong>Save progress</strong>
+  — your answers stay there and you can resume later from Inspections.</li>
+<li>Once submitted, an inspection <strong>cannot be edited</strong>. It becomes a
+  permanent record. Only re-inspection creates a new record.</li>
+</ul>
+<h3 id="63-raising-a-corrective-action-manually">6.3 Raising a corrective action manually</h3>
+<p>Sometimes you spot an issue that doesn't map to a checklist question
+(e.g. bracket is loose). Raise a CA manually:
+1. Corrective Actions → <strong>New corrective action</strong>
+2. Pick the equipment, describe the issue, set priority
+3. Optionally attach evidence photos
+4. Submit — Central Admin will assign and follow through</p>
+<h3 id="64-if-the-qr-wont-scan">6.4 If the QR won't scan</h3>
+<ul>
+<li>Make sure the QR sticker is clean and not creased</li>
+<li>Try again with better lighting</li>
+<li>Fallback: open SafetyVerse manually → Scan (in the sidebar) → the
+  in-app scanner works even in dim conditions</li>
+<li>Manual fallback: Equipment → search by code → open → Start inspection</li>
+</ul>
+<hr />
+<h2 id="7-viewer-manual">7. Viewer manual</h2>
+<p>You have <strong>read-only access</strong>. You can see everything but change
+nothing.</p>
+<h3 id="71-what-you-can-do">7.1 What you can do</h3>
+<ul>
+<li><strong>Dashboard</strong> — see compliance stats</li>
+<li><strong>Equipment</strong> — browse the master, click an item to see history</li>
+<li><strong>Inspections</strong> — view completed inspections, open the detail page,
+  even <strong>Print / Save as PDF</strong> — read-only exports work</li>
+<li><strong>Corrective Actions</strong> — see the list, open the detail page</li>
+<li><strong>Reports</strong> — every report, plus CSV / Excel export</li>
+</ul>
+<h3 id="72-what-you-cant-do">7.2 What you can't do</h3>
+<ul>
+<li>Start a new inspection</li>
+<li>Edit anything</li>
+<li>See users' passwords or personal info</li>
+<li>Access Audit Logs (Super Admin only)</li>
+</ul>
+<p>Typical Viewer users: management stakeholders, external auditors,
+company safety officers who oversee but don't operate.</p>
+<hr />
+<h2 id="8-common-workflows">8. Common workflows</h2>
+<h3 id="81-print-a-completed-inspection-as-pdf">8.1 Print a completed inspection as PDF</h3>
+<ol>
+<li>Open the completed inspection (Inspections → click the row)</li>
+<li>Top-right → <strong>Print / Save as PDF</strong></li>
+<li>Browser dialog opens → destination = <strong>Save as PDF</strong> → Save</li>
+<li>The PDF includes:
+   - Template header (if configured)
+   - Equipment details (serial, asset, location, etc.)
+   - All questions and answers
+   - Signature block
+   - Template footer (if configured)</li>
+</ol>
+<h3 id="82-export-a-report-as-excel">8.2 Export a report as Excel</h3>
+<ol>
+<li>Reports → pick a report → apply filters (date range, unit, type)</li>
+<li>Top-right → <strong>Export Excel</strong> (or CSV)</li>
+<li>File downloads → open in Excel / Google Sheets</li>
+</ol>
+<h3 id="83-track-a-specific-equipments-full-history">8.3 Track a specific equipment's full history</h3>
+<p>Two options:
+- <strong>Reports → Equipment inspection log</strong> → search + pick the equipment
+  → get every completed inspection with every answer as a column
+- <strong>Reports → Equipment history</strong> → simpler summary (dates, pass/fail,
+  inspector)</p>
+<h3 id="84-see-all-inspections-of-one-equipment-type">8.4 See "all inspections of one equipment type"</h3>
+<p>Reports → <strong>Inspections by equipment type</strong> → pick the type → get one
+row per completed inspection across every equipment of that type, with
+every checklist question as a column.</p>
+<hr />
+<h2 id="9-frequently-asked-questions">9. Frequently asked questions</h2>
+<p><strong>Q: Can I fill an inspection that was due last month?</strong>
+Yes. Inspections → All inspections tab → find the pending one → <strong>Resume</strong>.</p>
+<p><strong>Q: I made a typo in a submitted inspection — can I edit it?</strong>
+No, submitted inspections are immutable by design. Ask your Central
+Admin to raise a <strong>re-inspection</strong> (they can start a new inspection for
+the same equipment for the same period).</p>
+<p><strong>Q: My phone camera won't scan the QR.</strong>
+See §6.4 above — clean the sticker, try better lighting, or use the
+in-app Scan page.</p>
+<p><strong>Q: The app is slow to load.</strong>
+The free hosting tier spins down after 15 minutes of inactivity. First
+request wakes it (~30 seconds). Subsequent requests are fast.</p>
+<p><strong>Q: I uploaded a photo but now it's gone.</strong>
+On the current free hosting tier, uploaded photos are stored on
+ephemeral disk and get wiped when the container restarts (~ every day
+or when a new version deploys). Structured data (inspections,
+corrective actions, users) is safe in the persistent database.
+Photo persistence needs an object-storage upgrade — talk to your admin.</p>
+<p><strong>Q: How do I know my role?</strong>
+Top-right of the app, above the "Sign out" button, shows your name and
+role (Super Admin, Central Admin, Unit Admin, Inspector, Viewer).</p>
+<p><strong>Q: How do I switch to dark mode?</strong>
+Click the sun / moon icon in the top nav (next to Sign out). Your
+choice is saved.</p>
+<p><strong>Q: How often should inspections happen?</strong>
+Depends on the Equipment Type's <code>inspectionFrequencyDays</code> setting.
+Default is 30 days (monthly) for most fire safety equipment. Your
+Super Admin controls this per type.</p>
+<hr />
+<h2 id="10-getting-help">10. Getting help</h2>
+<ul>
+<li><strong>In-app</strong>: hover over any icon or badge for a tooltip</li>
+<li><strong>This manual</strong>: bookmark it — it's the source of truth</li>
+<li><strong>Your admin</strong>: your Unit Admin for unit-specific things, Central
+  Admin for cross-unit or template questions, Super Admin for user /
+  access issues</li>
+<li><strong>Bugs or feature requests</strong>: raise through the internal IT process
+  or your Safety Officer</li>
+</ul>
+<hr />
+<p><strong>Version:</strong> 2026-09 — matches the SafetyVerse pilot release
+<strong>Maintained by:</strong> UPL Fire Safety / IT</p>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#FFF5EE',
+      primaryTextColor: '#0F172A',
+      primaryBorderColor: '#F37021',
+      lineColor: '#F37021',
+      secondaryColor: '#F1F5F9',
+      tertiaryColor: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif'
+    }
+  });
+  // Tell the print driver "we're ready" once diagrams have rendered.
+  // Chrome's --print-to-pdf waits for onload; mermaid runs after that.
+  // We give it a beat then set a flag Puppeteer/CDP could poll — but
+  // since we're using CLI, we rely on --virtual-time-budget instead.
+</script>
+
+</body>
+</html>
