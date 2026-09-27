@@ -37,6 +37,8 @@ HERE = Path(__file__).parent
 DOCS = [
     ('DEVELOPER_GUIDE.md', 'SafetyVerse_Developer_Guide',
      'Developer Guide', 'SafetyVerse · by UPL'),
+    ('DEVELOPER_GUIDE_SIMPLE.md', 'SafetyVerse_Developer_Guide_Simple',
+     'The Really Simple Guide', 'SafetyVerse · by UPL'),
     ('USER_MANUAL.md', 'SafetyVerse_User_Manual',
      'User Manual', 'SafetyVerse · by UPL'),
 ]
