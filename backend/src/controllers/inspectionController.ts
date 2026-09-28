@@ -67,7 +67,9 @@ export const listInspections: RequestHandler = asyncHandler(async (req, res) => 
       : 25;
 
   const status =
-    req.query.status === 'PENDING' || req.query.status === 'COMPLETED'
+    req.query.status === 'PENDING' ||
+    req.query.status === 'PENDING_APPROVAL' ||
+    req.query.status === 'COMPLETED'
       ? req.query.status
       : undefined;
   const result =
@@ -201,9 +203,50 @@ export const submit: RequestHandler = asyncHandler(async (req, res) => {
     entityType: 'Inspection',
     entityId: inspection.id,
     metadata: {
+      status: inspection.status,
       result: inspection.result,
       hasSafetyCriticalFailure: inspection.hasSafetyCriticalFailure,
     },
+  });
+  res.json({ inspection });
+});
+
+const rejectSchema = z.object({
+  reason: z.string().min(1).max(1000),
+});
+
+export const listPendingApprovals: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const rows = await service.listPendingApprovals(actor(req));
+    res.json({ inspections: rows });
+  },
+);
+
+export const approve: RequestHandler = asyncHandler(async (req, res) => {
+  const inspection = await service.approveInspection(actor(req), req.params.id);
+  await writeAudit({
+    actorId: req.user!.id,
+    action: 'inspection.approve',
+    entityType: 'Inspection',
+    entityId: inspection.id,
+    metadata: { inspectionNumber: inspection.inspectionNumber },
+  });
+  res.json({ inspection });
+});
+
+export const reject: RequestHandler = asyncHandler(async (req, res) => {
+  const parsed = rejectSchema.parse(req.body);
+  const inspection = await service.rejectInspection(
+    actor(req),
+    req.params.id,
+    parsed.reason,
+  );
+  await writeAudit({
+    actorId: req.user!.id,
+    action: 'inspection.reject',
+    entityType: 'Inspection',
+    entityId: inspection.id,
+    metadata: { reason: parsed.reason },
   });
   res.json({ inspection });
 });

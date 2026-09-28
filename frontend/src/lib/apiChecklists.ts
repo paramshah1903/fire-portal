@@ -6,6 +6,8 @@ export const QUESTION_TYPES = [
   'NUMERIC',
   'TEXT',
   'DROPDOWN',
+  'RADIO',
+  'CHECKBOX',
   'DATE',
   'PHOTO',
   'REMARKS',
@@ -18,6 +20,8 @@ export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   NUMERIC: 'Numeric',
   TEXT: 'Text',
   DROPDOWN: 'Dropdown',
+  RADIO: 'Radio buttons',
+  CHECKBOX: 'Checkboxes (multi-select)',
   DATE: 'Date',
   PHOTO: 'Photo',
   REMARKS: 'Remarks',
@@ -51,6 +55,17 @@ export interface ChecklistTemplateSummary {
     unitId: string;
     unit: { id: string; code: string; name: string };
   }[];
+  approvers: {
+    templateId: string;
+    userId: string;
+    user: {
+      id: string;
+      username: string;
+      fullName: string;
+      unitId: string | null;
+      role: { key: string; name: string };
+    };
+  }[];
   versions: ChecklistVersionSummary[];
   _count?: { versions: number };
 }
@@ -75,6 +90,8 @@ export interface ChecklistQuestion {
   isSafetyCritical: boolean;
   requiresCorrectiveActionOnFail: boolean;
   optionsJson: string | null;
+  /// Pre-selected default for DROPDOWN / RADIO — must be one of the options.
+  defaultOptionValue?: string | null;
   numericMin: number | null;
   numericMax: number | null;
   numericUnit: string | null;
@@ -129,6 +146,7 @@ export interface TemplateCreateInput {
   footerText?: string | null;
   signatureLine?: string | null;
   applicableUnitIds?: string[];
+  approverUserIds?: string[];
 }
 
 export interface TemplateUpdateInput {
@@ -139,6 +157,7 @@ export interface TemplateUpdateInput {
   footerText?: string | null;
   signatureLine?: string | null;
   applicableUnitIds?: string[];
+  approverUserIds?: string[];
   isActive?: boolean;
 }
 

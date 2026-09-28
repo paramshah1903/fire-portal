@@ -33,6 +33,7 @@ function emptyQuestion(): ChecklistQuestion {
     isSafetyCritical: false,
     requiresCorrectiveActionOnFail: false,
     optionsJson: null,
+    defaultOptionValue: null,
     numericMin: null,
     numericMax: null,
     numericUnit: null,
@@ -553,6 +554,7 @@ function QuestionEditor({
               questionType: e.target.value as QuestionType,
               // Reset per-type fields on type change.
               optionsJson: null,
+              defaultOptionValue: null,
               numericMin: null,
               numericMax: null,
               numericUnit: null,
@@ -567,15 +569,51 @@ function QuestionEditor({
         </Select>
 
         {/* Per-type extras */}
-        {question.questionType === 'DROPDOWN' && (
+        {(question.questionType === 'DROPDOWN' ||
+          question.questionType === 'RADIO' ||
+          question.questionType === 'CHECKBOX') && (
           <div className="sm:col-span-2">
             <DropdownOptionsInput
               value={question.optionsJson}
               disabled={readOnly}
               onChange={(nextJson) =>
-                onChange((q) => ({ ...q, optionsJson: nextJson }))
+                onChange((q) => {
+                  // If the default no longer matches an option, clear it.
+                  const parsed = parseOptionsList(nextJson);
+                  const stillValid =
+                    q.defaultOptionValue &&
+                    parsed.includes(q.defaultOptionValue);
+                  return {
+                    ...q,
+                    optionsJson: nextJson,
+                    defaultOptionValue: stillValid ? q.defaultOptionValue : null,
+                  };
+                })
               }
             />
+            {(question.questionType === 'DROPDOWN' ||
+              question.questionType === 'RADIO') && (
+              <div className="mt-2">
+                <Select
+                  label="Default selection (optional)"
+                  disabled={readOnly}
+                  value={question.defaultOptionValue ?? ''}
+                  onChange={(e) =>
+                    onChange((q) => ({
+                      ...q,
+                      defaultOptionValue: e.target.value || null,
+                    }))
+                  }
+                >
+                  <option value="">— No default —</option>
+                  {parseOptionsList(question.optionsJson).map((o) => (
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
           </div>
         )}
         {question.questionType === 'NUMERIC' && (
@@ -693,6 +731,19 @@ function optionsJsonToLines(json: string | null): string {
     // fall through
   }
   return '';
+}
+
+function parseOptionsList(json: string | null | undefined): string[] {
+  if (!json) return [];
+  try {
+    const parsed = JSON.parse(json);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((s): s is string => typeof s === 'string');
+    }
+  } catch {
+    // fall through
+  }
+  return [];
 }
 
 function optionsLinesToJson(text: string): string | null {

@@ -140,12 +140,15 @@ model User {
   auditLogs                   AuditLog[]
   publishedChecklists         ChecklistTemplateVersion[] @relation("PublishedChecklistVersions")
   inspectionsPerformed        Inspection[]               @relation("InspectionsPerformed")
+  inspectionsApproved         Inspection[]               @relation("InspectionApprovals")
+  inspectionsRejected         Inspection[]               @relation("InspectionRejections")
   inspectionAttachments       InspectionAttachment[]
   correctiveActionsRaised     CorrectiveAction[]         @relation("CorrectiveActionsRaised")
   correctiveActionsAssigned   CorrectiveAction[]         @relation("CorrectiveActionsAssigned")
   correctiveActionsResolved   CorrectiveAction[]         @relation("CorrectiveActionsResolved")
   correctiveActionsClosed     CorrectiveAction[]         @relation("CorrectiveActionsClosed")
   correctiveActionAttachments CorrectiveActionAttachment[]
+  templateApprovals           ChecklistTemplateApprover[] @relation("ChecklistTemplateApprovers")
 
   @@index([roleId])
   @@index([unitId])
@@ -287,9 +290,26 @@ model ChecklistTemplate {
   equipmentType   EquipmentType             @relation(fields: [equipmentTypeId], references: [id])
   versions        ChecklistTemplateVersion[]
   applicableUnits ChecklistTemplateUnit[]
+  approvers       ChecklistTemplateApprover[]
 
   @@index([equipmentTypeId])
   @@index([isActive])
+}
+
+/// Users authorised to approve inspections captured against this
+/// template. When at least one approver row exists, submitted
+/// inspections enter PENDING_APPROVAL until any listed user approves.
+/// Approvers must have role UNIT_ADMIN or above.
+model ChecklistTemplateApprover {
+  templateId String
+  userId     String
+  createdAt  DateTime @default(now())
+
+  template ChecklistTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  user     User              @relation("ChecklistTemplateApprovers", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([templateId, userId])
+  @@index([userId])
 }
 
 /// A join table: which units a template applies to. If a template has
@@ -344,8 +364,8 @@ model ChecklistSection {
   @@index([versionId])
 }
 
-/// Question types (stored as string for SQLite portability):
-///   PASS_FAIL | YES_NO | NUMERIC | TEXT | DROPDOWN | DATE | PHOTO | REMARKS
+/// Question types (stored as string for portability):
+///   PASS_FAIL | YES_NO | NUMERIC | TEXT | DROPDOWN | RADIO | CHECKBOX | DATE | PHOTO | REMARKS
 model ChecklistQuestion {
   id                             String  @id @default(cuid())
   sectionId                      String
@@ -357,8 +377,11 @@ model ChecklistQuestion {
   /// If true, a failed answer to this question raises a corrective
   /// action automatically (see Phase 6).
   requiresCorrectiveActionOnFail Boolean @default(false)
-  /// JSON-encoded array of option labels for DROPDOWN questions.
+  /// JSON-encoded array of option labels for DROPDOWN / RADIO / CHECKBOX.
   optionsJson                    String?
+  /// Optional default option for DROPDOWN / RADIO (must be one of
+  /// the values in optionsJson). Pre-fills the answer on inspection start.
+  defaultOptionValue             String?
   /// Numeric constraints (only used for NUMERIC).
   numericMin                     Float?
   numericMax                     Float?
@@ -412,7 +435,14 @@ model Inspection {
   /// The date by which this inspection must be completed to be on time.
   dueDate                  DateTime
 
-  /// PENDING | COMPLETED
+  /// PENDING | PENDING_APPROVAL | COMPLETED
+  ///
+  /// - PENDING            → inspector is still working on it (or the
+  ///                         approval was rejected; rejectionReason is set).
+  /// - PENDING_APPROVAL   → submitted, waiting on an approver listed
+  ///                         on the checklist template.
+  /// - COMPLETED          → immutable final state. Inspection number
+  ///                         and auto-CAs are assigned on entry.
   status                   String    @default("PENDING")
   /// PASS | FAIL — set on submission.
   result                   String?
@@ -426,6 +456,16 @@ model Inspection {
   /// The typed name the inspector confirmed the submission with.
   confirmationName         String?
 
+  /// Approval metadata — set only for templates with approvers configured.
+  approvedAt               DateTime?
+  approvedById             String?
+  /// Populated when a reviewer rejects a PENDING_APPROVAL submission.
+  /// The inspection returns to PENDING; the reason stays for context
+  /// until the next submission clears it.
+  rejectionReason          String?
+  rejectedAt               DateTime?
+  rejectedById             String?
+
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
 
@@ -433,6 +473,8 @@ model Inspection {
   templateVersion ChecklistTemplateVersion @relation(fields: [templateVersionId], references: [id])
   unit            Unit                     @relation(fields: [unitId], references: [id])
   inspector       User                     @relation("InspectionsPerformed", fields: [inspectorId], references: [id])
+  approvedBy      User?                    @relation("InspectionApprovals", fields: [approvedById], references: [id])
+  rejectedBy      User?                    @relation("InspectionRejections", fields: [rejectedById], references: [id])
 
   responses          InspectionResponse[]
   attachments        InspectionAttachment[]

@@ -74,7 +74,6 @@ export function EquipmentTypeInspectionLogReportPage() {
     <div>
       <PageHeader
         title="Inspections by equipment type"
-        description="Every completed inspection for a chosen equipment type — one column per checklist question."
         actions={
           data && (
             <ExportBar
@@ -204,11 +203,6 @@ function LogTable({ data }: { data: EquipmentTypeLogReport }) {
             {data.questions.map((q) => (
               <Th key={q.key}>
                 <div className="min-w-[160px]">
-                  {q.sectionTitle && (
-                    <p className="text-[9px] font-normal uppercase tracking-widest text-slate-400">
-                      {q.sectionTitle}
-                    </p>
-                  )}
                   <p className="whitespace-normal text-[11px] font-semibold normal-case text-slate-700 dark:text-slate-300">
                     {q.text}
                   </p>
@@ -305,6 +299,7 @@ function LogTable({ data }: { data: EquipmentTypeLogReport }) {
                   q.type === 'PASS_FAIL' ||
                   q.type === 'YES_NO' ||
                   q.type === 'DROPDOWN' ||
+                  q.type === 'RADIO' ||
                   a.isFail;
                 return (
                   <Td key={q.key} className="align-top">
@@ -315,11 +310,6 @@ function LogTable({ data }: { data: EquipmentTypeLogReport }) {
                         <span className="text-slate-800 dark:text-slate-200">
                           {a.display || '—'}
                         </span>
-                      )}
-                      {a.notes && (
-                        <p className="mt-1 text-[11px] italic text-slate-500 dark:text-slate-400">
-                          {a.notes}
-                        </p>
                       )}
                       {a.attachmentCount > 0 && q.type === 'PHOTO' && (
                         <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">

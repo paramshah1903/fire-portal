@@ -809,10 +809,25 @@ function formatAnswer(r: {
     case 'PASS_FAIL':
     case 'YES_NO':
     case 'DROPDOWN':
+    case 'RADIO':
     case 'TEXT':
     case 'REMARKS':
       core = r.valueString ?? '';
       break;
+    case 'CHECKBOX': {
+      // valueString is a JSON array; render as comma-joined for CSV/XLSX.
+      if (!r.valueString) {
+        core = '';
+      } else {
+        try {
+          const arr = JSON.parse(r.valueString);
+          core = Array.isArray(arr) ? arr.join(', ') : String(r.valueString);
+        } catch {
+          core = r.valueString;
+        }
+      }
+      break;
+    }
     case 'NUMERIC':
       core =
         r.valueNumeric == null
@@ -827,9 +842,6 @@ function formatAnswer(r: {
       break;
     default:
       core = r.valueString ?? '';
-  }
-  if (r.notes && r.notes.trim().length > 0) {
-    return core ? `${core} — Note: ${r.notes}` : `Note: ${r.notes}`;
   }
   return core;
 }

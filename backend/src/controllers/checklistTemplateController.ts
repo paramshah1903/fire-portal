@@ -18,6 +18,7 @@ const createTemplateSchema = z.object({
   footerText: z.string().max(2000).optional().nullable(),
   signatureLine: z.string().max(200).optional().nullable(),
   applicableUnitIds: z.array(z.string()).optional(),
+  approverUserIds: z.array(z.string()).optional(),
 });
 
 const updateTemplateSchema = z.object({
@@ -28,6 +29,7 @@ const updateTemplateSchema = z.object({
   footerText: z.string().max(2000).optional().nullable(),
   signatureLine: z.string().max(200).optional().nullable(),
   applicableUnitIds: z.array(z.string()).optional(),
+  approverUserIds: z.array(z.string()).optional(),
   isActive: z.boolean().optional(),
 });
 
@@ -40,6 +42,7 @@ const questionSchema = z.object({
   isSafetyCritical: z.boolean(),
   requiresCorrectiveActionOnFail: z.boolean(),
   optionsJson: z.string().max(4000).optional().nullable(),
+  defaultOptionValue: z.string().max(200).optional().nullable(),
   numericMin: z.number().optional().nullable(),
   numericMax: z.number().optional().nullable(),
   numericUnit: z.string().max(50).optional().nullable(),

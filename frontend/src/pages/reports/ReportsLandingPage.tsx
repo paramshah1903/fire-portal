@@ -4,61 +4,22 @@ import { PageHeader } from '../../components/ui';
 interface ReportCard {
   to: string;
   title: string;
-  description: string;
 }
 
 const CARDS: ReportCard[] = [
-  {
-    to: '/reports/compliance',
-    title: 'Compliance report',
-    description:
-      'For a given month, per-equipment: was the inspection completed on time? passed?',
-  },
-  {
-    to: '/reports/unit-compliance',
-    title: 'Unit compliance',
-    description:
-      'Roll-up of compliance figures per unit — completion rate, pass rate.',
-  },
-  {
-    to: '/reports/equipment-history',
-    title: 'Equipment history',
-    description:
-      'Full inspection history for one equipment, including template versions used.',
-  },
-  {
-    to: '/reports/equipment-inspection-log',
-    title: 'Equipment inspection log',
-    description:
-      'For one equipment: every question × every inspection, plus who filled it. Ideal for audits.',
-  },
-  {
-    to: '/reports/by-equipment-type',
-    title: 'Inspections by equipment type',
-    description:
-      'All completed inspections for a chosen type — one row each, every checklist question as a column, plus serial / asset / location / inspection number.',
-  },
-  {
-    to: '/reports/failed-equipment',
-    title: 'Failed equipment',
-    description:
-      'Currently non-compliant equipment, with open corrective-action counts.',
-  },
-  {
-    to: '/reports/corrective-actions',
-    title: 'Corrective actions',
-    description:
-      'CA list with priority, status, days-open, and average time-to-close.',
-  },
+  { to: '/reports/compliance',              title: 'Compliance report' },
+  { to: '/reports/unit-compliance',         title: 'Unit compliance' },
+  { to: '/reports/equipment-history',       title: 'Equipment history' },
+  { to: '/reports/equipment-inspection-log', title: 'Equipment inspection log' },
+  { to: '/reports/by-equipment-type',       title: 'Inspections by equipment type' },
+  { to: '/reports/failed-equipment',        title: 'Failed equipment' },
+  { to: '/reports/corrective-actions',      title: 'Corrective actions' },
 ];
 
 export function ReportsLandingPage() {
   return (
     <div>
-      <PageHeader
-        title="Reports"
-        description="Every report supports on-screen review plus CSV, Excel, and print (browser Save-as-PDF) exports."
-      />
+      <PageHeader title="Reports" />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {CARDS.map((c) => (
           <Link
@@ -72,7 +33,6 @@ export function ReportsLandingPage() {
             <h2 className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-100">
               {c.title}
             </h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{c.description}</p>
           </Link>
         ))}
       </div>

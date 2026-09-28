@@ -10,6 +10,7 @@ import {
   type TemplateUpdateInput,
 } from '../lib/apiChecklists';
 import { listUnits, type Unit } from '../lib/apiUnits';
+import { listUsers, type UserRow } from '../lib/apiUsers';
 import { PERMS } from '../lib/permissions';
 import {
   Badge,
@@ -316,6 +317,7 @@ function SettingsModal({
   onSaved: () => void;
 }) {
   const [units, setUnits] = useState<Unit[]>([]);
+  const [approverCandidates, setApproverCandidates] = useState<UserRow[]>([]);
   const [form, setForm] = useState({
     name: template.name,
     description: template.description ?? '',
@@ -325,6 +327,7 @@ function SettingsModal({
     footerText: template.footerText ?? '',
     signatureLine: template.signatureLine ?? '',
     applicableUnitIds: template.applicableUnits.map((au) => au.unitId),
+    approverUserIds: template.approvers.map((a) => a.userId),
     isActive: template.isActive,
   });
   const [error, setError] = useState<string | null>(null);
@@ -340,10 +343,14 @@ function SettingsModal({
       footerText: template.footerText ?? '',
       signatureLine: template.signatureLine ?? '',
       applicableUnitIds: template.applicableUnits.map((au) => au.unitId),
+      approverUserIds: template.approvers.map((a) => a.userId),
       isActive: template.isActive,
     });
     setError(null);
     listUnits().then(setUnits).catch(() => setUnits([]));
+    // Fetch users so we can filter to eligible approvers (role
+    // UNIT_ADMIN / CENTRAL_ADMIN / SUPER_ADMIN).
+    listUsers({}).then(setApproverCandidates).catch(() => setApproverCandidates([]));
   }, [open, template]);
 
   async function onSubmit(e: React.FormEvent) {
@@ -361,6 +368,7 @@ function SettingsModal({
         footerText: form.footerText.trim() || null,
         signatureLine: form.signatureLine.trim() || null,
         applicableUnitIds: form.applicableUnitIds,
+        approverUserIds: form.approverUserIds,
         isActive: form.isActive,
       };
       await updateTemplate(template.id, payload);
@@ -371,6 +379,19 @@ function SettingsModal({
       setSubmitting(false);
     }
   }
+
+  function toggleApprover(id: string) {
+    setForm((f) => ({
+      ...f,
+      approverUserIds: f.approverUserIds.includes(id)
+        ? f.approverUserIds.filter((x) => x !== id)
+        : [...f.approverUserIds, id],
+    }));
+  }
+
+  const eligibleApprovers = approverCandidates.filter((u) =>
+    ['SUPER_ADMIN', 'CENTRAL_ADMIN', 'UNIT_ADMIN'].includes(u.role.key),
+  );
 
   function toggleUnit(id: string) {
     setForm((f) => ({
@@ -496,6 +517,44 @@ function SettingsModal({
               </label>
             ))}
           </div>
+        </div>
+        <div className="sm:col-span-2">
+          <p className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-600 dark:text-slate-400">
+            Approvers (optional)
+          </p>
+          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+            When at least one approver is set, submitted inspections wait
+            for approval before becoming a valid record. Any listed
+            approver can approve. Only Unit Admin / Central Admin / Super
+            Admin users are shown.
+          </p>
+          {eligibleApprovers.length === 0 ? (
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              No eligible users found.
+            </p>
+          ) : (
+            <div className="grid max-h-64 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
+              {eligibleApprovers.map((u) => (
+                <label
+                  key={u.id}
+                  className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.approverUserIds.includes(u.id)}
+                    onChange={() => toggleApprover(u.id)}
+                  />
+                  <span className="flex-1">
+                    {u.fullName}
+                    <span className="ml-1 text-xs text-slate-500 dark:text-slate-400">
+                      · {u.role.name}
+                      {u.unit ? ` · ${u.unit.code}` : ''}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
         </div>
         <label className="sm:col-span-2 flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
           <input

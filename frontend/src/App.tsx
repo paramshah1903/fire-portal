@@ -30,6 +30,7 @@ import { FailedEquipmentReportPage } from './pages/reports/FailedEquipmentReport
 import { CorrectiveActionsReportPage } from './pages/reports/CorrectiveActionsReportPage';
 import { EquipmentInspectionLogReportPage } from './pages/reports/EquipmentInspectionLogReportPage';
 import { EquipmentTypeInspectionLogReportPage } from './pages/reports/EquipmentTypeInspectionLogReportPage';
+import { ApprovalsPage } from './pages/ApprovalsPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { ForbiddenPage } from './pages/ForbiddenPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -159,6 +160,9 @@ export function App() {
                 path="reports/corrective-actions"
                 element={<CorrectiveActionsReportPage />}
               />
+            </Route>
+            <Route element={<ProtectedRoute requirePermissions={[PERMS.INSPECTION_VIEW]} />}>
+              <Route path="approvals" element={<ApprovalsPage />} />
             </Route>
             <Route element={<ProtectedRoute requirePermissions={[PERMS.AUDIT_VIEW]} />}>
               <Route path="audit-logs" element={<AuditLogsPage />} />

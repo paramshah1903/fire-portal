@@ -39,6 +39,26 @@ function seedAnswers(insp: InspectionDetail): AnswerMap {
       attachments: r.attachments,
     };
   }
+  // Pre-fill any RADIO / DROPDOWN question that has a default and no
+  // existing answer yet — a convenience for inspectors so the common
+  // answer is already selected.
+  for (const section of insp.templateVersion.sections) {
+    for (const q of section.questions) {
+      if (map[q.id]) continue;
+      if (
+        (q.questionType === 'RADIO' || q.questionType === 'DROPDOWN') &&
+        q.defaultOptionValue
+      ) {
+        map[q.id] = {
+          valueString: q.defaultOptionValue,
+          valueNumeric: null,
+          valueDate: null,
+          notes: null,
+          attachments: [],
+        };
+      }
+    }
+  }
   return map;
 }
 
@@ -48,9 +68,19 @@ function isAnswered(q: InspectionQuestion, a: AnswerState | undefined): boolean 
     case 'PASS_FAIL':
     case 'YES_NO':
     case 'DROPDOWN':
+    case 'RADIO':
     case 'TEXT':
     case 'REMARKS':
       return !!a.valueString && a.valueString.trim().length > 0;
+    case 'CHECKBOX': {
+      if (!a.valueString) return false;
+      try {
+        const arr = JSON.parse(a.valueString);
+        return Array.isArray(arr) && arr.length > 0;
+      } catch {
+        return false;
+      }
+    }
     case 'NUMERIC':
       return a.valueNumeric != null;
     case 'DATE':
@@ -638,15 +668,6 @@ function QuestionInput({
       </div>
 
       <AnswerControl q={q} answer={answer} onChange={onChange} onPhoto={onPhoto} busy={busy} />
-
-      <div className="mt-3">
-        <TextArea
-          label="Notes"
-          rows={2}
-          value={answer?.notes ?? ''}
-          onChange={(e) => onChange({ notes: e.target.value || null })}
-        />
-      </div>
     </div>
   );
 }
@@ -712,6 +733,73 @@ function AnswerControl({
           </option>
         ))}
       </select>
+    );
+  }
+  if (t === 'RADIO') {
+    let opts: string[] = [];
+    try {
+      opts = JSON.parse(q.optionsJson || '[]');
+    } catch {
+      opts = [];
+    }
+    return (
+      <div className="flex flex-wrap gap-2">
+        {opts.map((opt) => {
+          const selected = answer?.valueString === opt;
+          const tone = selected
+            ? 'bg-brand-600 text-white border-brand-600'
+            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700';
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => onChange({ valueString: opt })}
+              className={`min-w-[6rem] rounded-md border px-4 py-2 text-sm font-semibold shadow-sm ${tone}`}
+            >
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+  if (t === 'CHECKBOX') {
+    let opts: string[] = [];
+    try {
+      opts = JSON.parse(q.optionsJson || '[]');
+    } catch {
+      opts = [];
+    }
+    let selected: string[] = [];
+    try {
+      const parsed = JSON.parse(answer?.valueString || '[]');
+      if (Array.isArray(parsed)) selected = parsed.filter((v) => typeof v === 'string');
+    } catch {
+      selected = [];
+    }
+    function toggle(opt: string) {
+      const next = selected.includes(opt)
+        ? selected.filter((v) => v !== opt)
+        : [...selected, opt];
+      onChange({ valueString: JSON.stringify(next) });
+    }
+    return (
+      <div className="flex flex-col gap-2">
+        {opts.map((opt) => (
+          <label
+            key={opt}
+            className="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200"
+          >
+            <input
+              type="checkbox"
+              checked={selected.includes(opt)}
+              onChange={() => toggle(opt)}
+              className="h-4 w-4"
+            />
+            <span>{opt}</span>
+          </label>
+        ))}
+      </div>
     );
   }
   if (t === 'DATE') {

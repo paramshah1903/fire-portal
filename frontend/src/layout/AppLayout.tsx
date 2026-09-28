@@ -26,6 +26,11 @@ const NAV: NavGroup[] = [
       { to: '/scan', label: 'Scan', perm: PERMS.EQUIPMENT_VIEW },
       { to: '/inspections', label: 'Inspections', perm: PERMS.INSPECTION_VIEW },
       {
+        to: '/approvals',
+        label: 'Approvals',
+        perm: PERMS.INSPECTION_VIEW,
+      },
+      {
         to: '/corrective-actions',
         label: 'Corrective Actions',
         perm: PERMS.CORRECTIVE_ACTION_VIEW,

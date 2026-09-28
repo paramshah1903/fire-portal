@@ -8,10 +8,22 @@ export const QUESTION_TYPES = [
   'NUMERIC',
   'TEXT',
   'DROPDOWN',
+  'RADIO',
+  'CHECKBOX',
   'DATE',
   'PHOTO',
   'REMARKS',
 ] as const;
+
+/**
+ * Question types that carry a list of options in `optionsJson`.
+ * DROPDOWN / RADIO are single-select; CHECKBOX is multi-select.
+ */
+export const OPTION_BASED_QUESTION_TYPES: readonly QuestionType[] = [
+  'DROPDOWN',
+  'RADIO',
+  'CHECKBOX',
+];
 
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 

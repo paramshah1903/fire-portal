@@ -1,7 +1,7 @@
 import { api } from './api';
 import type { QuestionType } from './apiChecklists';
 
-export type InspectionStatus = 'PENDING' | 'COMPLETED';
+export type InspectionStatus = 'PENDING' | 'PENDING_APPROVAL' | 'COMPLETED';
 export type InspectionResult = 'PASS' | 'FAIL';
 export type ScheduleStatus = 'DUE' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
 
@@ -24,6 +24,11 @@ export interface InspectionListItem {
   remarks: string | null;
   hasSafetyCriticalFailure: boolean;
   confirmationName: string | null;
+  approvedAt: string | null;
+  approvedById: string | null;
+  rejectionReason: string | null;
+  rejectedAt: string | null;
+  rejectedById: string | null;
   createdAt: string;
   updatedAt: string;
   equipment: {
@@ -87,6 +92,7 @@ export interface InspectionQuestion {
   isSafetyCritical: boolean;
   requiresCorrectiveActionOnFail: boolean;
   optionsJson: string | null;
+  defaultOptionValue: string | null;
   numericMin: number | null;
   numericMax: number | null;
   numericUnit: string | null;
@@ -126,6 +132,8 @@ export interface InspectionEquipmentContext {
 
 export interface InspectionDetail extends Omit<InspectionListItem, 'equipment'> {
   equipment: InspectionEquipmentContext;
+  approvedBy: { id: string; username: string; fullName: string } | null;
+  rejectedBy: { id: string; username: string; fullName: string } | null;
   templateVersion: InspectionListItem['templateVersion'] & {
     versionNumber: number;
     template: {
@@ -135,6 +143,10 @@ export interface InspectionDetail extends Omit<InspectionListItem, 'equipment'> 
       headerText: string | null;
       footerText: string | null;
       signatureLine: string | null;
+      approvers: Array<{
+        userId: string;
+        user: { id: string; username: string; fullName: string };
+      }>;
     };
     sections: InspectionSection[];
   };
@@ -305,6 +317,33 @@ export async function submitInspection(
     input,
   );
   return data.inspection;
+}
+
+export async function approveInspection(
+  id: string,
+): Promise<InspectionDetail> {
+  const { data } = await api.post<{ inspection: InspectionDetail }>(
+    `/inspections/${id}/approve`,
+  );
+  return data.inspection;
+}
+
+export async function rejectInspection(
+  id: string,
+  reason: string,
+): Promise<InspectionDetail> {
+  const { data } = await api.post<{ inspection: InspectionDetail }>(
+    `/inspections/${id}/reject`,
+    { reason },
+  );
+  return data.inspection;
+}
+
+export async function listPendingApprovals(): Promise<InspectionListItem[]> {
+  const { data } = await api.get<{ inspections: InspectionListItem[] }>(
+    '/inspections/pending-approvals',
+  );
+  return data.inspections;
 }
 
 export async function uploadInspectionAttachment(

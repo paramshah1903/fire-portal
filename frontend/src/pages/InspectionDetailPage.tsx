@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toApiError } from '../lib/api';
 import {
+  approveInspection,
   getInspection,
   inspectionAttachmentUrl,
+  rejectInspection,
   type InspectionDetail,
   type InspectionEquipmentContext,
   type InspectionResponseRow,
@@ -13,20 +15,28 @@ import {
   listCorrectiveActions,
   type CorrectiveActionListItem,
 } from '../lib/apiCorrectiveActions';
+import { useAuth } from '../auth/AuthContext';
+import { ROLES } from '../lib/permissions';
 import {
   Badge,
   Button,
   ErrorBanner,
   PageHeader,
+  TextArea,
 } from '../components/ui';
+import { Modal } from '../components/Modal';
 import { PriorityBadge, StatusBadge } from './CorrectiveActionsPage';
 
 export function InspectionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [insp, setInsp] = useState<InspectionDetail | null>(null);
   const [cas, setCas] = useState<CorrectiveActionListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [showReject, setShowReject] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -48,6 +58,36 @@ export function InspectionDetailPage() {
       setError(toApiError(err).message);
     }
   }, [id]);
+
+  async function onApprove() {
+    if (!insp) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const updated = await approveInspection(insp.id);
+      setInsp(updated);
+    } catch (err) {
+      setError(toApiError(err).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onReject() {
+    if (!insp || !rejectReason.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const updated = await rejectInspection(insp.id, rejectReason.trim());
+      setInsp(updated);
+      setShowReject(false);
+      setRejectReason('');
+    } catch (err) {
+      setError(toApiError(err).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   useEffect(() => {
     void load();
@@ -82,6 +122,15 @@ export function InspectionDetailPage() {
 
   const template = insp.templateVersion.template;
   const signatureLine = template.signatureLine?.trim() || "Inspector's signature";
+  const isPendingApproval = insp.status === 'PENDING_APPROVAL';
+  const isSuperAdmin = user?.roleKey === ROLES.SUPER_ADMIN;
+  const isListedApprover = template.approvers.some(
+    (a) => a.userId === user?.id,
+  );
+  const canReviewThis =
+    isPendingApproval &&
+    user?.id !== insp.inspectorId &&
+    (isSuperAdmin || isListedApprover);
 
   return (
     <div className="mx-auto max-w-3xl print-color">
@@ -140,10 +189,64 @@ export function InspectionDetailPage() {
                   Print / Save as PDF
                 </Button>
               )}
+              {canReviewThis && (
+                <>
+                  <Button
+                    variant="danger"
+                    disabled={busy}
+                    onClick={() => setShowReject(true)}
+                  >
+                    Reject
+                  </Button>
+                  <Button disabled={busy} onClick={onApprove}>
+                    {busy ? 'Approving…' : 'Approve'}
+                  </Button>
+                </>
+              )}
             </>
           }
         />
       </div>
+
+      {/* Approval status banners */}
+      {isPendingApproval && (
+        <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+          <strong>Awaiting approval.</strong>{' '}
+          This inspection has been submitted and is waiting for a reviewer
+          before it becomes a valid record. Reviewers assigned on this
+          template:{' '}
+          {template.approvers.length === 0 ? (
+            <em>none</em>
+          ) : (
+            template.approvers.map((a, i) => (
+              <span key={a.userId}>
+                {i > 0 && ', '}
+                {a.user.fullName}
+              </span>
+            ))
+          )}
+          .
+        </div>
+      )}
+      {insp.status === 'PENDING' && insp.rejectionReason && (
+        <div className="mb-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900 dark:border-red-700 dark:bg-red-950/40 dark:text-red-200">
+          <strong>Rejected by reviewer.</strong>{' '}
+          {insp.rejectedBy && (
+            <>({insp.rejectedBy.fullName}
+            {insp.rejectedAt
+              ? ` on ${new Date(insp.rejectedAt).toLocaleString()}`
+              : ''}
+            ) </>
+          )}
+          <br />
+          Reason: {insp.rejectionReason}
+        </div>
+      )}
+      {error && !isPendingApproval && (
+        <div className="mb-4">
+          <ErrorBanner message={error} />
+        </div>
+      )}
 
       <section className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <SummaryCard
@@ -242,11 +345,6 @@ export function InspectionDetailPage() {
                       <AnswerDisplay row={responseByQ.get(q.id)} />
                     </div>
                   </div>
-                  {responseByQ.get(q.id)?.notes && (
-                    <p className="mt-2 rounded bg-slate-50 dark:bg-slate-800 px-2 py-1 text-xs text-slate-700 dark:text-slate-300">
-                      Notes: {responseByQ.get(q.id)?.notes}
-                    </p>
-                  )}
                   {(responseByQ.get(q.id)?.attachments ?? []).length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
                       {responseByQ.get(q.id)?.attachments.map((a) => (
@@ -340,6 +438,44 @@ export function InspectionDetailPage() {
           {template.footerText}
         </p>
       )}
+
+      <Modal
+        open={showReject}
+        onClose={() => setShowReject(false)}
+        title="Reject inspection?"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => setShowReject(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={onReject}
+              disabled={busy || !rejectReason.trim()}
+            >
+              {busy ? 'Rejecting…' : 'Reject and return to inspector'}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-slate-700 dark:text-slate-300">
+          The inspection will return to the inspector with your reason.
+          They can edit and re-submit.
+        </p>
+        <div className="mt-3">
+          <TextArea
+            label="Rejection reason"
+            rows={4}
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="e.g. Photo of pressure gauge is unclear — please retake."
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -438,8 +574,24 @@ function AnswerDisplay({ row }: { row: InspectionResponseRow | undefined }) {
     case 'PASS_FAIL':
     case 'YES_NO':
     case 'DROPDOWN':
+    case 'RADIO':
       content = row.valueString ?? '—';
       break;
+    case 'CHECKBOX': {
+      if (!row.valueString) {
+        content = '—';
+        break;
+      }
+      try {
+        const arr = JSON.parse(row.valueString);
+        content = Array.isArray(arr) && arr.length > 0
+          ? arr.join(', ')
+          : '—';
+      } catch {
+        content = row.valueString;
+      }
+      break;
+    }
     case 'NUMERIC':
       content =
         row.valueNumeric != null

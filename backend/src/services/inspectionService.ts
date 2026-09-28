@@ -66,6 +66,8 @@ const inspectionDetailInclude = {
   },
   unit: { select: { id: true, code: true, name: true } },
   inspector: { select: { id: true, username: true, fullName: true } },
+  approvedBy: { select: { id: true, username: true, fullName: true } },
+  rejectedBy: { select: { id: true, username: true, fullName: true } },
   // Full template + sections + questions so the perform UI has
   // everything it needs to render without a second round-trip.
   templateVersion: {
@@ -78,6 +80,13 @@ const inspectionDetailInclude = {
           headerText: true,
           footerText: true,
           signatureLine: true,
+          approvers: {
+            include: {
+              user: {
+                select: { id: true, username: true, fullName: true },
+              },
+            },
+          },
         },
       },
       sections: {
@@ -128,7 +137,7 @@ export interface ListInspectionsOptions {
   actor: Actor;
   equipmentId?: string;
   unitId?: string;
-  status?: 'PENDING' | 'COMPLETED';
+  status?: 'PENDING' | 'PENDING_APPROVAL' | 'COMPLETED';
   result?: 'PASS' | 'FAIL';
   inspectorId?: string;
   periodKey?: string;
@@ -598,9 +607,20 @@ function isAnswered(
     case 'PASS_FAIL':
     case 'YES_NO':
     case 'DROPDOWN':
+    case 'RADIO':
     case 'TEXT':
     case 'REMARKS':
       return !!value.valueString && value.valueString.trim().length > 0;
+    case 'CHECKBOX': {
+      // valueString is a JSON array of selected labels; answered = at least one.
+      if (!value.valueString) return false;
+      try {
+        const arr = JSON.parse(value.valueString);
+        return Array.isArray(arr) && arr.length > 0;
+      } catch {
+        return false;
+      }
+    }
     case 'NUMERIC':
       return value.valueNumeric != null;
     case 'DATE':
@@ -656,17 +676,39 @@ export async function saveInspectionProgress(
       if (r.valueDate && Number.isNaN(valueDate?.getTime())) {
         throw badRequest(`Invalid date value for question "${q.text}".`, 'INVALID_DATE');
       }
-      if (q.questionType === 'DROPDOWN' && r.valueString && q.optionsJson) {
+      if (
+        (q.questionType === 'DROPDOWN' || q.questionType === 'RADIO') &&
+        r.valueString &&
+        q.optionsJson
+      ) {
         try {
           const opts = JSON.parse(q.optionsJson) as string[];
           if (Array.isArray(opts) && !opts.includes(r.valueString)) {
             throw badRequest(
               `"${r.valueString}" is not a valid option for question "${q.text}".`,
-              'INVALID_DROPDOWN_ANSWER',
+              'INVALID_OPTION_ANSWER',
             );
           }
         } catch {
           // If optionsJson is malformed we skip validation rather than crash.
+        }
+      }
+      if (q.questionType === 'CHECKBOX' && r.valueString && q.optionsJson) {
+        try {
+          const opts = JSON.parse(q.optionsJson) as string[];
+          const selected = JSON.parse(r.valueString);
+          if (
+            Array.isArray(opts) &&
+            Array.isArray(selected) &&
+            selected.some((v) => !opts.includes(v))
+          ) {
+            throw badRequest(
+              `Answer to "${q.text}" contains options not in its list.`,
+              'INVALID_OPTION_ANSWER',
+            );
+          }
+        } catch {
+          // Malformed → skip validation, will surface as unanswered.
         }
       }
 
@@ -758,7 +800,14 @@ export async function submitInspection(
     where: { id },
     include: {
       templateVersion: {
-        include: { sections: { include: { questions: true } } },
+        include: {
+          template: {
+            include: {
+              approvers: { select: { userId: true } },
+            },
+          },
+          sections: { include: { questions: true } },
+        },
       },
       responses: { include: { attachments: true } },
     },
@@ -796,30 +845,74 @@ export async function submitInspection(
     );
   }
 
-  const anyFail = existing.responses.some((r) => r.isFail);
-  const anySafetyFail = existing.responses.some(
-    (r) => r.isFail && r.isSafetyCritical,
-  );
+  const hasApprovers = existing.templateVersion.template.approvers.length > 0;
 
-  // Update the inspection and auto-create corrective actions atomically.
+  if (hasApprovers) {
+    // Approval flow: mark PENDING_APPROVAL, clear any prior rejection.
+    // Do NOT assign inspection number or raise CAs yet — those happen
+    // on approval so a rejection can send it back cleanly.
+    return prisma.inspection.update({
+      where: { id },
+      data: {
+        status: 'PENDING_APPROVAL',
+        confirmationName: input.confirmationName.trim(),
+        rejectionReason: null,
+        rejectedAt: null,
+        rejectedById: null,
+      },
+      include: inspectionDetailInclude,
+    });
+  }
+
+  // No approvers → complete immediately (existing behaviour).
+  return completeInspection(existing.id, actor.id, {
+    confirmationName: input.confirmationName.trim(),
+  });
+}
+
+/**
+ * Finalise an inspection: compute result, assign a permanent number,
+ * auto-raise corrective actions. Called by:
+ *   - submitInspection when the template has no approvers
+ *   - approveInspection when an approver signs off
+ */
+async function completeInspection(
+  inspectionId: string,
+  actorId: string,
+  input: { confirmationName?: string } = {},
+) {
+  const existing = await prisma.inspection.findUnique({
+    where: { id: inspectionId },
+    include: {
+      responses: true,
+    },
+  });
+  if (!existing) throw notFound('Inspection not found.');
+
   const unit = await prisma.unit.findUnique({
     where: { id: existing.unitId },
     select: { code: true },
   });
   if (!unit) throw notFound('Inspection unit not found.');
 
-  const submitted = await prisma.$transaction(async (tx) => {
+  const anyFail = existing.responses.some((r) => r.isFail);
+  const anySafetyFail = existing.responses.some(
+    (r) => r.isFail && r.isSafetyCritical,
+  );
+
+  return prisma.$transaction(async (tx) => {
     const completedAt = new Date();
     const inspectionNumber = await nextInspectionNumber(tx, completedAt);
     const updated = await tx.inspection.update({
-      where: { id },
+      where: { id: inspectionId },
       data: {
         status: 'COMPLETED',
         result: anyFail ? 'FAIL' : 'PASS',
         hasSafetyCriticalFailure: anySafetyFail,
         completedAt,
         inspectionNumber,
-        confirmationName: input.confirmationName.trim(),
+        confirmationName:
+          input.confirmationName ?? existing.confirmationName ?? undefined,
       },
       include: inspectionDetailInclude,
     });
@@ -829,20 +922,155 @@ export async function submitInspection(
     );
     for (const r of autoCandidates) {
       await autoCreateForFailedResponse(tx as unknown as PrismaClient, {
-        inspectionId: id,
+        inspectionId,
         responseId: r.id,
         equipmentId: updated.equipmentId,
         unitId: updated.unitId,
         questionText: r.questionText,
         isSafetyCritical: r.isSafetyCritical,
-        raisedById: actor.id,
+        raisedById: actorId,
         unitCode: unit.code,
       });
     }
 
     return updated;
   });
-  return submitted;
+}
+
+// ---------------------------------------------------------------------------
+// Approval workflow
+// ---------------------------------------------------------------------------
+
+async function assertCanApprove(
+  actor: Actor,
+  inspection: {
+    id: string;
+    inspectorId: string;
+    status: string;
+    templateVersion: {
+      template: { approvers: { userId: string }[] };
+    };
+  },
+): Promise<void> {
+  if (inspection.status !== 'PENDING_APPROVAL') {
+    throw badRequest(
+      'This inspection is not awaiting approval.',
+      'NOT_PENDING_APPROVAL',
+    );
+  }
+  if (inspection.inspectorId === actor.id) {
+    throw forbidden(
+      'You cannot approve or reject your own inspection.',
+    );
+  }
+  // Super Admin can always approve as a safety valve; otherwise the
+  // actor must be in the template's approver list.
+  if (actor.roleKey === ROLE_KEYS.SUPER_ADMIN) return;
+  const isApprover = inspection.templateVersion.template.approvers.some(
+    (a) => a.userId === actor.id,
+  );
+  if (!isApprover) {
+    throw forbidden(
+      'You are not listed as an approver for this checklist template.',
+    );
+  }
+}
+
+export async function approveInspection(actor: Actor, id: string) {
+  const insp = await prisma.inspection.findUnique({
+    where: { id },
+    include: {
+      templateVersion: {
+        include: {
+          template: { include: { approvers: { select: { userId: true } } } },
+        },
+      },
+    },
+  });
+  if (!insp) throw notFound('Inspection not found.');
+  assertCanActOnUnit(actor, insp.unitId);
+  await assertCanApprove(actor, insp);
+
+  // Mark approvedBy, then finalise (which sets COMPLETED + number + CAs).
+  await prisma.inspection.update({
+    where: { id },
+    data: {
+      approvedAt: new Date(),
+      approvedById: actor.id,
+    },
+  });
+  return completeInspection(id, actor.id);
+}
+
+export async function rejectInspection(
+  actor: Actor,
+  id: string,
+  reason: string,
+) {
+  const trimmed = reason?.trim();
+  if (!trimmed) {
+    throw badRequest(
+      'A rejection reason is required so the inspector knows what to fix.',
+      'REJECTION_REASON_REQUIRED',
+    );
+  }
+  const insp = await prisma.inspection.findUnique({
+    where: { id },
+    include: {
+      templateVersion: {
+        include: {
+          template: { include: { approvers: { select: { userId: true } } } },
+        },
+      },
+    },
+  });
+  if (!insp) throw notFound('Inspection not found.');
+  assertCanActOnUnit(actor, insp.unitId);
+  await assertCanApprove(actor, insp);
+
+  return prisma.inspection.update({
+    where: { id },
+    data: {
+      status: 'PENDING',
+      rejectionReason: trimmed,
+      rejectedAt: new Date(),
+      rejectedById: actor.id,
+      // Clear any prior approval metadata.
+      approvedAt: null,
+      approvedById: null,
+    },
+    include: inspectionDetailInclude,
+  });
+}
+
+/**
+ * List inspections awaiting approval where the actor is on the
+ * template's approver list (or is a Super Admin).
+ */
+export async function listPendingApprovals(actor: Actor) {
+  const scopeUnitId = isBroadRole(actor)
+    ? undefined
+    : actor.unitId ?? '__none__';
+
+  const rows = await prisma.inspection.findMany({
+    where: {
+      status: 'PENDING_APPROVAL',
+      unitId: scopeUnitId,
+      // Actor must be an approver, unless they're a Super Admin.
+      ...(actor.roleKey === ROLE_KEYS.SUPER_ADMIN
+        ? {}
+        : {
+            templateVersion: {
+              template: { approvers: { some: { userId: actor.id } } },
+            },
+          }),
+      // Never show own inspections — one cannot approve their own.
+      inspectorId: { not: actor.id },
+    },
+    include: inspectionListInclude,
+    orderBy: [{ updatedAt: 'desc' }],
+  });
+  return rows;
 }
 
 // ---------------------------------------------------------------------------

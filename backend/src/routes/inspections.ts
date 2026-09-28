@@ -8,7 +8,8 @@ export const inspectionsRouter = Router();
 
 inspectionsRouter.use(requireAuth);
 
-// Order matters: /schedule and /start must not be captured by /:id.
+// Order matters: /schedule, /start, /pending-approvals must not be
+// captured by /:id.
 inspectionsRouter.get(
   '/schedule',
   requirePermissions(PERMISSION_KEYS.INSPECTION_VIEW),
@@ -18,6 +19,11 @@ inspectionsRouter.post(
   '/start',
   requirePermissions(PERMISSION_KEYS.INSPECTION_PERFORM),
   ctrl.startInspection,
+);
+inspectionsRouter.get(
+  '/pending-approvals',
+  requirePermissions(PERMISSION_KEYS.INSPECTION_VIEW),
+  ctrl.listPendingApprovals,
 );
 
 inspectionsRouter.get(
@@ -39,6 +45,16 @@ inspectionsRouter.post(
   '/:id/submit',
   requirePermissions(PERMISSION_KEYS.INSPECTION_PERFORM),
   ctrl.submit,
+);
+inspectionsRouter.post(
+  '/:id/approve',
+  requirePermissions(PERMISSION_KEYS.INSPECTION_VIEW),
+  ctrl.approve,
+);
+inspectionsRouter.post(
+  '/:id/reject',
+  requirePermissions(PERMISSION_KEYS.INSPECTION_VIEW),
+  ctrl.reject,
 );
 inspectionsRouter.post(
   '/:id/attachments',

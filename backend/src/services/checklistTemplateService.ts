@@ -5,6 +5,14 @@ import {
   isQuestionType,
   type QuestionType,
 } from '../lib/checklistTypes.js';
+import { ROLE_KEYS } from '../lib/rbac.js';
+
+/// Users allowed to be approvers on a template.
+const APPROVER_ROLES: readonly string[] = [
+  ROLE_KEYS.SUPER_ADMIN,
+  ROLE_KEYS.CENTRAL_ADMIN,
+  ROLE_KEYS.UNIT_ADMIN,
+];
 
 // -----------------------------------------------------------------------------
 // Read-side (include shapes)
@@ -14,6 +22,19 @@ const templateSummaryInclude = {
   equipmentType: { select: { id: true, key: true, name: true } },
   applicableUnits: {
     include: { unit: { select: { id: true, code: true, name: true } } },
+  },
+  approvers: {
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          fullName: true,
+          unitId: true,
+          role: { select: { key: true, name: true } },
+        },
+      },
+    },
   },
   versions: {
     select: {
@@ -54,6 +75,7 @@ export interface TemplateCreateInput {
   footerText?: string | null;
   signatureLine?: string | null;
   applicableUnitIds?: string[];
+  approverUserIds?: string[];
 }
 
 export interface TemplateUpdateInput {
@@ -65,7 +87,31 @@ export interface TemplateUpdateInput {
   footerText?: string | null;
   signatureLine?: string | null;
   applicableUnitIds?: string[];
+  approverUserIds?: string[];
   isActive?: boolean;
+}
+
+async function validateApproverIds(userIds: string[]): Promise<void> {
+  if (userIds.length === 0) return;
+  const users = await prisma.user.findMany({
+    where: { id: { in: userIds }, isActive: true },
+    select: { id: true, role: { select: { key: true } } },
+  });
+  if (users.length !== userIds.length) {
+    throw badRequest(
+      'One or more approver users are invalid or inactive.',
+      'INVALID_APPROVERS',
+    );
+  }
+  const wrongRole = users.filter(
+    (u) => !APPROVER_ROLES.includes(u.role.key),
+  );
+  if (wrongRole.length > 0) {
+    throw badRequest(
+      'Approvers must have role Unit Admin, Central Admin, or Super Admin.',
+      'INVALID_APPROVER_ROLE',
+    );
+  }
 }
 
 export interface DraftQuestionInput {
@@ -77,6 +123,7 @@ export interface DraftQuestionInput {
   isSafetyCritical: boolean;
   requiresCorrectiveActionOnFail: boolean;
   optionsJson?: string | null;
+  defaultOptionValue?: string | null;
   numericMin?: number | null;
   numericMax?: number | null;
   numericUnit?: string | null;
@@ -209,6 +256,10 @@ export async function createTemplate(input: TemplateCreateInput) {
     }
   }
 
+  if (input.approverUserIds && input.approverUserIds.length > 0) {
+    await validateApproverIds(input.approverUserIds);
+  }
+
   return prisma.$transaction(async (tx) => {
     const template = await tx.checklistTemplate.create({
       data: {
@@ -222,6 +273,11 @@ export async function createTemplate(input: TemplateCreateInput) {
         applicableUnits: input.applicableUnitIds
           ? {
               create: input.applicableUnitIds.map((unitId) => ({ unitId })),
+            }
+          : undefined,
+        approvers: input.approverUserIds
+          ? {
+              create: input.approverUserIds.map((userId) => ({ userId })),
             }
           : undefined,
       },
@@ -261,6 +317,10 @@ export async function updateTemplate(id: string, input: TemplateUpdateInput) {
     }
   }
 
+  if (input.approverUserIds && input.approverUserIds.length > 0) {
+    await validateApproverIds(input.approverUserIds);
+  }
+
   return prisma.$transaction(async (tx) => {
     await tx.checklistTemplate.update({
       where: { id },
@@ -294,6 +354,22 @@ export async function updateTemplate(id: string, input: TemplateUpdateInput) {
           data: input.applicableUnitIds.map((unitId) => ({
             templateId: id,
             unitId,
+          })),
+        });
+      }
+    }
+
+    if (input.approverUserIds) {
+      // Full replacement — simpler than diffing, and templates rarely
+      // have huge approver lists.
+      await tx.checklistTemplateApprover.deleteMany({
+        where: { templateId: id },
+      });
+      if (input.approverUserIds.length > 0) {
+        await tx.checklistTemplateApprover.createMany({
+          data: input.approverUserIds.map((userId) => ({
+            templateId: id,
+            userId,
           })),
         });
       }
@@ -378,6 +454,7 @@ export async function createDraftVersion(templateId: string) {
               isSafetyCritical: q.isSafetyCritical,
               requiresCorrectiveActionOnFail: q.requiresCorrectiveActionOnFail,
               optionsJson: q.optionsJson,
+              defaultOptionValue: q.defaultOptionValue,
               numericMin: q.numericMin,
               numericMax: q.numericMax,
               numericUnit: q.numericUnit,
@@ -435,12 +512,27 @@ export async function updateDraftContent(
           'INVALID_QUESTION_TYPE',
         );
       }
-      if (q.questionType === 'DROPDOWN') {
+      if (
+        q.questionType === 'DROPDOWN' ||
+        q.questionType === 'RADIO' ||
+        q.questionType === 'CHECKBOX'
+      ) {
         const opts = parseOptions(q.optionsJson);
         if (!opts || opts.length === 0) {
           throw badRequest(
-            `Dropdown question "${q.text}" must have at least one option.`,
-            'INVALID_DROPDOWN',
+            `${q.questionType.toLowerCase()} question "${q.text}" must have at least one option.`,
+            'INVALID_OPTIONS',
+          );
+        }
+        // Default must be one of the options (only for single-select).
+        if (
+          (q.questionType === 'DROPDOWN' || q.questionType === 'RADIO') &&
+          q.defaultOptionValue &&
+          !opts.includes(q.defaultOptionValue)
+        ) {
+          throw badRequest(
+            `Default value "${q.defaultOptionValue}" for question "${q.text}" is not in its options.`,
+            'INVALID_DEFAULT_OPTION',
           );
         }
       }
@@ -471,6 +563,13 @@ export async function updateDraftContent(
       });
       let qSeq = 1;
       for (const q of section.questions) {
+        const isOptionType =
+          q.questionType === 'DROPDOWN' ||
+          q.questionType === 'RADIO' ||
+          q.questionType === 'CHECKBOX';
+        // Default value only applies to single-select option types.
+        const isSingleSelectOptionType =
+          q.questionType === 'DROPDOWN' || q.questionType === 'RADIO';
         await tx.checklistQuestion.create({
           data: {
             sectionId: created.id,
@@ -480,10 +579,9 @@ export async function updateDraftContent(
             isMandatory: q.isMandatory,
             isSafetyCritical: q.isSafetyCritical,
             requiresCorrectiveActionOnFail: q.requiresCorrectiveActionOnFail,
-            optionsJson:
-              q.questionType === 'DROPDOWN'
-                ? normaliseOptionsJson(q.optionsJson)
-                : null,
+            optionsJson: isOptionType ? normaliseOptionsJson(q.optionsJson) : null,
+            defaultOptionValue:
+              isSingleSelectOptionType ? q.defaultOptionValue?.trim() || null : null,
             numericMin: q.questionType === 'NUMERIC' ? q.numericMin ?? null : null,
             numericMax: q.questionType === 'NUMERIC' ? q.numericMax ?? null : null,
             numericUnit: q.questionType === 'NUMERIC' ? q.numericUnit?.trim() || null : null,

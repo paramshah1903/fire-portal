@@ -280,7 +280,7 @@ export const equipmentTypeInspectionLog: RequestHandler = asyncHandler(
     ];
     const questionCols: ColumnSpec<service.EquipmentTypeLogRow>[] =
       data.questions.map((q) => ({
-        header: q.sectionTitle ? `[${q.sectionTitle}] ${q.text}` : q.text,
+        header: q.text,
         accessor: (r) => r.answers[q.key]?.display ?? '',
       }));
     const columns = [...staticCols, ...questionCols];
@@ -342,7 +342,7 @@ export const equipmentInspectionLog: RequestHandler = asyncHandler(
     ];
     const questionCols: ColumnSpec<service.InspectionLogRow>[] =
       data.questions.map((q) => ({
-        header: q.sectionTitle ? `[${q.sectionTitle}] ${q.text}` : q.text,
+        header: q.text,
         accessor: (r) => r.answers[q.key]?.display ?? '',
       }));
     const columns = [...staticCols, ...questionCols];

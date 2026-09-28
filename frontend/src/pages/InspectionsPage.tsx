@@ -326,7 +326,9 @@ function HistoryPanel({
   const [rows, setRows] = useState<InspectionListItem[] | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<'PENDING' | 'COMPLETED' | ''>('');
+  const [status, setStatus] = useState<
+    'PENDING' | 'PENDING_APPROVAL' | 'COMPLETED' | ''
+  >('');
   const [result, setResult] = useState<'PASS' | 'FAIL' | ''>('');
   const [unitId, setUnitId] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -337,7 +339,11 @@ function HistoryPanel({
       const res = await listInspections({
         page,
         pageSize: PAGE_SIZE,
-        status: (status || undefined) as 'PENDING' | 'COMPLETED' | undefined,
+        status: (status || undefined) as
+          | 'PENDING'
+          | 'PENDING_APPROVAL'
+          | 'COMPLETED'
+          | undefined,
         result: (result || undefined) as 'PASS' | 'FAIL' | undefined,
         unitId: centralOrSuper ? unitId || undefined : undefined,
       });
@@ -380,11 +386,18 @@ function HistoryPanel({
           value={status}
           onChange={(e) => {
             setPage(1);
-            setStatus(e.target.value as 'PENDING' | 'COMPLETED' | '');
+            setStatus(
+              e.target.value as
+                | 'PENDING'
+                | 'PENDING_APPROVAL'
+                | 'COMPLETED'
+                | '',
+            );
           }}
         >
           <option value="">All statuses</option>
           <option value="PENDING">In progress</option>
+          <option value="PENDING_APPROVAL">Awaiting approval</option>
           <option value="COMPLETED">Completed</option>
         </Select>
         <Select
@@ -445,8 +458,20 @@ function HistoryPanel({
                   <Td className="font-mono text-xs">{r.unit.code}</Td>
                   <Td>{r.inspector.fullName}</Td>
                   <Td>
-                    <Badge tone={r.status === 'COMPLETED' ? 'green' : 'amber'}>
-                      {r.status === 'COMPLETED' ? 'Completed' : 'In progress'}
+                    <Badge
+                      tone={
+                        r.status === 'COMPLETED'
+                          ? 'green'
+                          : r.status === 'PENDING_APPROVAL'
+                            ? 'blue'
+                            : 'amber'
+                      }
+                    >
+                      {r.status === 'COMPLETED'
+                        ? 'Completed'
+                        : r.status === 'PENDING_APPROVAL'
+                          ? 'Awaiting approval'
+                          : 'In progress'}
                     </Badge>
                   </Td>
                   <Td>
