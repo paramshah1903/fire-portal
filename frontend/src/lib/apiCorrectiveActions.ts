@@ -237,7 +237,12 @@ export async function uploadCaAttachment(
   const { data } = await api.post<{ attachment: CorrectiveActionAttachment }>(
     `/corrective-actions/${id}/attachments`,
     fd,
-    { headers: { 'Content-Type': 'multipart/form-data' } },
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      // Uploads on cellular networks and free-tier cold starts need
+      // more than the default axios timeout.
+      timeout: 120_000,
+    },
   );
   return data.attachment;
 }

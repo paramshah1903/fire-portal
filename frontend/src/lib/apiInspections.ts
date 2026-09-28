@@ -358,7 +358,13 @@ export async function uploadInspectionAttachment(
   const { data } = await api.post<{ attachment: InspectionAttachment }>(
     `/inspections/${inspectionId}/attachments`,
     fd,
-    { headers: { 'Content-Type': 'multipart/form-data' } },
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      // Photo uploads on cellular networks + free-tier hosting cold
+      // starts can easily take longer than the default 15 s axios
+      // timeout. Give uploads a much larger budget.
+      timeout: 120_000,
+    },
   );
   return data.attachment;
 }

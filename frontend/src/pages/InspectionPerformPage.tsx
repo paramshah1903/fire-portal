@@ -1066,9 +1066,14 @@ function CameraCaptureModal({
   function capture() {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
+    // Downscale to a max dimension of 1600 px so cellular uploads stay
+    // fast — inspection photos are documentary, not fine-art prints.
+    // 1600 px + JPEG q=0.82 keeps typical file size under ~600 KB.
+    const MAX = 1600;
+    const scale = Math.min(1, MAX / Math.max(video.videoWidth, video.videoHeight));
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -1078,7 +1083,7 @@ function CameraCaptureModal({
         setCaptured({ blob, url: URL.createObjectURL(blob) });
       },
       'image/jpeg',
-      0.9,
+      0.82,
     );
   }
 
