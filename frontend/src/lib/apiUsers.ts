@@ -23,6 +23,17 @@ export interface RoleOption {
   key: string;
   name: string;
   description: string | null;
+  isSystem: boolean;
+  userCount: number;
+  permissionKeys: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PermissionOption {
+  id: string;
+  key: string;
+  description: string | null;
 }
 
 export interface CreateUserInput {
@@ -94,4 +105,46 @@ export async function resetUserPassword(
 export async function listRoles(): Promise<RoleOption[]> {
   const { data } = await api.get<{ roles: RoleOption[] }>('/users/roles');
   return data.roles;
+}
+
+export async function listPermissions(): Promise<PermissionOption[]> {
+  const { data } = await api.get<{ permissions: PermissionOption[] }>(
+    '/users/permissions',
+  );
+  return data.permissions;
+}
+
+export interface CreateRoleInput {
+  key: string;
+  name: string;
+  description?: string | null;
+  permissionKeys: string[];
+}
+
+export interface UpdateRoleInput {
+  name?: string;
+  description?: string | null;
+  permissionKeys?: string[];
+}
+
+export async function createRole(
+  input: CreateRoleInput,
+): Promise<RoleOption> {
+  const { data } = await api.post<{ role: RoleOption }>('/users/roles', input);
+  return data.role;
+}
+
+export async function updateRole(
+  id: string,
+  input: UpdateRoleInput,
+): Promise<RoleOption> {
+  const { data } = await api.put<{ role: RoleOption }>(
+    `/users/roles/${id}`,
+    input,
+  );
+  return data.role;
+}
+
+export async function deleteRole(id: string): Promise<void> {
+  await api.delete(`/users/roles/${id}`);
 }

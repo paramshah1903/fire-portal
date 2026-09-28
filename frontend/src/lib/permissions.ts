@@ -18,6 +18,7 @@ export type RoleKey = (typeof ROLES)[keyof typeof ROLES];
 export const PERMS = {
   USER_MANAGE: 'user.manage',
   USER_VIEW: 'user.view',
+  ROLE_MANAGE: 'role.manage',
   UNIT_MANAGE: 'unit.manage',
   UNIT_VIEW: 'unit.view',
   DEPARTMENT_MANAGE: 'department.manage',

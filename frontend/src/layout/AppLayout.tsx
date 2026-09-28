@@ -61,7 +61,10 @@ const NAV: NavGroup[] = [
   },
   {
     label: 'Administration',
-    items: [{ to: '/users', label: 'Users', perm: PERMS.USER_VIEW }],
+    items: [
+      { to: '/users', label: 'Users', perm: PERMS.USER_VIEW },
+      { to: '/roles', label: 'Roles & Permissions', perm: PERMS.ROLE_MANAGE },
+    ],
   },
   {
     label: 'QR Management',

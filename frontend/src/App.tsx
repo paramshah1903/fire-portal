@@ -32,6 +32,7 @@ import { EquipmentInspectionLogReportPage } from './pages/reports/EquipmentInspe
 import { EquipmentTypeInspectionLogReportPage } from './pages/reports/EquipmentTypeInspectionLogReportPage';
 import { ApprovalsPage } from './pages/ApprovalsPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
+import { RolesPage } from './pages/RolesPage';
 import { ForbiddenPage } from './pages/ForbiddenPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { PERMS } from './lib/permissions';
@@ -70,6 +71,9 @@ export function App() {
             </Route>
             <Route element={<ProtectedRoute requirePermissions={[PERMS.USER_VIEW]} />}>
               <Route path="users" element={<UsersPage />} />
+            </Route>
+            <Route element={<ProtectedRoute requirePermissions={[PERMS.ROLE_MANAGE]} />}>
+              <Route path="roles" element={<RolesPage />} />
             </Route>
 
             <Route element={<ProtectedRoute requirePermissions={[PERMS.EQUIPMENT_VIEW]} />}>

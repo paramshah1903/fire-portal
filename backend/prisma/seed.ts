@@ -101,11 +101,29 @@ async function upsertRolesAndPermissions() {
       where: { key: { in: grantedKeys as string[] } },
     });
 
-    // Reset the mapping so seed changes propagate deterministically.
-    await prisma.rolePermission.deleteMany({ where: { roleId: role.id } });
-    await prisma.rolePermission.createMany({
-      data: permissions.map((p) => ({ roleId: role.id, permissionId: p.id })),
+    // Non-destructive re-seed:
+    //  - For SUPER_ADMIN we always ensure every permission is granted
+    //    (the role is deliberately immutable — operators shouldn't have
+    //    to worry about lock-out after a deploy).
+    //  - For every other role we only ADD missing permissions on a
+    //    first-time run (existing mapping is empty). Once an operator
+    //    starts editing permissions via the Roles UI, a later deploy
+    //    must not overwrite their intent.
+    if (roleKey === ROLE_KEYS.SUPER_ADMIN) {
+      await prisma.rolePermission.deleteMany({ where: { roleId: role.id } });
+      await prisma.rolePermission.createMany({
+        data: permissions.map((p) => ({ roleId: role.id, permissionId: p.id })),
+      });
+      continue;
+    }
+    const existing = await prisma.rolePermission.count({
+      where: { roleId: role.id },
     });
+    if (existing === 0) {
+      await prisma.rolePermission.createMany({
+        data: permissions.map((p) => ({ roleId: role.id, permissionId: p.id })),
+      });
+    }
   }
 }
 
