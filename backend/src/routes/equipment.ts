@@ -3,8 +3,12 @@ import * as ctrl from '../controllers/equipmentController.js';
 import * as importCtrl from '../controllers/equipmentImportController.js';
 import * as inspectionCtrl from '../controllers/inspectionController.js';
 import * as caCtrl from '../controllers/correctiveActionController.js';
-import { requireAuth, requirePermissions } from '../middleware/auth.js';
-import { PERMISSION_KEYS } from '../lib/rbac.js';
+import {
+  requireAuth,
+  requirePermissions,
+  requireRoles,
+} from '../middleware/auth.js';
+import { PERMISSION_KEYS, ROLE_KEYS } from '../lib/rbac.js';
 import { equipmentImportUpload } from '../middleware/upload.js';
 
 export const equipmentRouter = Router();
@@ -76,4 +80,11 @@ equipmentRouter.put(
   '/:id',
   requirePermissions(PERMISSION_KEYS.EQUIPMENT_MANAGE),
   ctrl.update,
+);
+// Hard-delete: Super Admin only. Refuses if any inspection or CA
+// references the equipment.
+equipmentRouter.delete(
+  '/:id',
+  requireRoles(ROLE_KEYS.SUPER_ADMIN),
+  ctrl.remove,
 );

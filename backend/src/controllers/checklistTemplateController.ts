@@ -107,6 +107,17 @@ export const updateTemplate: RequestHandler = asyncHandler(async (req, res) => {
   res.json({ template });
 });
 
+export const deleteTemplate: RequestHandler = asyncHandler(async (req, res) => {
+  await service.deleteTemplate(req.params.id);
+  await writeAudit({
+    actorId: req.user?.id,
+    action: 'checklist_template.delete',
+    entityType: 'ChecklistTemplate',
+    entityId: req.params.id,
+  });
+  res.status(204).end();
+});
+
 // -----------------------------------------------------------------------------
 // Handlers — versions
 // -----------------------------------------------------------------------------

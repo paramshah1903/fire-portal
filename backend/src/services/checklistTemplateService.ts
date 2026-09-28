@@ -382,6 +382,38 @@ export async function updateTemplate(id: string, input: TemplateUpdateInput) {
   });
 }
 
+/**
+ * Hard-delete a checklist template. Refuses if any inspection has
+ * ever been captured against any of its versions (that would destroy
+ * historical audit records). Sections / questions / approvers /
+ * applicable-units cascade via the schema.
+ *
+ * Super-Admin-only endpoint — see `routes/checklistTemplates.ts`.
+ */
+export async function deleteTemplate(id: string) {
+  const existing = await prisma.checklistTemplate.findUnique({
+    where: { id },
+    include: {
+      versions: {
+        select: { id: true, _count: { select: { inspections: true } } },
+      },
+    },
+  });
+  if (!existing) throw notFound('Checklist template not found.');
+
+  const totalInspections = existing.versions.reduce(
+    (n, v) => n + v._count.inspections,
+    0,
+  );
+  if (totalInspections > 0) {
+    throw conflict(
+      'This template has been used by one or more inspections. Deactivate it instead of deleting.',
+      'TEMPLATE_HAS_HISTORY',
+    );
+  }
+  await prisma.checklistTemplate.delete({ where: { id } });
+}
+
 // -----------------------------------------------------------------------------
 // Write — versions
 // -----------------------------------------------------------------------------

@@ -4,6 +4,7 @@ import { toApiError } from '../lib/api';
 import { listDepartments, listUnits, type Department, type Unit } from '../lib/apiUnits';
 import {
   createUser,
+  deleteUser,
   listRoles,
   listUsers,
   resetUserPassword,
@@ -28,6 +29,7 @@ import { Modal } from '../components/Modal';
 export function UsersPage() {
   const { hasPermission, user: me } = useAuth();
   const canManage = hasPermission(PERMS.USER_MANAGE);
+  const isSuperAdmin = me?.roleKey === ROLES.SUPER_ADMIN;
   const centralOrSuper =
     me?.roleKey === ROLES.SUPER_ADMIN || me?.roleKey === ROLES.CENTRAL_ADMIN;
 
@@ -41,6 +43,7 @@ export function UsersPage() {
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<UserRow | null>(null);
   const [resettingFor, setResettingFor] = useState<UserRow | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
     listUnits(true).then(setUnits).catch(() => undefined);
@@ -188,6 +191,33 @@ export function UsersPage() {
                       >
                         Reset password
                       </Button>
+                      {isSuperAdmin && u.id !== me?.id && (
+                        <button
+                          type="button"
+                          disabled={busy === u.id}
+                          onClick={async () => {
+                            if (
+                              !confirm(
+                                `Permanently delete user "${u.fullName}" (${u.username})? This cannot be undone.`,
+                              )
+                            )
+                              return;
+                            setBusy(u.id);
+                            setError(null);
+                            try {
+                              await deleteUser(u.id);
+                              await reload();
+                            } catch (err) {
+                              setError(toApiError(err).message);
+                            } finally {
+                              setBusy(null);
+                            }
+                          }}
+                          className="ml-2 rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:bg-slate-800 dark:text-red-400 dark:hover:bg-red-950/40"
+                        >
+                          {busy === u.id ? 'Deleting…' : 'Delete'}
+                        </button>
+                      )}
                     </Td>
                   )}
                 </tr>

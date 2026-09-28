@@ -1,8 +1,12 @@
 import { Router } from 'express';
 import * as userController from '../controllers/userController.js';
 import * as roleController from '../controllers/roleController.js';
-import { requireAuth, requirePermissions } from '../middleware/auth.js';
-import { PERMISSION_KEYS } from '../lib/rbac.js';
+import {
+  requireAuth,
+  requirePermissions,
+  requireRoles,
+} from '../middleware/auth.js';
+import { PERMISSION_KEYS, ROLE_KEYS } from '../lib/rbac.js';
 
 export const usersRouter = Router();
 
@@ -66,4 +70,11 @@ usersRouter.post(
   '/:id/reset-password',
   requirePermissions(PERMISSION_KEYS.USER_MANAGE),
   userController.resetPassword,
+);
+// Hard-delete: Super Admin only. Refuses if the user has historical
+// records — see userService.deleteUser.
+usersRouter.delete(
+  '/:id',
+  requireRoles(ROLE_KEYS.SUPER_ADMIN),
+  userController.deleteUser,
 );

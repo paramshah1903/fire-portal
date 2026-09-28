@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import * as ctrl from '../controllers/checklistTemplateController.js';
-import { requireAuth, requirePermissions } from '../middleware/auth.js';
-import { PERMISSION_KEYS } from '../lib/rbac.js';
+import {
+  requireAuth,
+  requirePermissions,
+  requireRoles,
+} from '../middleware/auth.js';
+import { PERMISSION_KEYS, ROLE_KEYS } from '../lib/rbac.js';
 
 export const checklistTemplatesRouter = Router();
 
@@ -31,6 +35,13 @@ checklistTemplatesRouter.post(
   '/:id/versions',
   requirePermissions(PERMISSION_KEYS.CHECKLIST_MANAGE),
   ctrl.createDraft,
+);
+// Hard-delete: Super Admin only. Refuses if any inspection has ever
+// used any of the template's versions.
+checklistTemplatesRouter.delete(
+  '/:id',
+  requireRoles(ROLE_KEYS.SUPER_ADMIN),
+  ctrl.deleteTemplate,
 );
 
 export const checklistVersionsRouter = Router();

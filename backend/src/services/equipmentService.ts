@@ -290,3 +290,31 @@ export async function updateEquipment(
   });
   return { before, after };
 }
+
+/**
+ * Hard-delete an equipment record. Refuses if any inspection or
+ * corrective action references it — that history would otherwise be
+ * silently orphaned. Operators should deactivate + retire instead.
+ *
+ * Super-Admin-only endpoint — see `routes/equipment.ts`.
+ */
+export async function deleteEquipment(id: string) {
+  const existing = await prisma.equipment.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: { inspections: true, correctiveActions: true },
+      },
+    },
+  });
+  if (!existing) throw notFound('Equipment not found.');
+
+  const { inspections, correctiveActions } = existing._count;
+  if (inspections > 0 || correctiveActions > 0) {
+    throw conflict(
+      `Cannot delete: ${inspections} inspection(s) and ${correctiveActions} corrective action(s) reference this equipment. Retire it instead.`,
+      'EQUIPMENT_HAS_HISTORY',
+    );
+  }
+  await prisma.equipment.delete({ where: { id } });
+}

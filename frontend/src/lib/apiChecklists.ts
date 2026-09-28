@@ -201,6 +201,10 @@ export async function updateTemplate(
   return data.template;
 }
 
+export async function deleteTemplate(id: string): Promise<void> {
+  await api.delete(`/checklist-templates/${id}`);
+}
+
 export async function createDraftVersion(
   templateId: string,
 ): Promise<ChecklistVersion> {

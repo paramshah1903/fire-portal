@@ -4,13 +4,14 @@ import { useAuth } from '../auth/AuthContext';
 import { toApiError } from '../lib/api';
 import {
   createTemplate,
+  deleteTemplate,
   listTemplates,
   type ChecklistTemplateSummary,
   type TemplateCreateInput,
 } from '../lib/apiChecklists';
 import { listEquipmentTypes, type EquipmentType } from '../lib/apiEquipment';
 import { listUnits, type Unit } from '../lib/apiUnits';
-import { PERMS } from '../lib/permissions';
+import { PERMS, ROLES } from '../lib/permissions';
 import {
   Badge,
   Button,
@@ -24,9 +25,30 @@ import {
 import { Modal } from '../components/Modal';
 
 export function ChecklistTemplatesPage() {
-  const { hasPermission } = useAuth();
+  const { hasPermission, user: me } = useAuth();
   const navigate = useNavigate();
   const canManage = hasPermission(PERMS.CHECKLIST_MANAGE);
+  const isSuperAdmin = me?.roleKey === ROLES.SUPER_ADMIN;
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function onDelete(t: ChecklistTemplateSummary) {
+    if (
+      !confirm(
+        `Permanently delete template "${t.name}"? This cannot be undone.`,
+      )
+    )
+      return;
+    setBusy(t.id);
+    setError(null);
+    try {
+      await deleteTemplate(t.id);
+      await reload();
+    } catch (err) {
+      setError(toApiError(err).message);
+    } finally {
+      setBusy(null);
+    }
+  }
 
   const [rows, setRows] = useState<ChecklistTemplateSummary[] | null>(null);
   const [includeInactive, setIncludeInactive] = useState(false);
@@ -149,7 +171,7 @@ export function ChecklistTemplatesPage() {
                         <Badge tone="slate">Inactive</Badge>
                       )}
                     </Td>
-                    <Td className="text-right">
+                    <Td className="whitespace-nowrap text-right">
                       <Button
                         variant="secondary"
                         onClick={() =>
@@ -158,6 +180,17 @@ export function ChecklistTemplatesPage() {
                       >
                         Open
                       </Button>
+                      {isSuperAdmin && (
+                        <button
+                          type="button"
+                          disabled={busy === t.id}
+                          onClick={() => void onDelete(t)}
+                          className="ml-2 rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:bg-slate-800 dark:text-red-400 dark:hover:bg-red-950/40"
+                          title="Only allowed if no inspection has used this template."
+                        >
+                          {busy === t.id ? 'Deleting…' : 'Delete'}
+                        </button>
+                      )}
                     </Td>
                   </tr>
                 );

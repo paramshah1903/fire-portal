@@ -281,3 +281,91 @@ export async function resetPassword(id: string, newPassword: string) {
   });
   await destroyAllUserSessions(id);
 }
+
+/**
+ * Hard-delete a user. Refuses when historical records reference them
+ * so the audit trail stays intact. Sessions and audit-log actorId
+ * are handled by the schema's cascade / set-null rules.
+ *
+ * Super-Admin-only endpoint — see `routes/users.ts`.
+ */
+export async function deleteUser(actorId: string, id: string) {
+  if (actorId === id) {
+    throw badRequest(
+      'You cannot delete your own account.',
+      'CANNOT_DELETE_SELF',
+    );
+  }
+  const existing = await prisma.user.findUnique({
+    where: { id },
+    include: {
+      role: { select: { key: true } },
+      _count: {
+        select: {
+          inspectionsPerformed: true,
+          inspectionsApproved: true,
+          inspectionsRejected: true,
+          inspectionAttachments: true,
+          correctiveActionsRaised: true,
+          correctiveActionsAssigned: true,
+          correctiveActionsResolved: true,
+          correctiveActionsClosed: true,
+          correctiveActionAttachments: true,
+          publishedChecklists: true,
+          templateApprovals: true,
+        },
+      },
+    },
+  });
+  if (!existing) throw notFound('User not found.');
+
+  // Safety valve: never delete the last Super Admin (lock-out prevention).
+  if (existing.role.key === ROLE_KEYS.SUPER_ADMIN) {
+    const otherSuperAdmins = await prisma.user.count({
+      where: {
+        role: { key: ROLE_KEYS.SUPER_ADMIN },
+        isActive: true,
+        id: { not: id },
+      },
+    });
+    if (otherSuperAdmins === 0) {
+      throw badRequest(
+        'Cannot delete the last active Super Admin — the system needs at least one.',
+        'LAST_SUPER_ADMIN',
+      );
+    }
+  }
+
+  // Preserve history: refuse if the user has performed or approved
+  // any inspections, raised any CAs, uploaded any evidence, or
+  // published any templates. Operator should deactivate instead.
+  const c = existing._count;
+  const blockingCount =
+    c.inspectionsPerformed +
+    c.inspectionsApproved +
+    c.inspectionsRejected +
+    c.inspectionAttachments +
+    c.correctiveActionsRaised +
+    c.correctiveActionsAssigned +
+    c.correctiveActionsResolved +
+    c.correctiveActionsClosed +
+    c.correctiveActionAttachments +
+    c.publishedChecklists;
+  if (blockingCount > 0) {
+    throw conflict(
+      'This user has historical records (inspections, corrective actions, etc.). Deactivate them instead of deleting.',
+      'USER_HAS_HISTORY',
+    );
+  }
+
+  // Approver assignments on templates: clean up automatically —
+  // template survives, just without this approver.
+  if (c.templateApprovals > 0) {
+    await prisma.checklistTemplateApprover.deleteMany({
+      where: { userId: id },
+    });
+  }
+
+  // Sessions cascade via schema; audit-log actorId is SET NULL.
+  await prisma.user.delete({ where: { id } });
+}

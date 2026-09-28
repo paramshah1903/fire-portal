@@ -186,6 +186,18 @@ export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
   res.json({ ok: true });
 });
 
+export const deleteUser: RequestHandler = asyncHandler(async (req, res) => {
+  const actor = req.user!;
+  await userService.deleteUser(actor.id, req.params.id);
+  await writeAudit({
+    actorId: actor.id,
+    action: 'user.delete',
+    entityType: 'User',
+    entityId: req.params.id,
+  });
+  res.status(204).end();
+});
+
 export const listRoles: RequestHandler = asyncHandler(async (_req, res) => {
   const roles = await prisma.role.findMany({
     orderBy: { name: 'asc' },

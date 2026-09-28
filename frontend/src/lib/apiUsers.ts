@@ -102,6 +102,10 @@ export async function resetUserPassword(
   await api.post(`/users/${id}/reset-password`, { newPassword });
 }
 
+export async function deleteUser(id: string): Promise<void> {
+  await api.delete(`/users/${id}`);
+}
+
 export async function listRoles(): Promise<RoleOption[]> {
   const { data } = await api.get<{ roles: RoleOption[] }>('/users/roles');
   return data.roles;

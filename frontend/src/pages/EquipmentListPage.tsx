@@ -5,6 +5,7 @@ import { toApiError } from '../lib/api';
 import {
   EQUIPMENT_STATUS_LABELS,
   EQUIPMENT_STATUSES,
+  deleteEquipment,
   listEquipment,
   listEquipmentTypes,
   type Equipment,
@@ -43,8 +44,29 @@ export function EquipmentListPage() {
   const navigate = useNavigate();
   const { hasPermission, user } = useAuth();
   const canManage = hasPermission(PERMS.EQUIPMENT_MANAGE);
+  const isSuperAdmin = user?.roleKey === ROLES.SUPER_ADMIN;
   const centralOrSuper =
     user?.roleKey === ROLES.SUPER_ADMIN || user?.roleKey === ROLES.CENTRAL_ADMIN;
+  const [busy, setBusy] = useState<string | null>(null);
+
+  async function onDelete(e: Equipment) {
+    if (
+      !confirm(
+        `Permanently delete "${e.equipmentCode} — ${e.name}"? This cannot be undone.`,
+      )
+    )
+      return;
+    setBusy(e.id);
+    setError(null);
+    try {
+      await deleteEquipment(e.id);
+      await reload();
+    } catch (err) {
+      setError(toApiError(err).message);
+    } finally {
+      setBusy(null);
+    }
+  }
 
   const [rows, setRows] = useState<Equipment[] | null>(null);
   const [total, setTotal] = useState(0);
@@ -250,13 +272,24 @@ export function EquipmentListPage() {
                       <Badge tone="slate">No</Badge>
                     )}
                   </Td>
-                  <Td className="text-right">
+                  <Td className="whitespace-nowrap text-right">
                     <Button
                       variant="secondary"
                       onClick={() => navigate(`/equipment/${r.id}`)}
                     >
                       Open
                     </Button>
+                    {isSuperAdmin && (
+                      <button
+                        type="button"
+                        disabled={busy === r.id}
+                        onClick={() => void onDelete(r)}
+                        className="ml-2 rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:bg-slate-800 dark:text-red-400 dark:hover:bg-red-950/40"
+                        title="Only allowed if no inspection or CA references this equipment."
+                      >
+                        {busy === r.id ? 'Deleting…' : 'Delete'}
+                      </button>
+                    )}
                   </Td>
                 </tr>
               ))}

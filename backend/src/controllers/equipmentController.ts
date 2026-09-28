@@ -188,3 +188,14 @@ export const update: RequestHandler = asyncHandler(async (req, res) => {
 
   res.json({ equipment: after });
 });
+
+export const remove: RequestHandler = asyncHandler(async (req, res) => {
+  await service.deleteEquipment(req.params.id);
+  await writeAudit({
+    actorId: req.user?.id,
+    action: 'equipment.delete',
+    entityType: 'Equipment',
+    entityId: req.params.id,
+  });
+  res.status(204).end();
+});

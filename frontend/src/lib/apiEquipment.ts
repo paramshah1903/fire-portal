@@ -179,6 +179,10 @@ export async function updateEquipment(
   return data.equipment;
 }
 
+export async function deleteEquipment(id: string): Promise<void> {
+  await api.delete(`/equipment/${id}`);
+}
+
 // -- bulk import ------------------------------------------------------------
 
 export interface ImportRow {
