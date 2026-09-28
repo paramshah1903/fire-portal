@@ -1,0 +1,2063 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tech Stack &amp; Complete File Guide</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --orange: #F37021;
+    --orange-dark: #DB5B0E;
+    --orange-tint: #FFF5EE;
+    --slate-900: #0F172A;
+    --slate-800: #1E293B;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748B;
+    --slate-400: #94A3B8;
+    --slate-300: #CBD5E1;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50:  #F8FAFC;
+  }
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm 22mm 16mm;
+    @bottom-left  { content: "SafetyVerse · by UPL"; font-size: 9pt; color: #64748B; }
+    @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 9pt; color: #64748B; }
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    color: var(--slate-800);
+    font-size: 10.5pt;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Cover block at the very top */
+  .cover {
+    padding: 40mm 0 16mm 0;
+    border-bottom: 3px solid var(--orange);
+    margin-bottom: 12mm;
+    page-break-after: always;
+  }
+  .cover .eyebrow {
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .cover h1 {
+    font-size: 44pt;
+    margin: 8mm 0 2mm 0;
+    color: var(--slate-900);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .cover .sub {
+    font-size: 16pt;
+    color: var(--slate-500);
+    margin: 0 0 20mm 0;
+  }
+  .cover .meta {
+    font-size: 10pt;
+    color: var(--slate-500);
+    border-top: 1px solid var(--slate-200);
+    padding-top: 6mm;
+    margin-top: 10mm;
+  }
+  .cover .meta strong { color: var(--slate-800); }
+
+  /* Headings */
+  h1, h2, h3, h4 {
+    color: var(--slate-900);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 1.6em;
+    margin-bottom: 0.4em;
+    page-break-after: avoid;
+  }
+  h1 { font-size: 22pt; border-bottom: 2px solid var(--orange); padding-bottom: 2mm; }
+  h2 { font-size: 16pt; color: var(--slate-900); margin-top: 1.4em; }
+  h2:before {
+    content: "";
+    display: inline-block;
+    width: 3px; height: 0.9em;
+    background: var(--orange);
+    margin-right: 6px;
+    vertical-align: -0.05em;
+  }
+  h3 { font-size: 12.5pt; color: var(--slate-800); }
+  h4 { font-size: 11pt; color: var(--slate-700); }
+
+  p { margin: 0.5em 0 0.9em 0; }
+  strong { color: var(--slate-900); }
+
+  /* Links */
+  a {
+    color: var(--orange-dark);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--orange);
+  }
+
+  /* Lists */
+  ul, ol { padding-left: 1.4em; margin: 0.4em 0 1em 0; }
+  li { margin: 0.15em 0; }
+  ul li::marker { color: var(--orange); }
+  ol li::marker { color: var(--orange-dark); font-weight: 600; }
+
+  /* Code */
+  code {
+    background: var(--slate-100);
+    color: var(--orange-dark);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+  }
+  pre {
+    background: var(--slate-900);
+    color: #E5E7EB;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 3px solid var(--orange);
+    overflow-x: auto;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0 1.4em 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  thead { background: var(--orange); color: white; }
+  th {
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+    font-size: 9.5pt;
+    letter-spacing: 0.02em;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--slate-200);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--slate-50); }
+
+  /* Blockquotes = callouts */
+  blockquote {
+    background: var(--orange-tint);
+    border-left: 3px solid var(--orange);
+    margin: 1em 0;
+    padding: 8px 14px;
+    border-radius: 0 4px 4px 0;
+    color: var(--slate-800);
+  }
+  blockquote p { margin: 0.3em 0; }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--slate-200);
+    margin: 2em 0;
+  }
+
+  /* Mermaid: keep the SVG on one page and centered */
+  .mermaid {
+    text-align: center;
+    background: var(--slate-50);
+    padding: 12px 8px;
+    border-radius: 6px;
+    margin: 1em 0 1.4em 0;
+    page-break-inside: avoid;
+  }
+
+  /* Task list checkboxes */
+  ul.task-list { list-style: none; padding-left: 1em; }
+  input[type="checkbox"] {
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="eyebrow">SAFETYVERSE · BY UPL</div>
+  <h1>Tech Stack &amp; Complete File Guide</h1>
+  <p class="sub">SafetyVerse · by UPL</p>
+  <div class="meta">
+    <strong>Version:</strong> 2026-09  ·  <strong>Audience:</strong> All end users<br>
+    <strong>Live app:</strong> https://upl-fire-portal.onrender.com<br>
+    <strong>Repository:</strong> https://github.com/paramshah1903/fire-portal
+  </div>
+</div>
+
+<h1 id="safetyverse-tech-stack-complete-file-guide">SafetyVerse — Tech Stack &amp; Complete File Guide</h1>
+<p><em>A beginner-friendly walkthrough of every technology used and every
+file in the codebase. Read it top to bottom, or skip to any section.</em></p>
+<hr />
+<h1 id="part-1-tech-stack">PART 1 — TECH STACK</h1>
+<h2 id="11-the-big-picture">1.1 The big picture</h2>
+<p>Think of SafetyVerse as three cooperating machines:</p>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>What it does</th>
+<th>Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Frontend</strong> (browser)</td>
+<td>Shows the screens users interact with</td>
+<td>A waiter taking your order</td>
+</tr>
+<tr>
+<td><strong>Backend</strong> (server)</td>
+<td>Does the work — talks to database, checks permissions</td>
+<td>The kitchen preparing food</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>Remembers everything permanently</td>
+<td>The restaurant's filing cabinet</td>
+</tr>
+</tbody>
+</table>
+<p>We use a different set of tools for each. Everything in the middle
+column below is free and open-source unless noted.</p>
+<hr />
+<h2 id="12-frontend-stack">1.2 Frontend stack</h2>
+<p>The frontend lives in <code>frontend/</code> and runs entirely in the user's
+browser. It is a <strong>Single-Page Application</strong> (SPA) — one HTML file that
+loads all the app logic once, then swaps pages in and out without
+reloading.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>What it does</th>
+<th>Why we chose it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>React</strong></td>
+<td>18</td>
+<td>The core UI library — components, state, re-rendering</td>
+<td>Industry standard; huge community; easy to hire for</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td>5.6</td>
+<td>Adds types on top of JavaScript so mistakes are caught at write-time</td>
+<td>Turns "runtime crash" into "editor squiggle"</td>
+</tr>
+<tr>
+<td><strong>Vite</strong></td>
+<td>5</td>
+<td>Builds and serves the frontend (dev server + production bundler)</td>
+<td>Faster than the older Webpack/Create-React-App</td>
+</tr>
+<tr>
+<td><strong>Tailwind CSS</strong></td>
+<td>3.4</td>
+<td>Styling via short class names (<code>px-4 bg-white</code> etc.)</td>
+<td>No global CSS files to fight over; easy dark mode</td>
+</tr>
+<tr>
+<td><strong>React Router</strong></td>
+<td>6</td>
+<td>URL → page mapping in the SPA</td>
+<td>The de-facto SPA router</td>
+</tr>
+<tr>
+<td><strong>Axios</strong></td>
+<td>1.7</td>
+<td>Sends HTTP requests to the backend</td>
+<td>Simpler than <code>fetch</code> for cookies + error handling</td>
+</tr>
+<tr>
+<td><strong>html5-qrcode</strong></td>
+<td>2.3</td>
+<td>Turns the phone camera into a QR scanner</td>
+<td>Works in any browser, no app install needed</td>
+</tr>
+<tr>
+<td><strong>qrcode.react</strong></td>
+<td>4.2</td>
+<td>Draws QR labels for printing</td>
+<td>Renders as SVG so labels print sharp</td>
+</tr>
+<tr>
+<td><strong>Recharts</strong></td>
+<td>3</td>
+<td>Dashboard charts (bar / pie / line)</td>
+<td>Built specifically for React</td>
+</tr>
+</tbody>
+</table>
+<h3 id="development-only-extras">Development-only extras</h3>
+<ul>
+<li><strong>ESLint</strong> — catches common JavaScript mistakes</li>
+<li><strong>Autoprefixer + PostCSS</strong> — makes Tailwind actually work</li>
+</ul>
+<hr />
+<h2 id="13-backend-stack">1.3 Backend stack</h2>
+<p>The backend lives in <code>backend/</code> and runs on <strong>Node.js</strong> (a program that
+executes JavaScript outside the browser). It exposes an <strong>HTTP API</strong> —
+a set of URLs the frontend calls to fetch or change data.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>What it does</th>
+<th>Why we chose it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Node.js</strong></td>
+<td>18+</td>
+<td>Runs JavaScript on the server</td>
+<td>Same language as the frontend — one team, one language</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td>5.6</td>
+<td>Static types on the server</td>
+<td>Same benefits as frontend</td>
+</tr>
+<tr>
+<td><strong>Express</strong></td>
+<td>4.21</td>
+<td>Handles HTTP requests and responses</td>
+<td>Simplest, most popular Node web framework</td>
+</tr>
+<tr>
+<td><strong>Prisma</strong></td>
+<td>5.22</td>
+<td>Talks to the database via typed queries</td>
+<td>Turns SQL rows into TypeScript objects automatically</td>
+</tr>
+<tr>
+<td><strong>Zod</strong></td>
+<td>4.6</td>
+<td>Validates every request body against a schema</td>
+<td>Rejects bad input before it hits the database</td>
+</tr>
+<tr>
+<td><strong>bcryptjs</strong></td>
+<td>3</td>
+<td>Hashes passwords (one-way scrambling)</td>
+<td>Passwords stored as hashes, never plain text</td>
+</tr>
+<tr>
+<td><strong>cookie-parser</strong></td>
+<td>1.4</td>
+<td>Reads and signs session cookies</td>
+<td>Foundation of our login system</td>
+</tr>
+<tr>
+<td><strong>Helmet</strong></td>
+<td>8</td>
+<td>Adds security headers to every response</td>
+<td>Sensible defaults against common web attacks</td>
+</tr>
+<tr>
+<td><strong>CORS</strong></td>
+<td>2.8</td>
+<td>Controls which domains can call the API</td>
+<td>Blocks strangers' websites from calling our backend</td>
+</tr>
+<tr>
+<td><strong>Morgan</strong></td>
+<td>1.10</td>
+<td>Logs every HTTP request</td>
+<td>So we can see what happened in production</td>
+</tr>
+<tr>
+<td><strong>express-rate-limit</strong></td>
+<td>8</td>
+<td>Blocks abusers who send too many requests</td>
+<td>DoS protection</td>
+</tr>
+<tr>
+<td><strong>Multer</strong></td>
+<td>2.4</td>
+<td>Handles file uploads (photos)</td>
+<td>Standard Express file middleware</td>
+</tr>
+<tr>
+<td><strong>ExcelJS</strong></td>
+<td>4.4</td>
+<td>Generates <code>.xlsx</code> files for report exports</td>
+<td>Full XLSX support (styles, columns, sheets)</td>
+</tr>
+<tr>
+<td><strong>Papaparse</strong></td>
+<td>5.7</td>
+<td>Reads/writes CSV files</td>
+<td>Handles CSV edge cases (commas in values, quotes, etc.)</td>
+</tr>
+<tr>
+<td><strong>dotenv</strong></td>
+<td>16</td>
+<td>Loads config from a <code>.env</code> file</td>
+<td>So we don't hard-code secrets</td>
+</tr>
+</tbody>
+</table>
+<h3 id="development-only-extras_1">Development-only extras</h3>
+<ul>
+<li><strong>tsx</strong> — runs TypeScript files directly during development</li>
+<li><strong>@types/</strong>* — TypeScript type definitions for the JS libraries above</li>
+</ul>
+<hr />
+<h2 id="14-database">1.4 Database</h2>
+<ul>
+<li><strong>PostgreSQL</strong> — the actual database engine. An industry-standard,
+  ACID-compliant relational database.</li>
+<li><strong>Neon</strong> — a company that runs Postgres for us. Free tier.
+  We don't manage servers.</li>
+<li><strong>Prisma</strong> (also listed above) — our "translator" between TypeScript
+  and SQL.</li>
+</ul>
+<p><strong>Why Postgres over SQLite?</strong> SQLite is a file on disk, perfect for
+local development but hosted apps need a proper always-on database. We
+started with SQLite and migrated to Postgres when deploying. Same
+Prisma code works for both.</p>
+<hr />
+<h2 id="15-hosting-deployment">1.5 Hosting &amp; deployment</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Render.com</strong></td>
+<td>Rents us a virtual machine, runs our Node.js process, serves the site over HTTPS</td>
+</tr>
+<tr>
+<td><strong>Neon</strong></td>
+<td>Rents us a Postgres database, backups included</td>
+</tr>
+<tr>
+<td><strong>GitHub</strong></td>
+<td>Stores our source code; every push to <code>main</code> triggers a Render deploy</td>
+</tr>
+</tbody>
+</table>
+<p>The whole pipeline:</p>
+<pre><code>developer laptop → git push → GitHub → Render notices → Render builds → Render deploys
+</code></pre>
+<p>Zero manual steps once configured. See <code>render.yaml</code> for the exact
+recipe.</p>
+<hr />
+<h2 id="16-development-tools">1.6 Development tools</h2>
+<p>Not shipped in production but essential during development:</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Git</strong></td>
+<td>Version control — track every change, roll back if needed</td>
+</tr>
+<tr>
+<td><strong>npm</strong></td>
+<td>Installs library dependencies from <code>package.json</code></td>
+</tr>
+<tr>
+<td><strong>Prisma CLI</strong></td>
+<td>Runs database migrations, generates the typed client</td>
+</tr>
+<tr>
+<td><strong>Chrome DevTools</strong></td>
+<td>Debug the frontend live in the browser</td>
+</tr>
+<tr>
+<td><strong>VS Code (recommended)</strong></td>
+<td>Code editor with TypeScript support</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="part-2-repository-layout">PART 2 — REPOSITORY LAYOUT</h1>
+<h2 id="21-top-level-folders">2.1 Top-level folders</h2>
+<pre><code>upl_project/
+├── backend/          Node.js API + database schema
+├── frontend/         React SPA
+├── docs/             Every document you're reading — including this one
+├── logo.jpeg         UPL brand image (copied into frontend/public for the app)
+├── render.yaml       Deployment recipe read by Render.com
+├── README.md         Repo homepage
+├── .gitignore        Which files git should ignore
+└── .env.example      Template for local .env
+</code></pre>
+<h2 id="22-backend-folder">2.2 Backend folder</h2>
+<pre><code>backend/
+├── prisma/
+│   ├── schema.prisma      Data model (14 tables)
+│   ├── seed.ts            Loads demo data (roles, admin user, sample equipment)
+│   └── migrations/        SQL migration files (auto-generated)
+├── src/
+│   ├── config/env.ts      Loads and validates environment variables
+│   ├── controllers/       Thin HTTP layer — parse request, call service
+│   ├── services/          Business logic — the &quot;brain&quot; of each feature
+│   ├── routes/            URL → Controller wiring
+│   ├── middleware/        Runs on every request (auth, logging, rate limit)
+│   ├── lib/               Shared helpers (Prisma client, error classes, etc.)
+│   ├── types/             TypeScript type declarations
+│   ├── app.ts             Express app setup (glues everything together)
+│   └── server.ts          HTTP listener (main entry point)
+├── package.json           List of dependencies + npm scripts
+├── tsconfig.json          TypeScript compiler settings
+└── .env                   Local configuration (gitignored — has secrets)
+</code></pre>
+<h2 id="23-frontend-folder">2.3 Frontend folder</h2>
+<pre><code>frontend/
+├── public/                Files served as-is (favicon, logo)
+├── src/
+│   ├── main.tsx           App entry point — mounts React into the HTML page
+│   ├── App.tsx            Route table — URL → Page component
+│   ├── index.css          Global Tailwind styles + print rules
+│   ├── auth/              Session state and route guards
+│   ├── theme/             Dark/light mode toggle
+│   ├── layout/            App shell (top bar + sidebar)
+│   ├── pages/             One file per screen (Dashboard, Login, etc.)
+│   ├── components/        Reusable pieces (Modal, Button, Badge, …)
+│   └── lib/               API client + typed wrappers for each backend area
+├── index.html             HTML skeleton
+├── package.json           Dependencies + scripts
+├── vite.config.ts         Build settings
+├── tailwind.config.js     UPL brand palette + dark mode config
+├── postcss.config.js      CSS processing pipeline
+└── tsconfig.*.json        TypeScript settings
+</code></pre>
+<hr />
+<h1 id="part-3-backend-files-deep-dive">PART 3 — BACKEND FILES (DEEP DIVE)</h1>
+<h2 id="31-the-entry-point-how-a-request-flows">3.1 The entry point — how a request flows</h2>
+<p>Before we look at individual files, understand the request pipeline:</p>
+<pre><code>1. Browser sends &quot;GET /api/equipment&quot;
+2. → server.ts        starts the HTTP listener
+3. → app.ts           passes request through the middleware stack
+4. → middleware/*     auth, rate limit, request id, etc.
+5. → routes/*         says &quot;this URL goes to controllers/equipmentController.list&quot;
+6. → controllers/*    parses query params, calls the service
+7. → services/*       runs business logic (permission checks, DB query)
+8. → prisma           translates to SQL, runs it on Postgres
+9. → (response bubbles back up the chain)
+</code></pre>
+<p>Every file below fits somewhere in this pipeline. Understanding the
+pipeline makes the file list easy to navigate.</p>
+<hr />
+<h2 id="32-entry-point-files">3.2 Entry point files</h2>
+<h3 id="backendsrcserverts"><code>backend/src/server.ts</code></h3>
+<p><strong>One-liner:</strong> Starts the HTTP listener on a port.</p>
+<p><strong>Why it exists:</strong> Node.js needs an entry file — the one you literally
+run. This is it. It imports <code>app.ts</code> (which builds the Express app)
+and calls <code>.listen(port)</code>.</p>
+<p><strong>Deep dive:</strong> Tiny file. Reads the port from environment variables
+(defaults to 4000 in dev, or whatever Render assigns in production),
+prints a "listening on…" message, hooks up graceful shutdown on
+Ctrl+C. Everything else is delegated to <code>app.ts</code>.</p>
+<p><strong>Importance:</strong> Critical. If this crashes, the whole backend is down.</p>
+<hr />
+<h3 id="backendsrcappts"><code>backend/src/app.ts</code></h3>
+<p><strong>One-liner:</strong> Builds the Express application by chaining middleware
+and mounting routers.</p>
+<p><strong>Why it exists:</strong> Express apps are built by "using" pieces of
+functionality in a specific order (security first, then auth, then
+routes, then error handling). This file is where that order is defined.</p>
+<p><strong>Deep dive:</strong> In order, this file:
+1. Turns off <code>X-Powered-By</code> (security through obscurity — hides
+   which server we run)
+2. Sets <code>trust proxy: 1</code> (tells Express the app is behind Render's
+   load balancer so <code>req.ip</code> returns the real client IP)
+3. Applies <strong>Helmet</strong> (adds ~10 security headers)
+4. Applies <strong>CORS</strong> (only lets our own frontend call the API)
+5. Parses request bodies as JSON
+6. Parses signed cookies
+7. Assigns a random request ID to every request (for tracing errors)
+8. Logs every request with Morgan
+9. Runs <code>attachUser</code> middleware (loads the current logged-in user)
+10. Applies rate limiting
+11. Mounts every <code>routes/*</code> router at its URL prefix
+12. Optionally serves the built frontend static files (<code>FRONTEND_DIST_DIR</code>)
+13. Registers the 404 handler and the global error handler</p>
+<p><strong>Importance:</strong> Critical. Every request touches this file.</p>
+<hr />
+<h2 id="33-configuration">3.3 Configuration</h2>
+<h3 id="backendsrcconfigenvts"><code>backend/src/config/env.ts</code></h3>
+<p><strong>One-liner:</strong> Reads environment variables and gives them typed names
+elsewhere in the code.</p>
+<p><strong>Why it exists:</strong> You don't want random <code>process.env.PORT</code> sprinkled
+throughout the code. This file is the <em>single</em> place where env vars
+are read, validated, and defaulted.</p>
+<p><strong>Deep dive:</strong> Exports an <code>env</code> object with fields like <code>env.port</code>,
+<code>env.databaseUrl</code>, <code>env.sessionSecret</code>, etc. Uses helper functions
+<code>required()</code> (throws if missing, unless a fallback is provided),
+<code>integer()</code> (parses to number), and <code>optional()</code> (returns undefined
+if missing). Also exports <code>isProduction</code> (a boolean derived from
+<code>NODE_ENV</code>).</p>
+<p><strong>Importance:</strong> Critical. Wrong config here → app fails to start or
+runs with silent bugs (like an empty session secret).</p>
+<hr />
+<h2 id="34-middleware-code-that-runs-on-every-request">3.4 Middleware — code that runs on every request</h2>
+<p>Middleware sits between the HTTP request arriving and the actual
+business logic running. Think of it as an assembly line where each
+station adds or checks something before passing the package on.</p>
+<h3 id="backendsrcmiddlewareauthts"><code>backend/src/middleware/auth.ts</code></h3>
+<p><strong>One-liner:</strong> Reads the session cookie, looks up the user, attaches
+them to <code>req.user</code>.</p>
+<p><strong>Why it exists:</strong> Almost every backend endpoint needs to know "who is
+calling?". Doing that lookup in every controller would be repetitive.</p>
+<p><strong>Deep dive:</strong> Contains three exports:
+- <strong><code>attachUser</code></strong> — runs on every request, decodes the signed cookie,
+  looks up the <code>Session</code> row, extends the session's <code>expiresAt</code>,
+  loads the associated <code>User</code>, and puts them on <code>req.user</code>. Doesn't
+  fail if there's no session — just sets <code>req.user = null</code>.
+- <strong><code>requireAuth</code></strong> — a stricter middleware that returns 401 if
+  <code>req.user</code> is null. Applied to routes that need a logged-in user.
+- <strong><code>requirePermissions(...perms)</code></strong> — factory that returns middleware
+  which checks that the user has <em>all</em> of the listed permissions.</p>
+<p>Also exports <code>asyncHandler</code> — a utility that catches async errors from
+controllers and forwards them to the global error handler (Express 4
+doesn't do this natively).</p>
+<p><strong>Importance:</strong> Critical for security. Every protected endpoint uses
+<code>requireAuth</code> + <code>requirePermissions</code>.</p>
+<hr />
+<h3 id="backendsrcmiddlewareerrorhandlerts"><code>backend/src/middleware/errorHandler.ts</code></h3>
+<p><strong>One-liner:</strong> Catches every unhandled error and returns a clean JSON
+error to the client.</p>
+<p><strong>Why it exists:</strong> Without this, an unexpected error would leak a
+full stack trace to the browser. This file wraps everything in a
+structured <code>{error: {code, message, requestId}}</code> shape.</p>
+<p><strong>Deep dive:</strong> Two exports:
+- <strong><code>notFoundHandler</code></strong> — catches URLs that no route matched, returns
+  <code>404 NOT_FOUND</code>.
+- <strong><code>errorHandler</code></strong> — the last middleware. Inspects the thrown error,
+  returns the right HTTP status: <code>400</code> for validation, <code>401</code> for auth,
+  <code>403</code> for permissions, <code>404</code> for not-found, <code>409</code> for conflicts,
+  <code>429</code> for rate limits, <code>500</code> for everything else. Zod errors are
+  turned into human-readable field-level messages. Prisma errors are
+  translated too (<code>P2002</code> = unique constraint → 409). In production
+  we hide stack traces.</p>
+<p><strong>Importance:</strong> Critical for both security and user experience.</p>
+<hr />
+<h3 id="backendsrcmiddlewareratelimitsts"><code>backend/src/middleware/rateLimits.ts</code></h3>
+<p><strong>One-liner:</strong> Blocks IP addresses sending too many requests.</p>
+<p><strong>Why it exists:</strong> Without this, a single client (or a bot) could
+overwhelm the API. Also prevents brute-force login attempts.</p>
+<p><strong>Deep dive:</strong> Exports two limiters:
+- <strong><code>globalApiLimiter</code></strong> — max 300 requests per minute per IP, applied
+  to all <code>/api/*</code>.
+- <strong><code>writeApiLimiter</code></strong> — max 60 writes per minute per IP (POST / PUT
+  / DELETE only), applied on top of the global one.</p>
+<p>Both are read from env vars (<code>RATE_LIMIT_GLOBAL_PER_MINUTE</code> etc.) so
+they're tunable without a code change.</p>
+<p><strong>Importance:</strong> High. Prevents accidental and malicious abuse.</p>
+<hr />
+<h3 id="backendsrcmiddlewarerequestidts"><code>backend/src/middleware/requestId.ts</code></h3>
+<p><strong>One-liner:</strong> Assigns a random ID to every request so we can trace it
+in logs.</p>
+<p><strong>Why it exists:</strong> When an error happens, the client sees a
+<code>requestId</code> in the error response. Ops can grep the server logs for
+that ID to see exactly what happened for that specific request.</p>
+<p><strong>Deep dive:</strong> Sets <code>req.id = crypto.randomUUID().slice(0, 12)</code>. Adds
+the ID to a response header (<code>X-Request-Id</code>) and to the Morgan log
+format via a custom token.</p>
+<p><strong>Importance:</strong> Medium. Not required for the app to work, but
+essential for debugging in production.</p>
+<hr />
+<h3 id="backendsrcmiddlewareuploadts"><code>backend/src/middleware/upload.ts</code></h3>
+<p><strong>One-liner:</strong> Configures Multer to handle uploaded image files.</p>
+<p><strong>Why it exists:</strong> File uploads need special HTTP parsing (they use
+<code>multipart/form-data</code>). Multer does that but needs configuration
+around max size, allowed MIME types, and storage location.</p>
+<p><strong>Deep dive:</strong> Exports <code>inspectionPhotoUpload</code> — Multer middleware
+that expects a single field named <code>file</code>, caps size at
+<code>UPLOAD_MAX_BYTES</code> (default 10 MB), and stores in memory (we then
+write to disk via <code>lib/fileStorage.ts</code> after auth checks pass).</p>
+<p><strong>Importance:</strong> Only needed for inspection photo uploads.</p>
+<hr />
+<h2 id="35-routes-url-controller-wiring">3.5 Routes — URL → controller wiring</h2>
+<p>Every file in <code>backend/src/routes/</code> follows the same pattern: create
+an <code>express.Router()</code>, list <code>router.get('/path', middleware, handler)</code>
+lines, export it. <code>app.ts</code> mounts each router at a URL prefix.</p>
+<p>Most routes are trivial (one to twenty lines each) and share the same
+shape. Rather than describe each individually, here's the pattern once
+and a list of what each router covers:</p>
+<pre><code class="language-typescript">export const someRouter = Router();
+someRouter.use(requireAuth);
+someRouter.get('/', requirePermissions(PERMS.X_VIEW), controller.list);
+someRouter.post('/', requirePermissions(PERMS.X_MANAGE), controller.create);
+someRouter.get('/:id', requirePermissions(PERMS.X_VIEW), controller.get);
+someRouter.put('/:id', requirePermissions(PERMS.X_MANAGE), controller.update);
+</code></pre>
+<h3 id="file-list">File list</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>URL prefix</th>
+<th>Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>routes/health.ts</code></td>
+<td><code>/api</code></td>
+<td><code>/health</code> — is the DB reachable?</td>
+</tr>
+<tr>
+<td><code>routes/auth.ts</code></td>
+<td><code>/api/auth</code></td>
+<td>Login, logout, <code>me</code> (whoami)</td>
+</tr>
+<tr>
+<td><code>routes/users.ts</code></td>
+<td><code>/api/users</code></td>
+<td>User CRUD + role master (roles, permissions endpoints)</td>
+</tr>
+<tr>
+<td><code>routes/units.ts</code></td>
+<td><code>/api/units</code></td>
+<td>Unit CRUD</td>
+</tr>
+<tr>
+<td><code>routes/departments.ts</code></td>
+<td><code>/api/departments</code></td>
+<td>Department CRUD</td>
+</tr>
+<tr>
+<td><code>routes/equipmentTypes.ts</code></td>
+<td><code>/api/equipment-types</code></td>
+<td>Equipment type CRUD</td>
+</tr>
+<tr>
+<td><code>routes/equipment.ts</code></td>
+<td><code>/api/equipment</code></td>
+<td>Equipment CRUD, QR lookup, bulk import</td>
+</tr>
+<tr>
+<td><code>routes/checklistTemplates.ts</code></td>
+<td><code>/api/checklist-templates</code> + <code>/api/checklist-versions</code></td>
+<td>Template + version CRUD, publish</td>
+</tr>
+<tr>
+<td><code>routes/inspections.ts</code></td>
+<td><code>/api/inspections</code></td>
+<td>Start, save, submit, approve, reject, schedule, photos</td>
+</tr>
+<tr>
+<td><code>routes/correctiveActions.ts</code></td>
+<td><code>/api/corrective-actions</code></td>
+<td>CA CRUD, assign, resolve, close, photos</td>
+</tr>
+<tr>
+<td><code>routes/reports.ts</code></td>
+<td><code>/api/reports</code></td>
+<td>All 7 reports</td>
+</tr>
+<tr>
+<td><code>routes/dashboard.ts</code></td>
+<td><code>/api/dashboard</code></td>
+<td>Compliance summary + chart data</td>
+</tr>
+<tr>
+<td><code>routes/auditLogs.ts</code></td>
+<td><code>/api/audit-logs</code></td>
+<td>Read the audit trail</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Importance:</strong> Each file is trivial in isolation but essential —
+without the router, the endpoint isn't reachable.</p>
+<hr />
+<h2 id="36-controllers-the-receptionist-layer">3.6 Controllers — the "receptionist" layer</h2>
+<p>A controller does three jobs:
+1. <strong>Read</strong> the request (URL params, query string, body)
+2. <strong>Validate</strong> the body (using Zod)
+3. <strong>Call</strong> the service function
+4. <strong>Return</strong> the result as JSON</p>
+<p>Controllers never touch the database directly. That's the service's job.</p>
+<h3 id="file-list_1">File list</h3>
+<p>Each controller matches its route file (same resource). Rather than
+one-by-one, here's what each does at a glance:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Handlers</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>controllers/authController.ts</code></td>
+<td>login, logout, me</td>
+<td>Sets and clears the session cookie</td>
+</tr>
+<tr>
+<td><code>controllers/userController.ts</code></td>
+<td>listUsers, getUser, createUser, updateUser, resetPassword</td>
+<td>Old <code>listRoles</code> handler still exported but no longer routed (moved to <code>roleController</code>)</td>
+</tr>
+<tr>
+<td><code>controllers/roleController.ts</code></td>
+<td>listRoles, getRole, listPermissions, createRole, updateRole, deleteRole</td>
+<td>The Role Master API</td>
+</tr>
+<tr>
+<td><code>controllers/unitController.ts</code></td>
+<td>list, get, create, update</td>
+<td>Standard CRUD</td>
+</tr>
+<tr>
+<td><code>controllers/departmentController.ts</code></td>
+<td>list, get, create, update</td>
+<td>Standard CRUD</td>
+</tr>
+<tr>
+<td><code>controllers/equipmentTypeController.ts</code></td>
+<td>list, get, create, update</td>
+<td>Standard CRUD</td>
+</tr>
+<tr>
+<td><code>controllers/equipmentController.ts</code></td>
+<td>list, get, create, update, byQr, applicableChecklist, listInspectionsForEquipment, currentInspectionForEquipment</td>
+<td>The <code>byQr</code> handler is what QR scans hit</td>
+</tr>
+<tr>
+<td><code>controllers/equipmentImportController.ts</code></td>
+<td>template download, preview, import</td>
+<td>Bulk upload from CSV</td>
+</tr>
+<tr>
+<td><code>controllers/checklistTemplateController.ts</code></td>
+<td>Template CRUD, version create, version save, version publish</td>
+<td>Handles the versioned template model</td>
+</tr>
+<tr>
+<td><code>controllers/inspectionController.ts</code></td>
+<td>list, get, listSchedule, start, saveProgress, submit, approve, reject, listPendingApprovals, uploadAttachment, downloadAttachment</td>
+<td>The busiest controller — 12+ handlers</td>
+</tr>
+<tr>
+<td><code>controllers/correctiveActionController.ts</code></td>
+<td>list, get, create, assign, progress, resolve, close, uploadAttachment</td>
+<td>Corrective-action lifecycle</td>
+</tr>
+<tr>
+<td><code>controllers/reportsController.ts</code></td>
+<td>7 report handlers, each with JSON / CSV / XLSX output</td>
+<td>Uses <code>lib/exporters.ts</code> for CSV/Excel</td>
+</tr>
+<tr>
+<td><code>controllers/dashboardController.ts</code></td>
+<td>summary + chart data</td>
+<td>Just calls the dashboard service</td>
+</tr>
+<tr>
+<td><code>controllers/auditLogController.ts</code></td>
+<td>list</td>
+<td>Simple paginated list</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deep-dive-on-the-most-interesting-ones">Deep dive on the most interesting ones</h3>
+<p><strong><code>controllers/authController.ts</code></strong> — Login is more than "check password":
+- Verify username + password against the DB (via <code>authService</code>)
+- Create a <code>Session</code> row
+- Set a signed HTTP-only cookie carrying the session ID
+- Return the current user + their permissions
+The cookie is <code>httpOnly</code> (JavaScript in the browser can't read it),
+<code>secure</code> (HTTPS only) in production, <code>sameSite: lax</code> (protects against
+cross-site request forgery), and signed (any tampering is detected).</p>
+<p><strong><code>controllers/inspectionController.ts</code></strong> — Contains one of the most
+important flows in the app: <code>submit</code>. It calls <code>service.submitInspection</code>
+which either completes the inspection immediately OR sends it to
+approval, depending on whether the template has approvers.</p>
+<p><strong><code>controllers/reportsController.ts</code></strong> — Each report has a
+<code>ColumnSpec[]</code> array defining the CSV/Excel columns. The same array
+drives both the download format and (for JSON responses) the shape
+the frontend renders. Adding a column is a one-line change.</p>
+<p><strong>Importance:</strong> Every controller is business-critical for its area.</p>
+<hr />
+<h2 id="37-services-the-brain-layer">3.7 Services — the "brain" layer</h2>
+<p>Services own the business logic and are the only layer that talks to
+the database (via Prisma). They:
+1. Enforce <strong>permission</strong> rules (unit scoping, ownership, role checks)
+2. Do the actual <strong>database work</strong>
+3. Return plain objects the controller can <code>res.json()</code></p>
+<p>Every write happens in a <strong>Prisma transaction</strong> (<code>prisma.$transaction</code>)
+so partially-completed changes never survive an error.</p>
+<h3 id="file-list-summaries">File list &amp; summaries</h3>
+<p><strong><code>services/authService.ts</code></strong> —
+Password verification (<code>bcrypt.compare</code>), session creation, session
+destruction. Session cookies here are stored server-side too (in the
+<code>Session</code> table), so revoking a session is a real DB row deletion, not
+just a "log out on the client" wave.</p>
+<p><strong><code>services/userService.ts</code></strong> —
+User CRUD, unit-scope checks (Unit Admin can only touch users in their
+own unit), password reset (writes a new bcrypt hash). Enforces "only
+one Super Admin" is <em>not</em> enforced — that's a policy call left to
+operators.</p>
+<p><strong><code>services/roleService.ts</code></strong> —
+Role Master CRUD, plus permission-set replacement. Includes hard
+guardrails:
+- <code>SUPER_ADMIN</code> is fully immutable (attempting to change it throws
+  403). Prevents accidental lock-out.
+- System roles keep their name and key.
+- Custom roles can be deleted only when no users are assigned.</p>
+<p><strong><code>services/unitService.ts</code> / <code>services/departmentService.ts</code> / <code>services/equipmentTypeService.ts</code></strong> —
+Simple CRUD services. Nothing surprising.</p>
+<p><strong><code>services/equipmentService.ts</code></strong> —
+Equipment CRUD with unit-scope enforcement, plus:
+- <strong>QR value generation</strong> — every new equipment gets a unique random
+  short string (e.g. <code>EQ-A1B2C3D4E5F6</code>).
+- <strong>Equipment code auto-generation</strong> — via <code>lib/equipmentCodes.ts</code>,
+  produces sequential codes like <code>FE-A-0001</code> scoped per equipment type
+  per unit.
+- <strong><code>byQr()</code></strong> — looks up equipment by its QR value. The heart of the
+  scan-to-inspect flow.</p>
+<p><strong><code>services/equipmentImportService.ts</code></strong> —
+CSV bulk import. Reads the file, validates each row (existence
+checks for unit/department/type, dedup checks), returns a preview,
+then commits in one transaction.</p>
+<p><strong><code>services/checklistTemplateService.ts</code></strong> —
+Template + versioning + approvers. The versioning logic is the
+trickiest part of the whole codebase:
+- Editing a published template means creating a <em>new draft version</em>
+  (cloned from the current published one)
+- Publishing a draft archives the previous published one and marks the
+  new one as <code>isCurrent</code>
+- Historical inspections reference the exact version they were captured
+  against — template edits never mutate history
+- Also: approver assignment with role validation (<code>Unit Admin</code> or above)</p>
+<p><strong><code>services/inspectionService.ts</code></strong> —
+The biggest and most complex service in the codebase. Contains:
+- <code>startInspection</code> — creates or resumes a <code>PENDING</code> inspection
+- <code>saveInspectionProgress</code> — upserts responses without validation
+- <code>submitInspection</code> — validates all mandatory answers, checks if the
+  template has approvers, either completes the inspection or sends it
+  to <code>PENDING_APPROVAL</code>
+- <code>completeInspection</code> — the finalisation step: assigns
+  <code>INS-YYYY-NNNNNN</code> number, computes overall result, auto-creates
+  corrective actions for failed safety-critical answers
+- <code>approveInspection</code> / <code>rejectInspection</code> — approval workflow
+- <code>listSchedule</code> — the monthly schedule with due/overdue/completed
+  status per equipment
+- <code>listPendingApprovals</code> — for the notification centre</p>
+<p>Also contains helpers like <code>nextInspectionNumber</code> (per-year monotonic
+sequence) and <code>isAnswered</code> (question-type-aware).</p>
+<p><strong><code>services/correctiveActionService.ts</code></strong> —
+CA lifecycle (OPEN → IN_PROGRESS → RESOLVED → CLOSED). Includes:
+- <code>autoCreateForFailedResponse</code> — called by <code>inspectionService</code> when
+  an inspection completes with a fail on a safety-critical question
+- Human-readable code generation (<code>CA-A-00001</code> per unit)
+- Attachment uploads keyed by lifecycle stage (evidence/resolution/closure)</p>
+<p><strong><code>services/reportsService.ts</code></strong> —
+Seven distinct report queries. Each function:
+1. Applies the current user's unit-scope
+2. Runs the Prisma query
+3. Transforms rows into a consistent <code>{summary, rows, questions?}</code> shape</p>
+<p>The trickiest is <code>equipmentInspectionLogReport</code> — it collects every
+question ever answered in the range, sorts them by section×sequence,
+and produces one column per question. <code>equipmentTypeInspectionLogReport</code>
+does the same across every equipment of a type.</p>
+<p><strong><code>services/dashboardService.ts</code></strong> —
+Aggregates data for the home dashboard: total equipment, this month's
+completion %, top failing types, recent activity feed.</p>
+<p><strong><code>services/auditLogService.ts</code></strong> —
+Simple paginated read over the <code>AuditLog</code> table with filters.</p>
+<p><strong>Importance:</strong> Services are where business logic lives. Changes here
+directly affect app behaviour.</p>
+<hr />
+<h2 id="38-shared-helpers-lib">3.8 Shared helpers (<code>lib/</code>)</h2>
+<p>Small files with focused purposes. Reused across services.</p>
+<h3 id="backendsrclibprismats"><code>backend/src/lib/prisma.ts</code></h3>
+<p><strong>One-liner:</strong> Exports a single Prisma client instance.</p>
+<p><strong>Why it exists:</strong> Creating a new Prisma client per request would
+exhaust the DB connection pool. We create one shared instance at app
+startup.</p>
+<p><strong>Deep dive:</strong> Also handles graceful shutdown (<code>await prisma.$disconnect()</code>
+on SIGTERM). In dev, hot-reloads reuse the same instance so we don't
+leak connections between reloads.</p>
+<hr />
+<h3 id="backendsrcliberrorsts"><code>backend/src/lib/errors.ts</code></h3>
+<p><strong>One-liner:</strong> Custom error classes with HTTP status codes attached.</p>
+<p><strong>Why it exists:</strong> Services throw semantic errors (<code>notFound()</code>,
+<code>forbidden()</code>, <code>conflict()</code>) that the global error handler can turn
+into the right HTTP status.</p>
+<p><strong>Deep dive:</strong> Exports <code>AppError</code> (base class) + helper factory
+functions: <code>badRequest(msg, code)</code>, <code>unauthorized</code>, <code>forbidden</code>,
+<code>notFound</code>, <code>conflict</code>, <code>tooLarge</code>, <code>rateLimited</code>. Each carries a
+symbolic error <code>code</code> (e.g. <code>INVALID_INPUT</code>) so the frontend can key
+UX decisions off the code, not the human-readable message.</p>
+<hr />
+<h3 id="backendsrclibrbacts"><code>backend/src/lib/rbac.ts</code></h3>
+<p><strong>One-liner:</strong> Single source of truth for role and permission keys.</p>
+<p><strong>Why it exists:</strong> Both the seed script and the middleware need to
+know "what are the 18 permissions and what does each role have?" This
+file is that source.</p>
+<p><strong>Deep dive:</strong> Exports:
+- <code>ROLE_KEYS</code> — 5 role keys as constants
+- <code>PERMISSION_KEYS</code> — 18 permission keys as constants
+- <code>ROLE_PERMISSIONS</code> — mapping of role → which permissions it gets by
+  default. Used only on first-run seed; operators can change roles
+  later via the Roles UI without those changes being wiped by seed.</p>
+<p><strong>Importance:</strong> Editing this file requires re-seeding on first deploy
+but is otherwise safe.</p>
+<hr />
+<h3 id="backendsrclibauditts"><code>backend/src/lib/audit.ts</code></h3>
+<p><strong>One-liner:</strong> Writes rows to the <code>AuditLog</code> table.</p>
+<p><strong>Why it exists:</strong> Every meaningful action (login, edit user, submit
+inspection, close CA, …) needs to be recorded so we can prove after
+the fact who did what.</p>
+<p><strong>Deep dive:</strong> Exports:
+- <code>AUDIT_ACTIONS</code> — enum of all action keys
+- <code>writeAudit({actorId, action, entityType, entityId, metadata})</code> — a
+  fire-and-forget function called from controllers after each write</p>
+<p>Failure to write an audit row doesn't fail the underlying operation
+(logged as a warning). That's a deliberate trade-off — you don't want
+users seeing an "audit log full" error and being unable to work.</p>
+<hr />
+<h3 id="backendsrclibsessionts"><code>backend/src/lib/session.ts</code></h3>
+<p><strong>One-liner:</strong> Cookie signing + session TTL logic.</p>
+<p><strong>Why it exists:</strong> Sessions have sliding expiry (each request bumps
+the expiry) and an absolute cap (force re-login every 30 days). The
+math and cookie helpers live here.</p>
+<p><strong>Deep dive:</strong> Exports helpers for building and clearing the session
+cookie with the right flags (<code>httpOnly</code>, <code>secure</code>, <code>sameSite</code>,
+<code>signed</code>). Also computes the next <code>expiresAt</code> based on <code>SESSION_MAX_AGE_MS</code>.</p>
+<hr />
+<h3 id="backendsrclibpasswordsts"><code>backend/src/lib/passwords.ts</code></h3>
+<p><strong>One-liner:</strong> Password strength validation + bcrypt hashing helpers.</p>
+<p><strong>Why it exists:</strong> Repeated code (min length, require digit, etc.)
+consolidated in one place.</p>
+<p><strong>Deep dive:</strong> Exports <code>hashPassword</code> (bcrypt with cost 10) and
+<code>assertPasswordAcceptable</code> (throws <code>INVALID_PASSWORD</code> if too weak).
+Called from user creation and password reset flows.</p>
+<hr />
+<h3 id="backendsrclibfilestoragets"><code>backend/src/lib/fileStorage.ts</code></h3>
+<p><strong>One-liner:</strong> Where uploaded photos go on disk.</p>
+<p><strong>Why it exists:</strong> Multer gives us the file in memory. We need to
+decide where on disk to write it and what the filename should be.</p>
+<p><strong>Deep dive:</strong> For each inspection, files land in
+<code>UPLOAD_DIR/inspections/&lt;inspectionId&gt;/&lt;safe-random-name.jpg&gt;</code>. Same
+for corrective-action photos under <code>.../corrective-actions/...</code>. Also
+provides <code>assertImageAcceptable</code> — enforces MIME type is <code>image/*</code> and
+size is under <code>UPLOAD_MAX_BYTES</code>.</p>
+<p><strong>Caveat:</strong> On Render's free tier, disk is ephemeral — photos disappear
+on restart. For a real rollout, this file is what you'd rewrite to
+push to S3 or Cloudflare R2 instead.</p>
+<hr />
+<h3 id="backendsrclibexportersts"><code>backend/src/lib/exporters.ts</code></h3>
+<p><strong>One-liner:</strong> Generates CSV and XLSX files for report exports.</p>
+<p><strong>Why it exists:</strong> Every report needs CSV + Excel output. Rather than
+duplicating that in each controller, we have a <code>ColumnSpec[]</code> shape
+and <code>sendCsv</code> / <code>sendXlsx</code> helpers.</p>
+<p><strong>Deep dive:</strong> <code>ColumnSpec</code> = <code>{header: string, accessor: (row) =&gt; string|number}</code>.
+<code>sendCsv</code> uses Papaparse to build the CSV body and streams it out.
+<code>sendXlsx</code> uses ExcelJS to build an actual <code>.xlsx</code> binary. Both set
+the correct <code>Content-Type</code> and <code>Content-Disposition</code> headers so the
+browser prompts "Save as…" with a sensible filename.</p>
+<hr />
+<h3 id="backendsrclibinspectionperiodts"><code>backend/src/lib/inspectionPeriod.ts</code></h3>
+<p><strong>One-liner:</strong> Turns "October 2026" into a date range (start / end /
+periodKey / due date).</p>
+<p><strong>Why it exists:</strong> Inspections are bucketed by month (period). We
+need consistent maths for "what month is now?", "when is the due date
+for this month?", and "what months fall in this date range?".</p>
+<p><strong>Deep dive:</strong> Key exports:
+- <code>currentPeriod()</code> — returns <code>{periodKey: '2026-10', periodStart, periodEnd}</code> for right now
+- <code>periodFromKey('2026-10')</code> — inverse
+- <code>computeDueDate(period, frequencyDays)</code> — end of period for monthly
+- <code>resolveDateRange({fromDate, toDate})</code> — converts a range to a list
+  of month keys, used by reports</p>
+<hr />
+<h3 id="backendsrclibchecklisttypests"><code>backend/src/lib/checklistTypes.ts</code></h3>
+<p><strong>One-liner:</strong> The <code>QUESTION_TYPES</code> enum + related helpers.</p>
+<p><strong>Why it exists:</strong> Both the template editor and the inspection form
+need to know the list of question types. Type guards live here too.</p>
+<p><strong>Deep dive:</strong> Exports <code>QUESTION_TYPES</code> = <code>['PASS_FAIL', 'YES_NO',
+'NUMERIC', 'TEXT', 'DROPDOWN', 'RADIO', 'CHECKBOX', 'DATE', 'PHOTO',
+'REMARKS']</code>, <code>isQuestionType()</code>, <code>FAILABLE_QUESTION_TYPES</code>, and
+<code>OPTION_BASED_QUESTION_TYPES</code>.</p>
+<hr />
+<h3 id="backendsrclibcorrectiveactiontypests-backendsrclibequipmentcodests"><code>backend/src/lib/correctiveActionTypes.ts</code> / <code>backend/src/lib/equipmentCodes.ts</code></h3>
+<p>Small helper files. First defines CA status / priority enums; second
+generates human-readable equipment codes like <code>FE-A-0001</code>.</p>
+<hr />
+<h2 id="39-the-database-schema">3.9 The database schema</h2>
+<h3 id="backendprismaschemaprisma"><code>backend/prisma/schema.prisma</code></h3>
+<p><strong>One-liner:</strong> The definition of every database table, column, and
+relationship.</p>
+<p><strong>Why it exists:</strong> Prisma reads this file, generates SQL to apply the
+schema (via <code>db push</code> or <code>migrate</code>), and generates TypeScript types
+for the queries.</p>
+<p><strong>Deep dive — 15 tables:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Role</code></td>
+<td>5 seeded roles + any custom ones</td>
+</tr>
+<tr>
+<td><code>Permission</code></td>
+<td>18 fine-grained permissions</td>
+</tr>
+<tr>
+<td><code>RolePermission</code></td>
+<td>Join: which permissions each role grants</td>
+</tr>
+<tr>
+<td><code>User</code></td>
+<td>Everyone who can log in</td>
+</tr>
+<tr>
+<td><code>Session</code></td>
+<td>One row per active login</td>
+</tr>
+<tr>
+<td><code>Unit</code></td>
+<td>UPL plant locations</td>
+</tr>
+<tr>
+<td><code>Department</code></td>
+<td>Sub-areas within a unit</td>
+</tr>
+<tr>
+<td><code>EquipmentType</code></td>
+<td>Fire Extinguisher, Hydrant, etc.</td>
+</tr>
+<tr>
+<td><code>Equipment</code></td>
+<td>Individual pieces of equipment with QR values</td>
+</tr>
+<tr>
+<td><code>ChecklistTemplate</code></td>
+<td>Logical checklist (name, header, approvers, …)</td>
+</tr>
+<tr>
+<td><code>ChecklistTemplateUnit</code></td>
+<td>Which units a template applies to</td>
+</tr>
+<tr>
+<td><code>ChecklistTemplateApprover</code></td>
+<td>Users authorised to approve inspections</td>
+</tr>
+<tr>
+<td><code>ChecklistTemplateVersion</code></td>
+<td>Immutable-once-published version of a template</td>
+</tr>
+<tr>
+<td><code>ChecklistSection</code></td>
+<td>A grouping of questions inside a version</td>
+</tr>
+<tr>
+<td><code>ChecklistQuestion</code></td>
+<td>Individual question with type + options</td>
+</tr>
+<tr>
+<td><code>Inspection</code></td>
+<td>One monthly inspection of one equipment</td>
+</tr>
+<tr>
+<td><code>InspectionResponse</code></td>
+<td>One answer to one question in one inspection</td>
+</tr>
+<tr>
+<td><code>InspectionAttachment</code></td>
+<td>Photo uploaded during an inspection</td>
+</tr>
+<tr>
+<td><code>CorrectiveAction</code></td>
+<td>Follow-up task raised on a fail</td>
+</tr>
+<tr>
+<td><code>CorrectiveActionAttachment</code></td>
+<td>Photo evidence for a CA</td>
+</tr>
+<tr>
+<td><code>AuditLog</code></td>
+<td>Who did what and when</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Design decisions worth knowing:</strong></p>
+<ul>
+<li><strong>Versioned checklists</strong> — history never mutates. Editing a template
+  creates a new version; old inspections keep the version they were
+  captured against.</li>
+<li><strong>Snapshotted responses</strong> — each <code>InspectionResponse</code> copies the
+  question text and metadata at submission time. If someone deletes a
+  question later, historical reports still make sense.</li>
+<li><strong>Unique index on <code>(equipmentId, periodKey)</code></strong> — the DB itself
+  prevents two inspections for the same equipment in the same month.</li>
+<li><strong><code>Inspection.inspectionNumber</code> unique</strong> — the human-readable
+  <code>INS-2026-000042</code> is enforced unique at the DB level.</li>
+</ul>
+<p><strong>Importance:</strong> The heart of the data model. Every service ultimately
+queries these tables.</p>
+<hr />
+<h3 id="backendprismaseedts"><code>backend/prisma/seed.ts</code></h3>
+<p><strong>One-liner:</strong> Populates the database with initial roles, permissions,
+users, and demo equipment.</p>
+<p><strong>Why it exists:</strong> A brand-new database is empty. We need at least an
+admin user to log in and a role/permission set to check against.</p>
+<p><strong>Deep dive:</strong> Runs 8 steps in order:
+1. Upsert 18 permissions
+2. Upsert 5 roles + assign default permissions
+3. Upsert 1 unit + 3 departments (Dahej plant)
+4. Upsert 5 demo users (one per role)
+5. Upsert 5 equipment types
+6. Upsert 10 sample equipment (2 per type)
+7. Upsert 5 sample checklist templates
+8. Print a summary of counts</p>
+<p>The seed is idempotent — safe to run repeatedly. Password hashes are
+NOT overwritten on re-seed (so operators don't get their passwords
+reset by a deploy).</p>
+<p><strong>Non-destructive permission update:</strong> For SUPER_ADMIN, the seed
+always ensures every permission is granted (prevents lock-out). For
+other roles, it only seeds permissions on first-time creation. If an
+operator later edits <code>INSPECTOR</code>'s permissions via the Roles UI, a
+future deploy won't overwrite those edits.</p>
+<p><strong>Importance:</strong> Only runs on first deploy or when re-seeding.</p>
+<hr />
+<h2 id="310-other-backend-files">3.10 Other backend files</h2>
+<h3 id="backendsrctypesexpressdts"><code>backend/src/types/express.d.ts</code></h3>
+<p><strong>One-liner:</strong> Extends Express's <code>Request</code> type with our custom fields.</p>
+<p><strong>Why it exists:</strong> We add <code>req.user</code>, <code>req.id</code>, and (via Multer)
+<code>req.file</code> to Request. TypeScript needs to know about them.</p>
+<p><strong>Deep dive:</strong> A single-purpose type-declaration file. No runtime
+code. When TypeScript sees <code>req.user</code> in a controller, this file tells
+it what type <code>user</code> is.</p>
+<hr />
+<h1 id="part-4-frontend-files-deep-dive">PART 4 — FRONTEND FILES (DEEP DIVE)</h1>
+<h2 id="41-entry-points">4.1 Entry points</h2>
+<h3 id="frontendsrcmaintsx"><code>frontend/src/main.tsx</code></h3>
+<p><strong>One-liner:</strong> Mounts React into the HTML page.</p>
+<p><strong>Why it exists:</strong> Every React app has one file that calls
+<code>createRoot(...).render(&lt;App /&gt;)</code>. This is it.</p>
+<p><strong>Deep dive:</strong> Also sets up the top-level providers: <code>ErrorBoundary</code>
+(catches React render errors), <code>ThemeProvider</code> (dark/light mode),
+<code>BrowserRouter</code> (React Router). Wraps in <code>React.StrictMode</code> for extra
+dev warnings.</p>
+<p><strong>Importance:</strong> Tiny but critical. If this crashes, nothing renders.</p>
+<hr />
+<h3 id="frontendsrcapptsx"><code>frontend/src/App.tsx</code></h3>
+<p><strong>One-liner:</strong> The URL → Page component route table.</p>
+<p><strong>Why it exists:</strong> React Router needs to know which component to
+render for each URL. This file is the whole map.</p>
+<p><strong>Deep dive:</strong> Organised in a hierarchy:
+- Public routes: <code>/login</code>, <code>/forbidden</code>
+- Protected routes (require login): everything else
+  - Nested under <code>&lt;AppLayout /&gt;</code> for the top-bar + sidebar chrome
+  - Each route wrapped in <code>&lt;ProtectedRoute requirePermissions={[...]} /&gt;</code>
+    so unauthorized visits redirect to <code>/forbidden</code>
+- 404 catch-all at the end</p>
+<p>Also does <strong>code-splitting</strong> on <code>ScanPage</code> and <code>QrBulkPage</code> — those
+pull in html5-qrcode (~350 KB) which we don't want in the main bundle.</p>
+<p><strong>Importance:</strong> Critical — the routing hierarchy defines the whole app.</p>
+<hr />
+<h3 id="frontendsrcindexcss"><code>frontend/src/index.css</code></h3>
+<p><strong>One-liner:</strong> Global CSS: Tailwind imports + print styles.</p>
+<p><strong>Why it exists:</strong> Tailwind needs its <code>@tailwind base;</code> etc. directives
+somewhere. Print stylesheet for the PDF export also lives here.</p>
+<p><strong>Deep dive:</strong> Three sections:
+1. <code>@tailwind base/components/utilities</code> — pulls in all Tailwind
+2. <code>@layer base</code> — sets the default font family and body colors, with
+   <code>dark:</code> variants so dark mode applies to the whole page
+3. <code>@media print</code> — hides <code>.print-hide</code> elements, keeps <code>.print-avoid-break</code>
+   sections whole, adjusts A4 page margins</p>
+<p><strong>Importance:</strong> Foundational. Missing = the app looks unstyled.</p>
+<hr />
+<h2 id="42-authentication">4.2 Authentication</h2>
+<h3 id="frontendsrcauthauthcontexttsx"><code>frontend/src/auth/AuthContext.tsx</code></h3>
+<p><strong>One-liner:</strong> Holds the current logged-in user + provides <code>login()</code> /
+<code>logout()</code> / <code>hasPermission()</code>.</p>
+<p><strong>Why it exists:</strong> Every page needs to know "who am I?" and "am I
+allowed to see this?". React Context lets the same values flow to
+every component.</p>
+<p><strong>Deep dive:</strong> On first mount, calls <code>GET /api/auth/me</code>. If the cookie
+is valid, gets back the user. Exposes:
+- <code>user</code> — the current user or <code>null</code>
+- <code>login(username, password)</code> — calls the API, updates state
+- <code>logout()</code> — calls the API, clears state
+- <code>hasPermission(perm)</code> — returns true/false, used to hide buttons</p>
+<p><strong>Importance:</strong> Every protected page relies on this.</p>
+<hr />
+<h3 id="frontendsrcauthprotectedroutetsx"><code>frontend/src/auth/ProtectedRoute.tsx</code></h3>
+<p><strong>One-liner:</strong> Redirects unauthenticated / unauthorized users away.</p>
+<p><strong>Why it exists:</strong> Cheap frontend enforcement so users can't even see
+pages they don't have access to. (Backend still enforces on every API
+call — this is UX, not security.)</p>
+<p><strong>Deep dive:</strong> A <code>&lt;Route element={&lt;ProtectedRoute ... /&gt;}&gt;</code> wrapper.
+If no user → redirect to <code>/login</code>. If <code>requirePermissions</code> are set and
+the user doesn't have them → redirect to <code>/forbidden</code>. Otherwise
+render the <code>&lt;Outlet /&gt;</code> (nested routes).</p>
+<hr />
+<h2 id="43-theme">4.3 Theme</h2>
+<h3 id="frontendsrcthemethemecontexttsx"><code>frontend/src/theme/ThemeContext.tsx</code></h3>
+<p><strong>One-liner:</strong> Dark / light mode toggle with localStorage persistence.</p>
+<p><strong>Why it exists:</strong> Inspectors work in low-light warehouses. Dark mode
+is a genuine usability feature.</p>
+<p><strong>Deep dive:</strong> On mount, reads the user's saved preference. When the
+theme changes, adds/removes a <code>dark</code> CSS class on <code>&lt;html&gt;</code> (that's how
+Tailwind's <code>dark:</code> variants activate) and writes back to localStorage.
+Also exports a <code>&lt;ThemeToggle /&gt;</code> button (sun/moon icon) placed in the
+app's top bar.</p>
+<p><strong>Design note:</strong> Deliberately does <em>not</em> follow the system's
+<code>prefers-color-scheme</code> — inspectors on shared devices found the
+automatic flip confusing.</p>
+<hr />
+<h2 id="44-layout">4.4 Layout</h2>
+<h3 id="frontendsrclayoutapplayouttsx"><code>frontend/src/layout/AppLayout.tsx</code></h3>
+<p><strong>One-liner:</strong> The persistent frame — top bar and left sidebar around
+every logged-in page.</p>
+<p><strong>Why it exists:</strong> Every authenticated page needs the same chrome. Do
+it once here, use <code>&lt;Outlet /&gt;</code> for the varying page content.</p>
+<p><strong>Deep dive:</strong> Renders:
+- Top bar — logo, SafetyVerse wordmark, mobile menu button, current
+  user info, theme toggle, sign-out button
+- Sidebar — grouped nav items (Overview, Operations, Masters,
+  Administration, QR Management, Reports, System). Each item is
+  permission-gated — invisible if the user can't access it. On mobile,
+  the sidebar is a drawer that overlays the content.
+- <code>print:hidden</code> — top bar and sidebar disappear when printing so PDF
+  exports are clean.</p>
+<p><strong>Importance:</strong> High. Broken layout = broken app.</p>
+<hr />
+<h2 id="45-shared-components">4.5 Shared components</h2>
+<h3 id="frontendsrccomponentsuitsx"><code>frontend/src/components/ui.tsx</code></h3>
+<p><strong>One-liner:</strong> Reusable UI primitives — Button, Input, Select,
+TextArea, Badge, PageHeader, EmptyState, ErrorBanner.</p>
+<p><strong>Why it exists:</strong> Every page uses the same styled inputs and buttons.
+Rather than repeat the Tailwind classes everywhere, centralise them.</p>
+<p><strong>Deep dive:</strong> Each primitive supports <code>dark:</code> variants automatically.
+Button has 4 variants (primary/secondary/danger/ghost). Input, Select,
+TextArea share a common look with support for labels, hints, and
+error messages. Badge comes in 5 tones.</p>
+<p><strong>Importance:</strong> Every page imports something from here.</p>
+<hr />
+<h3 id="frontendsrccomponentsmodaltsx"><code>frontend/src/components/Modal.tsx</code></h3>
+<p><strong>One-liner:</strong> Overlay dialog with fixed header, scrolling body, sticky
+footer.</p>
+<p><strong>Why it exists:</strong> Every "New X" / "Edit X" form is a modal. Standard
+pattern.</p>
+<p><strong>Deep dive:</strong> Trapped inside a fixed-position <code>&lt;div&gt;</code> that captures
+clicks on the backdrop to close. <code>Escape</code> key also closes. Uses
+<code>flex-column</code> so the body scrolls internally while the footer stays
+pinned. Handles <code>body { overflow: hidden }</code> while open so the page
+behind doesn't scroll.</p>
+<hr />
+<h3 id="frontendsrccomponentserrorboundarytsx"><code>frontend/src/components/ErrorBoundary.tsx</code></h3>
+<p><strong>One-liner:</strong> Catches React rendering errors so the whole app doesn't
+turn white.</p>
+<p><strong>Why it exists:</strong> A JavaScript error inside a component would blank
+the entire page by default. Error boundaries let us show a friendly
+"something went wrong, try refreshing" message instead.</p>
+<p><strong>Deep dive:</strong> Class component (that's how error boundaries work in
+React 18 — can't use hooks). Wraps the whole app in <code>main.tsx</code>. On
+error, shows a fallback UI with a "Reload" button and (in dev) the
+error message.</p>
+<hr />
+<h3 id="frontendsrccomponentsdaterangefiltertsx"><code>frontend/src/components/DateRangeFilter.tsx</code></h3>
+<p><strong>One-liner:</strong> Two-date input for report filters (from + to).</p>
+<p><strong>Why it exists:</strong> Every report uses the same date-range widget. DRY.</p>
+<hr />
+<h3 id="frontendsrccomponentsqrcodecardtsx-qrlabeltsx"><code>frontend/src/components/QrCodeCard.tsx</code> / <code>QrLabel.tsx</code></h3>
+<p><strong>One-liner:</strong> SVG-based QR label rendering for print.</p>
+<p><strong>Why it exists:</strong> Equipment labels need to be printable, at the right
+size, with human-readable info alongside the QR.</p>
+<p><strong>Deep dive:</strong> Uses <code>qrcode.react</code> to generate the SVG. <code>QrLabel</code> is
+the full label (QR + equipment code + name + type + location).
+<code>QrCodeCard</code> is a smaller card used in the equipment detail page.
+Print CSS ensures 1:1 scaling on paper.</p>
+<hr />
+<h2 id="46-api-client-typed-wrappers">4.6 API client + typed wrappers</h2>
+<h3 id="frontendsrclibapits"><code>frontend/src/lib/api.ts</code></h3>
+<p><strong>One-liner:</strong> The single Axios instance every API call goes through.</p>
+<p><strong>Why it exists:</strong> Consistent base URL, credential handling, error
+normalisation.</p>
+<p><strong>Deep dive:</strong> Configures Axios with:
+- <code>baseURL</code> — <code>/api</code> in production (backend and frontend share an
+  origin), <code>http://localhost:4000/api</code> in dev
+- <code>withCredentials: true</code> — send cookies with every request
+- <code>timeout: 15000</code> — 15-second timeout
+- Includes a <code>toApiError()</code> helper that normalizes any error (network,
+  timeout, backend error) into a <code>{code, message, status}</code> shape the
+  UI can render.</p>
+<p><strong>Importance:</strong> Every backend interaction touches this file.</p>
+<hr />
+<h3 id="frontendsrclibapixxxts-one-per-area"><code>frontend/src/lib/apiXxx.ts</code> — one per area</h3>
+<p>Each of these files is thin: TypeScript types matching the backend
+response shapes, plus wrapper functions that call the right endpoint.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Wraps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiChecklists.ts</code></td>
+<td>Template + version + question endpoints</td>
+</tr>
+<tr>
+<td><code>apiCorrectiveActions.ts</code></td>
+<td>CA CRUD + attachments</td>
+</tr>
+<tr>
+<td><code>apiDashboard.ts</code></td>
+<td>Dashboard summary + chart data</td>
+</tr>
+<tr>
+<td><code>apiEquipment.ts</code></td>
+<td>Equipment CRUD + QR lookup + import</td>
+</tr>
+<tr>
+<td><code>apiInspections.ts</code></td>
+<td>Inspection CRUD + schedule + approve/reject/pending</td>
+</tr>
+<tr>
+<td><code>apiReports.ts</code></td>
+<td>7 report fetch functions + <code>reportExportUrl()</code> for CSV/XLSX links</td>
+</tr>
+<tr>
+<td><code>apiUnits.ts</code></td>
+<td>Unit CRUD</td>
+</tr>
+<tr>
+<td><code>apiUsers.ts</code></td>
+<td>User CRUD + role master + permission listing</td>
+</tr>
+<tr>
+<td><code>apiAuditLogs.ts</code></td>
+<td>Audit log paginated list</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deep dive:</strong> Each function looks like:</p>
+<pre><code class="language-typescript">export async function listUnits(): Promise&lt;Unit[]&gt; {
+  const { data } = await api.get&lt;{units: Unit[]}&gt;('/units');
+  return data.units;
+}
+</code></pre>
+<p>Boring by design. Any complex logic belongs in the calling page or in
+the backend service, not here.</p>
+<p><strong>Importance:</strong> The bridge between the frontend and backend.
+Editing these files is easy and safe.</p>
+<hr />
+<h3 id="frontendsrclibpermissionsts"><code>frontend/src/lib/permissions.ts</code></h3>
+<p><strong>One-liner:</strong> Mirrors the backend's <code>RBAC</code> keys for use in frontend
+guards.</p>
+<p><strong>Why it exists:</strong> <code>&lt;ProtectedRoute requirePermissions={[PERMS.USER_VIEW]}&gt;</code>
+reads more cleanly than <code>['user.view']</code>. Also gives TypeScript
+autocomplete.</p>
+<p><strong>Deep dive:</strong> Two exports: <code>ROLES</code> (5 role keys) and <code>PERMS</code> (18
+permission keys). Must be kept in sync with <code>backend/src/lib/rbac.ts</code>
+manually — a small copy of duplication that pays for itself in DX.</p>
+<hr />
+<h3 id="frontendsrclibqrts"><code>frontend/src/lib/qr.ts</code></h3>
+<p><strong>One-liner:</strong> Turns an equipment <code>qrCodeValue</code> into a URL for the QR
+label + parses scanned values back to equipment codes.</p>
+<p><strong>Why it exists:</strong> Both QR generation and scanning need to agree on
+the URL format.</p>
+<p><strong>Deep dive:</strong> <code>qrPayload(value)</code> returns
+<code>${window.location.origin}/s/${value}</code>. <code>parseScannedValue(raw)</code> copes
+with camera apps that return the whole URL, a bare code, or a URL
+with query params — extracts the code.</p>
+<hr />
+<h2 id="47-pages-one-screen-at-a-time">4.7 Pages — one screen at a time</h2>
+<p>There's one file per screen. Rather than describe each in isolation,
+here's the map with a one-liner + notes on the interesting ones.</p>
+<h3 id="sign-in-and-error-pages">Sign-in and error pages</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LoginPage.tsx</code></td>
+<td>Username + password form; UPL logo + SafetyVerse wordmark</td>
+</tr>
+<tr>
+<td><code>ForbiddenPage.tsx</code></td>
+<td>"You don't have access to this page"</td>
+</tr>
+<tr>
+<td><code>NotFoundPage.tsx</code></td>
+<td>404 friendly page</td>
+</tr>
+</tbody>
+</table>
+<p><strong>LoginPage deep dive:</strong> Manages <code>username</code> / <code>password</code> state; on
+submit calls <code>login()</code> from AuthContext; redirects to intended page
+(from <code>location.state.from</code>) on success. Shows any error via the
+normalized <code>toApiError()</code>.</p>
+<hr />
+<h3 id="home">Home</h3>
+<p><strong><code>DashboardPage.tsx</code></strong> — Landing page after login. Shows:
+- Big stat tiles: total equipment, this month's completion %,
+  overdue count, safety-critical fails
+- A pie chart of inspection statuses (recharts)
+- A bar chart of top failing equipment types
+- Recent activity feed</p>
+<p>Uses <code>fetchDashboardSummary()</code> from <code>apiDashboard.ts</code>. All charts
+respect dark mode via Tailwind's palette CSS variables.</p>
+<hr />
+<h3 id="masters">Masters</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UnitsPage.tsx</code></td>
+<td>List + create + edit units</td>
+</tr>
+<tr>
+<td><code>DepartmentsPage.tsx</code></td>
+<td>List + create + edit departments (filter by unit)</td>
+</tr>
+<tr>
+<td><code>EquipmentTypesPage.tsx</code></td>
+<td>List + create + edit equipment types</td>
+</tr>
+<tr>
+<td><code>EquipmentListPage.tsx</code></td>
+<td>Paginated + searchable table of every equipment; filters by type/unit/status</td>
+</tr>
+<tr>
+<td><code>EquipmentDetailPage.tsx</code></td>
+<td>Full equipment view with inspection history, assigned checklist, and QR label</td>
+</tr>
+<tr>
+<td><code>EquipmentFormModal.tsx</code></td>
+<td>The "New / Edit equipment" modal shared by list and detail pages</td>
+</tr>
+<tr>
+<td><code>EquipmentImportPage.tsx</code></td>
+<td>CSV bulk import — download template, upload file, preview, confirm</td>
+</tr>
+<tr>
+<td><code>EquipmentLabelPage.tsx</code></td>
+<td>Printable single-equipment QR label</td>
+</tr>
+<tr>
+<td><code>ChecklistTemplatesPage.tsx</code></td>
+<td>List + create checklist templates</td>
+</tr>
+<tr>
+<td><code>ChecklistTemplateDetailPage.tsx</code></td>
+<td>Template settings, version list, approvers picker</td>
+</tr>
+<tr>
+<td><code>ChecklistVersionEditorPage.tsx</code></td>
+<td>The heart of template authoring — sections + questions + type-specific fields, drag-to-reorder</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ChecklistVersionEditorPage deep dive:</strong> The most complex form in
+the app.
+- Local <code>DraftState</code> is the authoring model (sections → questions with
+  per-type extras)
+- User-visible types with type-specific extras:
+  - <code>DROPDOWN</code> / <code>RADIO</code> — options (newline-separated) + optional default
+  - <code>CHECKBOX</code> — options only
+  - <code>NUMERIC</code> — min / max / unit
+- Reorder via up/down buttons
+- On save, POSTs the whole draft as one payload — the backend deletes
+  and rebuilds the section tree in a transaction (avoiding granular
+  add/remove endpoints)
+- Publish transitions status to <code>PUBLISHED</code> and archives the previous
+  current version</p>
+<hr />
+<h3 id="operations">Operations</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ScanPage.tsx</code></td>
+<td>Camera-based QR scanner (html5-qrcode)</td>
+</tr>
+<tr>
+<td><code>QrShortRedirectPage.tsx</code></td>
+<td>Handles the short <code>/s/:value</code> URL that QRs encode</td>
+</tr>
+<tr>
+<td><code>InspectionsPage.tsx</code></td>
+<td>Two tabs: monthly schedule + all-inspections history</td>
+</tr>
+<tr>
+<td><code>InspectionPerformPage.tsx</code></td>
+<td>The checklist-filling screen — one question at a time</td>
+</tr>
+<tr>
+<td><code>InspectionDetailPage.tsx</code></td>
+<td>Read-only view of a completed inspection + PDF print button + approval workflow</td>
+</tr>
+<tr>
+<td><code>ApprovalsPage.tsx</code></td>
+<td>Notification centre — inspections awaiting your review</td>
+</tr>
+<tr>
+<td><code>CorrectiveActionsPage.tsx</code></td>
+<td>List of all CAs with priority, status, filters</td>
+</tr>
+<tr>
+<td><code>CorrectiveActionDetailPage.tsx</code></td>
+<td>Full CA view — assign, progress, resolve, close, evidence photos</td>
+</tr>
+<tr>
+<td><code>QrBulkPage.tsx</code></td>
+<td>Prints many QR labels at once (paginated on A4)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>InspectionPerformPage deep dive:</strong> The most-used mobile screen.
+- Loads the inspection detail once
+- Local <code>AnswerMap</code> state — maps <code>questionId</code> → <code>{valueString?, valueNumeric?, valueDate?, attachments[]}</code>
+- Section-by-section navigation (tabs on desktop, buttons on mobile)
+- Question renderers per type (<code>PillGroup</code> for pass/fail, checkbox
+  list for CHECKBOX, etc.)
+- Photo upload — snaps directly from the phone camera via <code>&lt;input
+  type="file" accept="image/*" capture="environment"&gt;</code>
+- Sticky bottom bar with <code>Save progress</code> / <code>Submit inspection</code> buttons
+- Confirmation modal on submit: shows the overall predicted result
+  and asks the inspector to type their name</p>
+<p><strong>InspectionDetailPage deep dive:</strong> Read-only until approval:
+- Displays every question + answer with pass/fail badges
+- If status is <code>PENDING_APPROVAL</code> and user is a listed approver:
+  shows Approve + Reject buttons
+- If status is <code>PENDING</code> with a <code>rejectionReason</code>: shows a red banner
+  so the inspector can see what to fix
+- Print stylesheet turns the whole thing into a form-shaped PDF via
+  the browser's Save-as-PDF dialog</p>
+<hr />
+<h3 id="administration">Administration</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UsersPage.tsx</code></td>
+<td>User CRUD table + reset password modal</td>
+</tr>
+<tr>
+<td><code>RolesPage.tsx</code></td>
+<td>Role Master — list roles, edit permission sets, create custom roles</td>
+</tr>
+</tbody>
+</table>
+<p><strong>RolesPage deep dive:</strong> Uses two modals (create + edit).
+- Permission grid grouped by resource (User, Role, Unit, …)
+- Each permission has a human-readable label ("Manage (create /
+  edit / delete)") + its raw key + description
+- System roles: name and key locked
+- SUPER_ADMIN: entirely locked (not even permissions editable)
+- Delete button: disabled if the role has users</p>
+<hr />
+<h3 id="reports">Reports</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ReportsLandingPage.tsx</code></td>
+<td>Card grid of the 7 available reports</td>
+</tr>
+<tr>
+<td><code>ReportShell.tsx</code></td>
+<td>Shared components: <code>ExportBar</code> (CSV/XLSX/Print buttons), <code>ReportSummary</code> (stat tiles)</td>
+</tr>
+<tr>
+<td><code>ComplianceReportPage.tsx</code></td>
+<td>Per-equipment compliance for a date range</td>
+</tr>
+<tr>
+<td><code>UnitComplianceReportPage.tsx</code></td>
+<td>Roll-up per unit</td>
+</tr>
+<tr>
+<td><code>EquipmentHistoryReportPage.tsx</code></td>
+<td>One equipment's inspection history</td>
+</tr>
+<tr>
+<td><code>EquipmentInspectionLogReportPage.tsx</code></td>
+<td>One equipment × every question × every inspection</td>
+</tr>
+<tr>
+<td><code>EquipmentTypeInspectionLogReportPage.tsx</code></td>
+<td>Same but across every equipment of one type</td>
+</tr>
+<tr>
+<td><code>FailedEquipmentReportPage.tsx</code></td>
+<td>Currently non-compliant equipment</td>
+</tr>
+<tr>
+<td><code>CorrectiveActionsReportPage.tsx</code></td>
+<td>CA list with days-open, priority, status</td>
+</tr>
+</tbody>
+</table>
+<p>Every report page follows the same pattern:
+1. Load filter dropdowns (types, units)
+2. Fetch data when filters change
+3. Render a <code>&lt;ReportSummary&gt;</code> and a table
+4. Include an <code>&lt;ExportBar&gt;</code> in the header with CSV / Excel / Print links</p>
+<hr />
+<h3 id="system">System</h3>
+<p><strong><code>AuditLogsPage.tsx</code></strong> — Paginated audit log with search + entity-type
+filter. Read-only. Only Super Admin can access.</p>
+<hr />
+<h1 id="part-5-configuration-files">PART 5 — CONFIGURATION FILES</h1>
+<h2 id="51-root-files">5.1 Root files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>README.md</code></td>
+<td>Repo intro + local dev instructions</td>
+</tr>
+<tr>
+<td><code>.gitignore</code></td>
+<td>Files git should not track (<code>node_modules</code>, <code>.env</code>, uploaded photos, SQLite DBs)</td>
+</tr>
+<tr>
+<td><code>.env.example</code></td>
+<td>Template showing every required env var (without values)</td>
+</tr>
+<tr>
+<td><code>render.yaml</code></td>
+<td>Render.com "blueprint" — build command, start command, env vars</td>
+</tr>
+<tr>
+<td><code>logo.jpeg</code></td>
+<td>UPL brand image (also copied into <code>frontend/public/</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>render.yaml deep dive:</strong> Every push to <code>main</code> triggers Render to:
+1. <code>cd backend &amp;&amp; npm ci --include=dev</code> — install backend deps
+2. <code>npx prisma generate</code> — build the typed DB client
+3. <code>cd ../frontend &amp;&amp; npm ci --include=dev &amp;&amp; npm run build</code> — build the SPA
+4. <code>cd ../backend &amp;&amp; npm run build</code> — compile backend TS
+5. <code>npx prisma db push --accept-data-loss --skip-generate</code> — sync schema
+6. <code>npx tsx prisma/seed.ts</code> — seed (idempotent)
+7. <code>cd backend &amp;&amp; node dist/server.js</code> — start the process</p>
+<p>Environment variables are declared with <code>sync: false</code> for secrets (set
+manually in the dashboard) or literal values for non-secrets.</p>
+<hr />
+<h2 id="52-backend-config-files">5.2 Backend config files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backend/package.json</code></td>
+<td>List of dependencies + npm scripts (<code>dev</code>, <code>build</code>, <code>start</code>, <code>db:seed</code>, <code>db:studio</code>)</td>
+</tr>
+<tr>
+<td><code>backend/tsconfig.json</code></td>
+<td>TypeScript compiler settings for the whole backend</td>
+</tr>
+<tr>
+<td><code>backend/tsconfig.build.json</code></td>
+<td>Additional settings just for the production build</td>
+</tr>
+<tr>
+<td><code>backend/package-lock.json</code></td>
+<td>Exact resolved dependency versions (not human-edited)</td>
+</tr>
+<tr>
+<td><code>backend/.env</code> (local only)</td>
+<td>Real values for env vars, gitignored</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="53-frontend-config-files">5.3 Frontend config files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frontend/package.json</code></td>
+<td>Frontend dependencies + scripts (<code>dev</code>, <code>build</code>, <code>preview</code>)</td>
+</tr>
+<tr>
+<td><code>frontend/vite.config.ts</code></td>
+<td>Vite settings — how the app is built and dev-served</td>
+</tr>
+<tr>
+<td><code>frontend/tailwind.config.js</code></td>
+<td>UPL orange brand palette + <code>darkMode: 'class'</code></td>
+</tr>
+<tr>
+<td><code>frontend/postcss.config.js</code></td>
+<td>PostCSS pipeline (feeds Tailwind + autoprefixer)</td>
+</tr>
+<tr>
+<td><code>frontend/tsconfig.json</code></td>
+<td>Base TypeScript settings</td>
+</tr>
+<tr>
+<td><code>frontend/tsconfig.app.json</code></td>
+<td>Settings for the app source</td>
+</tr>
+<tr>
+<td><code>frontend/tsconfig.node.json</code></td>
+<td>Settings for the Vite config file (which runs in Node, not the browser)</td>
+</tr>
+<tr>
+<td><code>frontend/index.html</code></td>
+<td>HTML skeleton — <code>&lt;div id="root"&gt;</code> where React mounts</td>
+</tr>
+</tbody>
+</table>
+<p><strong>tailwind.config.js deep dive:</strong> Defines the <code>brand.*</code> colour scale
+(<code>#F37021</code> at 500 with lighter/darker shades). Enables <code>darkMode:
+'class'</code> so we can toggle a <code>dark</code> class on <code>&lt;html&gt;</code>. Also defines the
+default sans-serif font stack.</p>
+<hr />
+<h1 id="appendix-a-file-count-by-area">APPENDIX A — File count by area</h1>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backend controllers</td>
+<td>14</td>
+</tr>
+<tr>
+<td>Backend services</td>
+<td>14</td>
+</tr>
+<tr>
+<td>Backend routes</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Backend middleware</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Backend lib (helpers)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Backend config + entry</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Prisma (schema + seed)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Frontend pages</td>
+<td>~30</td>
+</tr>
+<tr>
+<td>Frontend shared components</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Frontend API client wrappers</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Frontend auth + theme + layout</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Frontend entry + routes</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Config files (both packages)</td>
+<td>~10</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~125</strong> source files, ~20k lines of code</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="appendix-b-where-to-look-when-you-want-to-change-x">APPENDIX B — Where to look when you want to change X</h1>
+<table>
+<thead>
+<tr>
+<th>I want to change…</th>
+<th>Look here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The colour scheme</td>
+<td><code>frontend/tailwind.config.js</code></td>
+</tr>
+<tr>
+<td>The database schema</td>
+<td><code>backend/prisma/schema.prisma</code></td>
+</tr>
+<tr>
+<td>A permission</td>
+<td><code>backend/src/lib/rbac.ts</code> + <code>frontend/src/lib/permissions.ts</code></td>
+</tr>
+<tr>
+<td>A URL</td>
+<td><code>backend/src/routes/*.ts</code></td>
+</tr>
+<tr>
+<td>A rule about who can do what</td>
+<td><code>backend/src/services/*.ts</code></td>
+</tr>
+<tr>
+<td>Input validation</td>
+<td><code>backend/src/controllers/*.ts</code> (Zod schemas)</td>
+</tr>
+<tr>
+<td>What appears on a page</td>
+<td><code>frontend/src/pages/*.tsx</code></td>
+</tr>
+<tr>
+<td>Reusable UI style</td>
+<td><code>frontend/src/components/ui.tsx</code></td>
+</tr>
+<tr>
+<td>The list of question types</td>
+<td><code>backend/src/lib/checklistTypes.ts</code> + <code>frontend/src/lib/apiChecklists.ts</code></td>
+</tr>
+<tr>
+<td>Report columns</td>
+<td><code>backend/src/controllers/reportsController.ts</code> (<code>ColumnSpec[]</code>)</td>
+</tr>
+<tr>
+<td>Deployment settings</td>
+<td><code>render.yaml</code></td>
+</tr>
+<tr>
+<td>Environment variable defaults</td>
+<td><code>backend/src/config/env.ts</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="appendix-c-recommended-reading-order">APPENDIX C — Recommended reading order</h1>
+<p>If you're new to the codebase, read the files in this order:</p>
+<ol>
+<li><code>README.md</code> — general orientation</li>
+<li><code>render.yaml</code> — how it deploys</li>
+<li><code>backend/prisma/schema.prisma</code> — the data model</li>
+<li><code>backend/src/lib/rbac.ts</code> — role and permission vocabulary</li>
+<li><code>backend/src/app.ts</code> — request pipeline</li>
+<li><code>backend/src/services/inspectionService.ts</code> — the most complex service; if this makes sense, the rest is easy</li>
+<li><code>frontend/src/App.tsx</code> — route table</li>
+<li><code>frontend/src/lib/api.ts</code> — how the frontend talks to the backend</li>
+<li><code>frontend/src/pages/InspectionPerformPage.tsx</code> — the most-used
+   screen, best example of a real feature end-to-end</li>
+<li>Any one report page + <code>reportsService.ts</code> + <code>reportsController.ts</code>
+    — best example of the full backend pipeline</li>
+</ol>
+<p>By the end, you'll have a working mental model of the whole system.</p>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#FFF5EE',
+      primaryTextColor: '#0F172A',
+      primaryBorderColor: '#F37021',
+      lineColor: '#F37021',
+      secondaryColor: '#F1F5F9',
+      tertiaryColor: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif'
+    }
+  });
+  // Tell the print driver "we're ready" once diagrams have rendered.
+  // Chrome's --print-to-pdf waits for onload; mermaid runs after that.
+  // We give it a beat then set a flag Puppeteer/CDP could poll — but
+  // since we're using CLI, we rely on --virtual-time-budget instead.
+</script>
+
+</body>
+</html>

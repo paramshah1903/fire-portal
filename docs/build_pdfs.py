@@ -39,6 +39,8 @@ DOCS = [
      'Developer Guide', 'SafetyVerse · by UPL'),
     ('DEVELOPER_GUIDE_SIMPLE.md', 'SafetyVerse_Developer_Guide_Simple',
      'The Really Simple Guide', 'SafetyVerse · by UPL'),
+    ('TECH_STACK_AND_FILES.md', 'SafetyVerse_Tech_Stack_and_Files',
+     'Tech Stack & Complete File Guide', 'SafetyVerse · by UPL'),
     ('USER_MANUAL.md', 'SafetyVerse_User_Manual',
      'User Manual', 'SafetyVerse · by UPL'),
 ]
