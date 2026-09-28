@@ -363,6 +363,12 @@ export async function uploadInspectionAttachment(
   return data.attachment;
 }
 
+export async function deleteInspectionAttachment(
+  attachmentId: string,
+): Promise<void> {
+  await api.delete(`/inspection-attachments/${attachmentId}`);
+}
+
 export function inspectionAttachmentUrl(id: string): string {
   const base =
     import.meta.env.VITE_API_BASE_URL ??

@@ -1130,5 +1130,42 @@ export async function getAttachmentForRead(actor: Actor, id: string) {
   return att;
 }
 
+/**
+ * Remove a photo attachment from a PENDING inspection. Deletes both
+ * the DB row and the file on disk. Only the owning inspector (or a
+ * broad-role user) can delete, and only while the inspection is still
+ * editable — once submitted, evidence is immutable.
+ */
+export async function deleteInspectionAttachment(actor: Actor, id: string) {
+  const { attachmentPathFor } = await import('../lib/fileStorage.js');
+  const { unlink } = await import('node:fs/promises');
+
+  const att = await prisma.inspectionAttachment.findUnique({
+    where: { id },
+    include: {
+      inspection: {
+        select: { id: true, unitId: true, inspectorId: true, status: true },
+      },
+    },
+  });
+  if (!att) throw notFound('Attachment not found.');
+  assertCanActOnUnit(actor, att.inspection.unitId);
+  assertOwnership(actor, att.inspection);
+  assertPending(att.inspection);
+
+  // Delete the DB row first — if the disk unlink fails after (e.g.
+  // file already missing on ephemeral disk), the API still succeeds
+  // and the app is consistent.
+  await prisma.inspectionAttachment.delete({ where: { id } });
+
+  try {
+    const filePath = attachmentPathFor(att.inspectionId, att.storedFilename);
+    await unlink(filePath);
+  } catch {
+    // File may already be gone (ephemeral disk restart, prior delete).
+    // Best-effort cleanup — no need to fail the request.
+  }
+}
+
 // Re-export for callers that just need the role type
 export type { RoleKey };

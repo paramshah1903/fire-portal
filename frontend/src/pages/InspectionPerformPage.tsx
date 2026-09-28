@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toApiError } from '../lib/api';
 import {
+  deleteInspectionAttachment,
   getInspection,
   inspectionAttachmentUrl,
   saveInspectionProgress,
@@ -270,6 +271,31 @@ export function InspectionPerformPage() {
     }
   }
 
+  async function onDeletePhoto(q: InspectionQuestion, attachmentId: string) {
+    if (!insp) return;
+    if (!confirm('Remove this photo? You can capture a new one.')) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await deleteInspectionAttachment(attachmentId);
+      const refreshed = await getInspection(insp.id);
+      setInsp(refreshed);
+      setAnswers((cur) => ({
+        ...cur,
+        [q.id]: {
+          ...(cur[q.id] ?? { attachments: [] }),
+          attachments: (cur[q.id]?.attachments ?? []).filter(
+            (a) => a.id !== attachmentId,
+          ),
+        },
+      }));
+    } catch (err) {
+      setError(toApiError(err).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onUploadPhoto(q: InspectionQuestion, file: File) {
     setBusy(true);
     setError(null);
@@ -450,6 +476,7 @@ export function InspectionPerformPage() {
                 answer={answers[q.id]}
                 onChange={(partial) => setAnswer(q.id, partial)}
                 onPhoto={(f) => onUploadPhoto(q, f)}
+                onDeletePhoto={(id) => onDeletePhoto(q, id)}
                 busy={busy}
               />
             ))}
@@ -624,12 +651,14 @@ function QuestionInput({
   answer,
   onChange,
   onPhoto,
+  onDeletePhoto,
   busy,
 }: {
   q: InspectionQuestion;
   answer: AnswerState | undefined;
   onChange: (partial: Partial<AnswerState>) => void;
   onPhoto: (file: File) => void | Promise<void>;
+  onDeletePhoto: (attachmentId: string) => void | Promise<void>;
   busy: boolean;
 }) {
   const isFail = isFailAnswer(q, answer);
@@ -667,7 +696,14 @@ function QuestionInput({
         )}
       </div>
 
-      <AnswerControl q={q} answer={answer} onChange={onChange} onPhoto={onPhoto} busy={busy} />
+      <AnswerControl
+        q={q}
+        answer={answer}
+        onChange={onChange}
+        onPhoto={onPhoto}
+        onDeletePhoto={onDeletePhoto}
+        busy={busy}
+      />
     </div>
   );
 }
@@ -677,12 +713,14 @@ function AnswerControl({
   answer,
   onChange,
   onPhoto,
+  onDeletePhoto,
   busy,
 }: {
   q: InspectionQuestion;
   answer: AnswerState | undefined;
   onChange: (partial: Partial<AnswerState>) => void;
   onPhoto: (file: File) => void | Promise<void>;
+  onDeletePhoto: (attachmentId: string) => void | Promise<void>;
   busy: boolean;
 }) {
   const t: QuestionType = q.questionType;
@@ -830,7 +868,14 @@ function AnswerControl({
     );
   }
   if (t === 'PHOTO') {
-    return <PhotoInput answer={answer} onPhoto={onPhoto} busy={busy} />;
+    return (
+      <PhotoInput
+        answer={answer}
+        onPhoto={onPhoto}
+        onDeletePhoto={onDeletePhoto}
+        busy={busy}
+      />
+    );
   }
   return null;
 }
@@ -880,57 +925,242 @@ function PillGroup({
 function PhotoInput({
   answer,
   onPhoto,
+  onDeletePhoto,
   busy,
 }: {
   answer: AnswerState | undefined;
   onPhoto: (file: File) => void | Promise<void>;
+  onDeletePhoto: (attachmentId: string) => void | Promise<void>;
   busy: boolean;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
   return (
     <div>
       <div className="flex flex-wrap gap-2">
         {(answer?.attachments ?? []).map((a) => (
-          <a
-            key={a.id}
-            href={inspectionAttachmentUrl(a.id)}
-            target="_blank"
-            rel="noopener"
-            className="block h-24 w-24 overflow-hidden rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
-            title={a.originalName}
-          >
-            <img
-              src={inspectionAttachmentUrl(a.id)}
-              alt={a.caption ?? a.originalName}
-              className="h-full w-full object-cover"
-            />
-          </a>
+          <div key={a.id} className="relative h-24 w-24">
+            <a
+              href={inspectionAttachmentUrl(a.id)}
+              target="_blank"
+              rel="noopener"
+              className="block h-24 w-24 overflow-hidden rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+              title={a.originalName}
+            >
+              <img
+                src={inspectionAttachmentUrl(a.id)}
+                alt={a.caption ?? a.originalName}
+                className="h-full w-full object-cover"
+              />
+            </a>
+            {/* Remove button — floats at top-right of the thumbnail.
+                Deletes the attachment from the pending inspection. */}
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void onDeletePhoto(a.id)}
+              aria-label="Remove photo"
+              title="Remove photo"
+              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white shadow-md hover:bg-red-700 disabled:opacity-50"
+            >
+              <span className="text-sm leading-none">×</span>
+            </button>
+          </div>
         ))}
         <button
           type="button"
           disabled={busy}
-          onClick={() => inputRef.current?.click()}
-          className="flex h-24 w-24 items-center justify-center rounded border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50"
+          onClick={() => setCameraOpen(true)}
+          className="flex h-24 w-24 flex-col items-center justify-center gap-1 rounded border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50"
         >
-          {busy ? 'Uploading…' : '+ Add photo'}
+          <span className="text-lg" aria-hidden>
+            📷
+          </span>
+          <span>{busy ? 'Uploading…' : 'Capture'}</span>
         </button>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) {
-              void onPhoto(f);
-              // reset so re-selecting the same file re-triggers change
-              if (inputRef.current) inputRef.current.value = '';
-            }
-          }}
-        />
       </div>
+      {cameraOpen && (
+        <CameraCaptureModal
+          onCapture={async (file) => {
+            setCameraOpen(false);
+            await onPhoto(file);
+          }}
+          onClose={() => setCameraOpen(false)}
+        />
+      )}
     </div>
+  );
+}
+
+/**
+ * Live camera capture modal. Uses navigator.mediaDevices.getUserMedia
+ * (back camera preferred) so the user MUST take a fresh photo — there
+ * is no path to the gallery or the local filesystem.
+ *
+ * Flow: preview → Capture → freeze frame → Retake | Use photo.
+ * Cleanup: on unmount all video tracks are stopped so the camera
+ * indicator turns off.
+ */
+function CameraCaptureModal({
+  onCapture,
+  onClose,
+}: {
+  onCapture: (file: File) => Promise<void> | void;
+  onClose: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [captured, setCaptured] = useState<{ blob: Blob; url: string } | null>(
+    null,
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [starting, setStarting] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function start() {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          setError(
+            'This device does not have a camera or the browser does not support live camera capture. Try again on a phone.',
+          );
+          return;
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+          audio: false,
+        });
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play().catch(() => undefined);
+        }
+      } catch (err) {
+        const msg =
+          err instanceof Error && err.name === 'NotAllowedError'
+            ? 'Camera permission was denied. Allow camera access in your browser settings and try again.'
+            : err instanceof Error
+              ? err.message
+              : 'Could not start the camera.';
+        if (!cancelled) setError(msg);
+      } finally {
+        if (!cancelled) setStarting(false);
+      }
+    }
+    void start();
+    return () => {
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    };
+  }, []);
+
+  function capture() {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        setCaptured({ blob, url: URL.createObjectURL(blob) });
+      },
+      'image/jpeg',
+      0.9,
+    );
+  }
+
+  function retake() {
+    if (captured) URL.revokeObjectURL(captured.url);
+    setCaptured(null);
+  }
+
+  async function useIt() {
+    if (!captured) return;
+    setBusy(true);
+    try {
+      const file = new File(
+        [captured.blob],
+        `photo-${Date.now()}.jpg`,
+        { type: 'image/jpeg' },
+      );
+      await onCapture(file);
+      URL.revokeObjectURL(captured.url);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function close() {
+    if (captured) URL.revokeObjectURL(captured.url);
+    onClose();
+  }
+
+  return (
+    <Modal
+      open={true}
+      title="Take photo"
+      onClose={close}
+      size="lg"
+      footer={
+        captured ? (
+          <>
+            <Button variant="secondary" onClick={retake} disabled={busy}>
+              Retake
+            </Button>
+            <Button onClick={useIt} disabled={busy}>
+              {busy ? 'Uploading…' : 'Use photo'}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="secondary" onClick={close}>
+              Cancel
+            </Button>
+            <Button onClick={capture} disabled={!!error || starting}>
+              Capture
+            </Button>
+          </>
+        )
+      }
+    >
+      {error ? (
+        <ErrorBanner message={error} />
+      ) : captured ? (
+        <img
+          src={captured.url}
+          alt="Captured preview"
+          className="w-full rounded-md"
+        />
+      ) : (
+        <>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full rounded-md bg-slate-900"
+          />
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+            {starting
+              ? 'Starting camera…'
+              : 'Position the equipment in view, then tap Capture.'}
+          </p>
+        </>
+      )}
+    </Modal>
   );
 }
 

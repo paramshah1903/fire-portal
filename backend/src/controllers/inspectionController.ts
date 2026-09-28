@@ -318,3 +318,16 @@ export const downloadAttachment: RequestHandler = asyncHandler(
     fs.createReadStream(abs).pipe(res);
   },
 );
+
+export const deleteAttachment: RequestHandler = asyncHandler(
+  async (req, res) => {
+    await service.deleteInspectionAttachment(actor(req), req.params.id);
+    await writeAudit({
+      actorId: req.user!.id,
+      action: 'inspection.attachment.delete',
+      entityType: 'InspectionAttachment',
+      entityId: req.params.id,
+    });
+    res.status(204).end();
+  },
+);

@@ -72,3 +72,10 @@ inspectionAttachmentsRouter.get(
   requirePermissions(PERMISSION_KEYS.INSPECTION_VIEW),
   ctrl.downloadAttachment,
 );
+// Remove a photo from a PENDING inspection. Ownership + status
+// enforced inside the service.
+inspectionAttachmentsRouter.delete(
+  '/:id',
+  requirePermissions(PERMISSION_KEYS.INSPECTION_PERFORM),
+  ctrl.deleteAttachment,
+);
